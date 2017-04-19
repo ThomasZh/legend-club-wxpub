@@ -11,6 +11,8 @@ from foo import comm
 from foo.auth import auth_email
 from foo.auth import auth_phone
 from wx import wx_activity
+from wx import wx_voucher
+from wx import wx_triprouter
 from wx import wx_personal_center
 from wx import wx_wrap
 from wx import xml_parser
@@ -97,16 +99,16 @@ def map():
 
 
         # 开放线路市场
-        (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_activity, 'WxTriprouterMarketHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/triprouters/([a-z0-9]*)", getattr(wx_activity, 'WxTriprouterInfoHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_triprouter, 'WxTriprouterMarketHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/triprouters/([a-z0-9]*)", getattr(wx_triprouter, 'WxTriprouterInfoHandler')),
 
 
         # 由俱乐部分享出的有偿代金券
-        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)", getattr(wx_activity, 'WxVoucherShareHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)/buy/step0", getattr(wx_activity, 'WxVoucherBuyStep0Handler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)/buy/step1", getattr(wx_activity, 'WxVoucherBuyStep1Handler')),
-        (r"/bf/voucher-pay", getattr(wx_activity, 'WxVoucherBuyStep2Handler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)/buy/step3", getattr(wx_activity, 'WxVoucherBuyStep3Handler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)", getattr(wx_voucher, 'WxVoucherShareHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)/buy/step0", getattr(wx_voucher, 'WxVoucherBuyStep0Handler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)/buy/step1", getattr(wx_voucher, 'WxVoucherBuyStep1Handler')),
+        (r"/bf/voucher-pay", getattr(wx_voucher, 'WxVoucherBuyStep2Handler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/vouchers/([a-z0-9]*)/buy/step3", getattr(wx_voucher, 'WxVoucherBuyStep3Handler')),
 
 
         # bike-forever wexin order
@@ -114,7 +116,7 @@ def map():
         # 该链接是通过【统一下单API】中提交的参数notify_url设置，如果链接无法访问，商户将无法接收到微信通知。
         # 通知url必须为直接可访问的url，不能携带参数。示例：notify_url：“https://pay.weixin.qq.com/wxpay/pay.action”
         (r"/bf/wx/orders/notify", getattr(wx_activity, 'WxOrderNotifyHandler')),
-        (r"/bf/wx/voucher-orders/notify", getattr(wx_activity, 'WxVoucherOrderNotifyHandler')),
+        (r"/bf/wx/voucher-orders/notify", getattr(wx_voucher, 'WxVoucherOrderNotifyHandler')),
         (r"/bf/wx/orders/wait", getattr(wx_activity, 'WxOrderWaitHandler')),
 
 
