@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Meta, title, CSS, favicons, etc. -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>骑无止境</title>
+
+  <!-- Bootstrap core CSS -->
+
+  <link href="{{ static_url('gentelella/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ static_url('gentelella/fontawesome/css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ static_url('gentelella/animate.css/animate.min.css') }}" rel="stylesheet">
+  <!-- Custom styling plus plugins -->
+  <link href="{{ static_url('css/custom.css') }}" rel="stylesheet">
+  <link href="{{ static_url('gentelella/iCheck/skins/flat/green.css') }}" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ static_url('upyun/css/fileinput.min.css') }}" />
+  <script src="{{ static_url('gentelella/jquery/dist/jquery.min.js') }}"></script>
+
+  <!-- fileinput -->
+  <link rel="stylesheet" href="{{ static_url("css/fileinput.min.css")}}">
+
+  <!-- fileinput -->
+  <script src="{{ static_url("js/fileinput.min.js")}}"></script>
+	<script src="{{ static_url("js/spark-md5.min.js")}}"></script>
+	<script src="{{ static_url("js/async.js")}}"></script>
+	<script src="{{ static_url("js/upyun-mu.js")}}"></script>
+</head>
+
+
+<body class="nav-md">
+
+  <div class="container body">
+
+
+    <div class="main_container">
+
+      <div class="col-md-3 left_col">
+        <div class="left_col scroll-view">
+
+          <!-- navigation title -->
+          {% module Template("vendor/nav-title-block.html", ops=ops) %}
+          <!-- /navigation title -->
+          <div class="clearfix"></div>
+
+          <!-- menu prile quick info -->
+          {% module Template("vendor/menu-prile-quick-info-block.html", ops=ops) %}
+          <!-- /menu prile quick info -->
+
+          <br />
+
+          <!-- sidebar menu -->
+          {% module Template("vendor/sidebar-menu-block.html", vendor_id=vendor_id, counter=counter) %}
+          <!-- /sidebar menu -->
+
+        </div>
+      </div>
+
+      <!-- top navigation -->
+      {% module Template("vendor/top-nav-block.html", ops=ops) %}
+      <!-- /top navigation -->
+
+      <!-- page content -->
+      <div class="right_col" role="main">
+
+        <!-- top tiles -->
+        <div class="row tile_count">
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/trip_router/{{ triprouter['_id'] }}/edit/step1">
+              <span class="count_top"><i class="fa fa-info-circle"></i> 线路信息</span>
+              <div class="count"><i class="glyphicon glyphicon-pencil"></i></div>
+              <span class="count_bottom"><i class="green">Step1 </i> 基本信息</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/trip_router/{{ triprouter['_id'] }}/edit/step2">
+              <span class="count_top"><i class="fa fa-calendar"></i> 详细介绍</span>
+              <div class="count"><i class="glyphicon glyphicon-pencil"></i></div>
+              <span class="count_bottom"><i class="red">Step2 </i> 编辑</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/trip_router/{{ triprouter['_id'] }}/activitylist">
+              <span class="count_top"><i class="fa fa-tasks"></i> 活动列表</span>
+              <div class="count"><i class="fa fa-tag"></i></div>
+              <span class="count_bottom"><i class="green">Step3 </i> 查看</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/trip_router/{{ triprouter['_id'] }}/evallist">
+              <span class="count_top"><i class="fa fa-tasks"></i> 评价列表</span>
+              <div class="count"><i class="fa fa-star"></i></div>
+              <span class="count_bottom"><i class="green">Step4 </i> 查看</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <!-- /top tiles -->
+
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h3>线路 <small> 编辑</small></h3>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>详细介绍 <small>可以直接编辑</small></h2>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+
+                  <form id="create-form" class="form-horizontal form-label-left" enctype="multipart/form-data" method="post" action="/vendors/{{ vendor_id }}/trip_router/{{ triprouter['_id'] }}/edit/step2">
+                      <div class="form-group">
+                          <!-- uploading toast -->
+                          <div id="loadingToast" class="weui_loading_toast" style="display:none;">
+                              <div class="weui_mask_transparent"></div>
+                              <div class="weui_toast">
+                                  <div class="weui_loading">
+                                      <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+                                      <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+                                  </div>
+                                  <p class="weui_toast_content">图片上传中...</p>
+                              </div>
+                          </div>
+
+                          <div class="form-group">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <div class="x_panel">
+                                      <div class="x_content">
+                                          <div id="alerts"></div>
+                                          <div class="btn-toolbar editor" data-role="editor-toolbar" data-target="#editor">
+                                              <div class="btn-group">
+                                                  <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font"><i class="fa fa-font"></i><b class="caret"></b></a>
+                                                  <ul class="dropdown-menu">
+                                                  </ul>
+                                              </div>
+
+                                              <div class="btn-group">
+                                                  <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font Size"><i class="fa fa-text-height"></i>&nbsp;<b class="caret"></b></a>
+                                                  <ul class="dropdown-menu">
+                                                      <li>
+                                                          <a data-edit="fontSize 5">
+                                                              <p style="font-size:17px">Huge</p>
+                                                          </a>
+                                                      </li>
+                                                      <li>
+                                                          <a data-edit="fontSize 3">
+                                                              <p style="font-size:14px">Normal</p>
+                                                          </a>
+                                                      </li>
+                                                      <li>
+                                                          <a data-edit="fontSize 1">
+                                                              <p style="font-size:11px">Small</p>
+                                                          </a>
+                                                      </li>
+                                                  </ul>
+                                              </div>
+                                              <div class="btn-group">
+                                                  <a class="btn" data-edit="bold" title="Bold (Ctrl/Cmd+B)"><i class="fa fa-bold"></i></a>
+                                                  <a class="btn" data-edit="italic" title="Italic (Ctrl/Cmd+I)"><i class="fa fa-italic"></i></a>
+                                                  <a class="btn" data-edit="strikethrough" title="Strikethrough"><i class="fa fa-strikethrough"></i></a>
+                                                  <a class="btn" data-edit="underline" title="Underline (Ctrl/Cmd+U)"><i class="fa fa-underline"></i></a>
+                                              </div>
+
+                                              <div class="btn-group">
+                                                  <a class="btn" data-edit="insertunorderedlist" title="Bullet list"><i class="fa fa-list-ul"></i></a>
+                                                  <a class="btn" data-edit="insertorderedlist" title="Number list"><i class="fa fa-list-ol"></i></a>
+                                                  <!-- <a class="btn" data-edit="outdent" title="Reduce indent (Shift+Tab)"><i class="fa fa-dedent"></i></a>
+                <a class="btn" data-edit="indent" title="Indent (Tab)"><i class="fa fa-indent"></i></a> -->
+                                              </div>
+
+                                              <div class="btn-group">
+                                                  <a class="btn" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)"><i class="fa fa-align-left"></i></a>
+                                                  <a class="btn" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)"><i class="fa fa-align-center"></i></a>
+                                                  <a class="btn" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)"><i class="fa fa-align-right"></i></a>
+                                                  <a class="btn" data-edit="justifyfull" title="Jus tify (Ctrl/Cmd+J)"><i class="fa fa-align-justify"></i></a>
+                                              </div>
+
+                                              <div class="btn-group">
+                                                  <a class="btn dropdown-toggle" data-toggle="dropdown" title="Hyperlink"><i class="fa fa-link"></i></a>
+                                                  <div class="dropdown-menu input-append">
+                                                      <input class="span2" placeholder="URL" type="text" data-edit="createLink" />
+                                                      <button class="btn" type="button">Add</button>
+                                                  </div>
+                                                  <a class="btn" data-edit="unlink" title="Remove Hyperlink"><i class="fa fa-cut"></i></a>
+                                              </div>
+
+                                              <div class="btn-group">
+                                                  <a class="btn" title="Insert picture (or just drag & drop)" id="pictureBtn"><i class="fa fa-picture-o"></i></a>
+                                                  <input type="file" id="file" data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" />
+                                              </div>
+
+                                              <div class="btn-group">
+                                                  <a class="btn" data-edit="undo" title="Undo (Ctrl/Cmd+Z)"><i class="fa fa-undo"></i></a>
+                                                  <a class="btn" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i class="fa fa-repeat"></i></a>
+                                              </div>
+                                          </div>
+
+                                          <div id="editor" style="height:260px;" class="editor-wrapper">
+
+                                          </div>
+                                          <input id="editor_input" type="hidden" name="content" value=""/>
+
+                                          <!-- <textarea name="descr" id="descr" style="display:none;"></textarea> -->
+
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+              </div>
+
+              <!-- <div class="ln_solid"></div> -->
+              <div class="form-group">
+                  <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                      <button type="button" class="btn btn-success" id="state_btn">保存</button>
+                  </div>
+              </div>
+
+              </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- footer content -->
+        {% module Template("vendor/footer-block.html") %}
+        <!-- /footer content -->
+
+      </div>
+      <!-- /page content -->
+    </div>
+
+  </div>
+
+
+  <script src="{{ static_url('gentelella/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
+  <!-- bootstrap progress js -->
+  <script src="{{ static_url('gentelella/bootstrap-progressbar/bootstrap-progressbar.min.js') }}" type="text/javascript"></script>
+  <!-- icheck -->
+  <script src="{{ static_url('gentelella/iCheck/icheck.min.js') }}" type="text/javascript"></script>
+  <!-- daterangepicker -->
+  <script src="{{ static_url('gentelella/moment/min/moment.min.js') }}" type="text/javascript"></script>
+  <script src="{{ static_url('gentelella/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
+  <!-- bootstrap-wysiwyg -->
+  <script src="{{ static_url('gentelella/bootstrap-wysiwyg/src/bootstrap-wysiwyg.js') }}"></script>
+  <script src="{{ static_url('gentelella/jquery.hotkeys/jquery.hotkeys.js') }}"></script>
+  <script src="{{ static_url('gentelella/google-code-prettify/src/prettify.js') }}"></script>
+
+  <script src="{{ static_url('js/custom.js') }}" type="text/javascript"></script>
+  <script type="text/javascript" src="{{ static_url('js/json2.js') }}"></script>
+  <script type="text/javascript" src="{{ static_url('js/jquery.validate.min.js') }}"></script>
+
+  <!-- fileinput -->
+  <script src="{{ static_url('upyun/js/fileinput.min.js') }}"></script>
+  <script src="{{ static_url('upyun/js/spark-md5.min.js') }}"></script>
+  <script src="{{ static_url('upyun/js/async.js') }}"></script>
+  <script src="{{ static_url('upyun/js/upyun-mu.js') }}"></script>
+
+  <script src="{{ static_url('admin/js/validator/validator.js') }}"></script>
+
+  <script type="text/javascript"
+          src="//cdn.bootcss.com/SyntaxHighlighter/3.0.83/scripts/shCore.min.js"></script>
+  <script type="text/javascript"
+          src="//cdn.bootcss.com/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js"></script>
+
+  <script>
+
+            function html_decode(str)
+                {
+                  var s = "";
+                  if (str.length == 0) return "";
+                  s = str;
+                  s = s.replace(/&lt;/g, "<");
+                  s = s.replace(/&gt;/g, ">");
+                  s = s.replace(/&nbsp;/g, " ");
+                  s = s.replace(/&#39;/g, "\'");
+                  s = s.replace(/&quot;/g, "\"");
+                  s = s.replace(/<br>/g, "\n");
+                  s = s.replace(/&amp;/g, "&");
+                  s = s.replace(/\\/g, "");
+                  return s;
+                }
+            var html = html_decode("{{ article['paragraphs'] }}");
+            //   alert(html);
+            $("#editor").html(html);
+
+              $("#file1").on("change",uploadHandle);
+              // var element1 = document.getElementById("file1");
+              // element1.addEventListener("change", uploadHandle, false);
+
+              function uploadHandle() {
+                  var file1 = document.getElementById('file1').files[0];
+                  //alert(file.name);
+                  var imgUrl = uploadUpyun(file1, 'file1');
+                  $('#loadingToast').show();
+                  document.getElementById("img").value = imgUrl;
+              }
+              document.addEventListener('uploaded',function(e) {
+                //alert('uploaded');
+                $('#loadingToast').hide();
+              });
+
+              function uuid() {
+                  var s = [];
+                  var hexDigits = "0123456789abcdef";
+                  for (var i = 0; i < 36; i++) {
+                      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+                  }
+                  s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
+                  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+                  s[8] = s[13] = s[18] = s[23] = "-";
+
+                  var uuid = s.join("");
+                  return uuid;
+              }
+
+              function uploadUpyun(file, elementId) {
+                  var ext = '.' + file.name.split('.').pop();
+
+                  var config = {
+                      // 空间名称
+                      bucket: 'tripc2c-club-title',
+                      // 上传请求过期时间
+                      expiration: parseInt((new Date().getTime() + 3600000) / 1000),
+                      // 尽量不要使用直接传表单 API 的方式，以防泄露造成安全隐患
+                      form_api_secret: 'CRKAOsKHGbbCnU+yztBxUT0bYR0='
+                  };
+
+                  var instance = new Sand(config);
+                  var options = {
+                      'notify_url': 'http://upyun.com'
+                  };
+                  instance.setOptions(options);
+                  instance.setElementId(elementId);
+
+                  var d = new Date();
+                  var month = d.getMonth() + 1;
+                  var filename = '/articles/bg/' + d.getFullYear() + '/' + month + '/' + d.getDate() + '/' + uuid() + ext;
+                  console.log(filename);
+                  instance.upload(filename);
+
+
+                  return 'https://tripc2c-club-title.b0.upaiyun.com' + filename;
+              }
+
+          </script>
+
+          <!-- bootstrap-wysiwyg -->
+          <script>
+              $(document).ready(function() {
+                  function initToolbarBootstrapBindings() {
+                      var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
+                              'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+                              'Times New Roman', 'Verdana'
+                          ],
+                          fontTarget = $('[title=Font]').siblings('.dropdown-menu');
+                      $.each(fonts, function(idx, fontName) {
+                          fontTarget.append($('<li><a data-edit="fontName ' + fontName + '" style="font-family:\'' + fontName + '\'">' + fontName + '</a></li>'));
+                      });
+                      $('a[title]').tooltip({
+                          container: 'body'
+                      });
+                      $('.dropdown-menu input').click(function() {
+                              return false;
+                          })
+                          .change(function() {
+                              $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');
+                          })
+                          .keydown('esc', function() {
+                              this.value = '';
+                              $(this).change();
+                          });
+
+                      $('[data-role=magic-overlay]').each(function() {
+                          var overlay = $(this),
+                              target = $(overlay.data('target'));
+                          overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
+                      });
+
+                      if ("onwebkitspeechchange" in document.createElement("input")) {
+                          var editorOffset = $('#editor').offset();
+                          $('.voiceBtn').css('position', 'absolute').offset({
+                              top: editorOffset.top,
+                              left: editorOffset.left + $('#editor').innerWidth() - 35
+                          });
+                      } else {
+                          $('.voiceBtn').hide();
+                      }
+                  }
+
+                  function showErrorAlert(reason, detail) {
+                      var msg = '';
+                      if (reason === 'unsupported-file-type') {
+                          msg = "Unsupported format " + detail;
+                      } else {
+                          console.log("error uploading file", reason, detail);
+                      }
+                      $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                          '<strong>File upload error</strong> ' + msg + ' </div>').prependTo('#alerts');
+                  }
+
+                  initToolbarBootstrapBindings();
+
+                  $('#editor').wysiwyg({
+                      fileUploadError: showErrorAlert
+                  });
+
+                  window.prettyPrint;
+                  prettyPrint();
+
+                $("#state_btn").on("click",function(){
+                  // console.log($("#editor").html());
+                  $("#editor_input").val($("#editor").html());
+                  $("#create-form").submit();
+
+                });
+              });
+      </script>
+          <!-- /bootstrap-wysiwyg -->
+
+</body>
+</html>

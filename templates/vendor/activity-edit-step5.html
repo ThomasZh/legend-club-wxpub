@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Meta, title, CSS, favicons, etc. -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>骑无止境</title>
+
+  <!-- Bootstrap core CSS -->
+
+  <link href="{{ static_url('admin/css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <link href="{{ static_url('admin/fonts/css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ static_url('admin/css/animate.min.css') }}" rel="stylesheet">
+
+  <!-- Custom styling plus plugins -->
+  <link href="{{ static_url('css/custom.css') }}" rel="stylesheet">
+  <link href="{{ static_url('admin/css/icheck/flat/green.css') }}" rel="stylesheet">
+
+
+  <script src="{{ static_url('admin/js/jquery.min.js') }}"></script>
+
+</head>
+
+
+<body class="nav-md">
+
+  <div class="container body">
+
+
+    <div class="main_container">
+
+      <div class="col-md-3 left_col">
+        <div class="left_col scroll-view">
+
+          <!-- navigation title -->
+          {% module Template("vendor/nav-title-block.html", ops=ops) %}
+          <!-- /navigation title -->
+          <div class="clearfix"></div>
+
+          <!-- menu prile quick info -->
+          {% module Template("vendor/menu-prile-quick-info-block.html", ops=ops) %}
+          <!-- /menu prile quick info -->
+
+          <br />
+
+          <!-- sidebar menu -->
+          {% module Template("vendor/sidebar-menu-block.html", vendor_id=vendor_id, counter=counter) %}
+          <!-- /sidebar menu -->
+
+        </div>
+      </div>
+
+      <!-- top navigation -->
+      {% module Template("vendor/top-nav-block.html", ops=ops) %}
+      <!-- /top navigation -->
+
+      <!-- page content -->
+      <div class="right_col" role="main">
+
+        <!-- top tiles -->
+        <div class="row tile_count">
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step1">
+              <span class="count_top"><i class="fa fa-info-circle"></i> 活动信息</span>
+              <div class="count">{{activity['member_min']}}-{{activity['member_max']}}</div>
+              <span class="count_bottom"><i class="green">Step1 </i> 基本信息</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step2">
+              <span class="count_top"><i class="fa fa-info-circle"></i> 活动信息</span>
+              <div class="count"><i class="fa fa-wechat"></i></div>
+              <span class="count_bottom"><i class="green">Step2 </i> 二维码</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step3">
+              <span class="count_top"><i class="fa fa-info-circle"></i> 活动信息</span>
+              {% if cret_template %}
+              <div class="count">{{cret_template['distance']}}<small>km</small></div>
+              {% else %}
+              <div class="count">0<small>km</small></div>
+              {% end %}
+              <span class="count_bottom"><i class="green">Step3 </i> 证书</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step4">
+              <span class="count_top"><i class="fa fa-info-circle"></i> 活动信息</span>
+              <div class="count">{{ bonus }}<small>积分</small></div>
+              <span class="count_bottom"><i class="green">Step4 </i> 分享</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step5">
+              <span class="count_top"><i class="fa fa-money"></i> 订单</span>
+              {% if activity_counter and activity_counter.has_key('order') %}
+              <div class="count">{{ activity_counter['order'] }}<small>笔</small></div>
+              {% else %}
+              <div class="count">0 <small>笔</small></div>
+              {% end %}
+              <span class="count_bottom"><i class="red">Step5 </i> 付费信息</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step6">
+              <span class="count_top"><i class="fa fa-user"></i> 会员报名</span>
+              {% if activity_counter and activity_counter.has_key('apply') %}
+              <div class="count">{{ activity_counter['apply'] }}<small>人次</small></div>
+              {% else %}
+              <div class="count">0 <small>人次</small></div>
+              {% end %}
+              <span class="count_bottom"><i class="green">Step6  </i> 报名信息</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step7">
+              <span class="count_top"><i class="fa fa-calendar"></i> 详细行程</span>
+              <div class="count"><i class="glyphicon glyphicon-pencil"></i></div>
+              <span class="count_bottom"><i class="green">Step7 </i> 编辑</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step8">
+              <span class="count_top"><i class="fa fa-money"></i> 费用说明</span>
+              <div class="count"><i class="glyphicon glyphicon-pencil"></i></div>
+              <span class="count_bottom"><i class="green">Step8 </i> 编辑</span>
+              </a>
+            </div>
+          </div>
+          <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+            <div class="left"></div>
+            <div class="right">
+              <a href="/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/detail/step9">
+              <span class="count_top"><i class="fa fa-suitcase"></i> 备注描述</span>
+              <div class="count"><i class="glyphicon glyphicon-pencil"></i></div>
+              <span class="count_bottom"><i class="green">Step9 </i> 编辑</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+        <!-- /top tiles -->
+
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h3>活动 <small> 订单</small></h3>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>会员付款详情</h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+
+                  <p>Simple table with project listing with progress and editing options</p>
+
+                  <!-- start project list -->
+                  <table class="table table-striped projects">
+                    <thead>
+                      <tr>
+                        <th style="width: 1%">#</th>
+                        <th>订单号</th>
+                        <th>会员</th>
+                        <th>下单金额</th>
+                        <th>支付总额</th>
+                        <th>日期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                        <th>俱乐部</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                  </table>
+                  <div class="clearfix"></div>
+                  <div class="col-md-5 col-sm-12 col-xs-12 center-margin">
+                    <button class="btn btn-success" type="button" id="prev">上一页</button>
+                    <span class="pageBox"></span>
+
+                    <button class="btn btn-success" type="button" id="next">下一页</button>
+                    共<span id="total_page" style="padding:0 5px;"></span>页
+                  </div>
+                  <!-- end project list -->
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- footer content -->
+        {% module Template("vendor/footer-block.html") %}
+        <!-- /footer content -->
+
+      </div>
+      <!-- /page content -->
+    </div>
+
+  </div>
+
+  <script src="{{ static_url('admin/js/bootstrap.min.js') }}"></script>
+
+  <!-- bootstrap progress js -->
+  <script src="{{ static_url('admin/js/progressbar/bootstrap-progressbar.min.js') }}"></script>
+  <!-- icheck -->
+  <script src="{{ static_url('admin/js/icheck/icheck.min.js') }}"></script>
+
+  <script src="{{ static_url('admin/js/custom.js') }}"></script>
+  <!-- pace -->
+  <script src="{{ static_url('admin/js/pace/pace.min.js') }}"></script>
+
+  <!-- daterangepicker -->
+  <script type="text/javascript" src="{{ static_url('admin/js/moment/moment.min.js') }}"></script>
+  <script type="text/javascript" src="{{ static_url('admin/js/datepicker/daterangepicker.js') }}"></script>
+  <!-- form validation -->
+  <script src="{{ static_url('admin/js/validator/validator.js') }}"></script>
+
+  <script>
+
+          var preAllow = true;   // when ajax not completed, cannot do the next request
+          var limit = 8;//每页显示数
+          var currentPage = 0;//当前页
+          var total_page = 0;//总页数
+          function query(pageNum) {
+            $.ajax({
+              type: "GET",
+              url: "/bf/api/vendors/{{ vendor_id }}/orders/activitys/{{ activity_id }}?page=1&limit="+limit,
+              headers: {
+                "Authorization": "Bearer {{ access_token }}"
+              },
+              dataType: "json",
+              contentType: 'application/json',
+              success: function(data, status, xhr) {
+                  console.log(data);
+                  currentPage = 1;
+              var pageData = data.data;
+                  total_page = data.total_pgae;//总页
+                  $("#total_page").html(total_page);
+              // num = ajaxobj.length;
+              for (var i in pageData) {
+
+                  var inner_html = '<tr id="tr'+pageData[i]._id +'">';
+                      inner_html += '<td class="a-center ">';
+                      if (pageData[i].check_status == '0')
+                        inner_html += '<input type="checkbox" class="tableflat" value="'+pageData[i]._id+'" onclick="javascript:OnReviewOrder(this);">';
+                      else
+                        inner_html += '<input type="checkbox" class="tableflat" checked="checked" disabled="true">';
+                      inner_html += '</td>';
+                      inner_html += '<td class=" ">';
+                      inner_html +=  pageData[i]._id;
+                        if (pageData[i].status == 20)
+                          inner_html +=  '<br />'+pageData[i].prepay_id;
+                        else if (pageData[i].status > 20){
+                          inner_html += '<br />'+ pageData[i].prepay_id;
+                        }
+                      inner_html += '<br />'+ pageData[i].transaction_id;
+                      inner_html += '</td>';
+                      inner_html += '<td>';
+                      inner_html += '<ul class="list-inline">';
+                      inner_html += '<li>';
+                      inner_html += '<img src="'+ pageData[i].avatar + '" class="avatar" alt="Avatar">';
+                      inner_html += '</li>';
+                      inner_html += '</ul>';
+                      inner_html += '<a href="/vendors/{{ vendor_id }}/customers/'+ pageData[i].account_id + '">'+ pageData[i].nickname +'</a>';
+                      inner_html += '<br />';
+                      inner_html += '</td>';
+                      inner_html += '<td>'+ pageData[i].total_amount +'元<br />';
+                      inner_html += '<td>'+ pageData[i].payed_total_fee +'元</td>'
+                      inner_html +=  '<td>' + pageData[i].create_time +'</td>';
+                      inner_html += '<td>';
+                          if (pageData[i].pay_status <= 20)
+                            inner_html += '<a href="#" class="btn btn-warning btn-xs"> 待付款 </a>';
+                          else if(pageData[i].pay_status == 21)
+                            inner_html += '<a href="#" class="btn btn-danger btn-xs"> 下单失败 </a>';
+                          else if (pageData[i].pay_status == 31)
+                            inner_html += '<a href="#" class="btn btn-danger btn-xs"> 支付失败 </a>';
+                          else if (pageData[i].pay_status == 30)
+                            inner_html += '<a href="#" class="btn btn-success btn-xs"> 支付成功 </a>';
+                          else if (pageData[i].pay_status > 31)
+                            inner_html += '<a href="#" class="btn btn-success btn-xs"> 支付成功 </a>';
+                      inner_html +=  '</td>';
+                      // inner_html +=  '<td><a href="#" class="btn btn-primary btn-xs">'+ pageData[i].settlement_status +' </a></td>';
+                      inner_html += '<td class=" ">';
+                        inner_html += '<a href="/vendors/{{ vendor_id }}/orders/'+pageData[i]._id+'" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> 查看详情 </a>';
+                      inner_html += '</td>';
+                      inner_html +=   '<td>'+ pageData[i].club_name +'</td>';
+                      inner_html +=   '</tr>';
+
+                $('#tbody').append(inner_html);
+                // member_num += 1;
+              };
+            if(total_page>5){
+                for (var k=1;k<=5;k++){
+                  var inner_html = '<button class="btn btn-info" type="button" id="num'+k+'">'+k+'</button>';
+                  $(".pageBox").append(inner_html);
+                };
+              }else if(total_page<=5){
+                for (var k=1;k<=total_page;k++){
+                  var inner_html = '<button class="btn btn-info" type="button" id="num'+k+'">'+k+'</button>';
+                  $(".pageBox").append(inner_html);
+                };
+              }
+              $("#num1").addClass("on");
+            }
+            });
+          };
+
+          function gotoPage(pageNum) {
+            $.ajax({
+              type: "GET",
+              url: "/bf/api/vendors/{{ vendor_id }}/orders/activitys/{{ activity_id }}?page="+pageNum+"&limit="+limit,
+              headers: {
+                "Authorization": "Bearer {{ access_token }}"
+              },
+              dataType: "json",
+              contentType: 'application/json',
+              success: function(data, status, xhr) {
+                  // console.log(data);
+                  currentPage = pageNum;
+              var pageData = data.data;
+                  total_page = data.total_pgae;//总页
+              $('#tbody').html("");
+
+              for (var i in pageData) {
+                var inner_html = '<tr id="tr'+pageData[i]._id +'">';
+                    inner_html += '<td class="a-center ">';
+                    if (pageData[i].check_status == '0')
+                      inner_html += '<input type="checkbox" class="tableflat" value="'+pageData[i]._id+'" onclick="javascript:OnReviewOrder(this);">';
+                    else
+                      inner_html += '<input type="checkbox" class="tableflat" checked="checked" disabled="true">';
+                    inner_html += '</td>';
+                    inner_html += '<td class=" ">';
+                    inner_html +=  pageData[i]._id;
+                      if (pageData[i].status == 20)
+                        inner_html +=  '<br />'+pageData[i].prepay_id;
+                      else if (pageData[i].status > 20){
+                        inner_html += '<br />'+ pageData[i].prepay_id;
+                      }
+                    inner_html += '<br />'+ pageData[i].transaction_id;
+                    inner_html += '</td>';
+                    inner_html += '<td>';
+                    inner_html += '<ul class="list-inline">';
+                    inner_html += '<li>';
+                    inner_html += '<img src="'+ pageData[i].avatar + '" class="avatar" alt="Avatar">';
+                    inner_html += '</li>';
+                    inner_html += '</ul>';
+                    inner_html += '<a href="/vendors/{{ vendor_id }}/customers/'+ pageData[i].account_id + '">'+ pageData[i].nickname +'</a>';
+                    inner_html += '<br />';
+                    inner_html += '</td>';
+                    inner_html += '<td>'+ pageData[i].total_amount +'元<br />';
+                    inner_html += '<td>'+ pageData[i].payed_total_fee +'元</td>'
+                    inner_html +=  '<td>' + pageData[i].create_time +'</td>';
+                    inner_html += '<td>';
+                        if (pageData[i].pay_status <= 20)
+                          inner_html += '<a href="#" class="btn btn-warning btn-xs"> 待付款 </a>';
+                        else if(pageData[i].pay_status == 21)
+                          inner_html += '<a href="#" class="btn btn-danger btn-xs"> 下单失败 </a>';
+                        else if (pageData[i].pay_status == 31)
+                          inner_html += '<a href="#" class="btn btn-danger btn-xs"> 支付失败 </a>';
+                        else if (pageData[i].pay_status == 30)
+                          inner_html += '<a href="#" class="btn btn-success btn-xs"> 支付成功 </a>';
+                        else if (pageData[i].pay_status > 31)
+                          inner_html += '<a href="#" class="btn btn-success btn-xs"> 支付成功 </a>';
+                    inner_html +=  '</td>';
+                    // inner_html +=  '<td><a href="#" class="btn btn-primary btn-xs">'+ pageData[i].settlement_status +' </a></td>';
+                    inner_html += '<td class=" ">';
+                      inner_html += '<a href="/vendors/{{ vendor_id }}/orders/'+pageData[i]._id+'" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> 查看详情 </a>';
+                    inner_html += '</td>';
+                    inner_html +=   '<td>'+ pageData[i].club_name +'</td>';
+                    inner_html +=   '</tr>';
+
+                $('#tbody').append(inner_html);
+                // member_num += 1;
+              };
+
+              pageNext = parseInt((currentPage-1)/5) + 1;
+
+                start = (pageNext-1)*5+1;
+                end = pageNext*5;
+                if(end > total_page){
+                  end = total_page;
+                }
+
+                $(".pageBox").html("");
+                for (var k=start;k<=end;k++){
+                  var inner_html = '<button class="btn btn-info" type="button" id="num'+k+'">'+k+'</button>';
+
+                  $(".pageBox").append(inner_html);
+                };
+                 $("#num"+currentPage).addClass("on").siblings().removeClass("on");
+
+              }
+            });
+
+          };
+
+          $(function(){
+            query();
+            $(document).on('click','.pageBox > button',function(){
+              var num = $(this).text();
+              gotoPage(num);
+              //  $(this).addClass("current").siblings().removeClass("current");
+            })
+
+            $("#prev").on("click",function(){
+                if(currentPage<=1){
+
+                }else{
+                    gotoPage(--currentPage);
+                    // $("#num"+currentPage).addClass("current").siblings().removeClass("current");
+                }
+            });
+
+            $("#next").on("click",function(){
+                if(currentPage>=total_page){
+
+                }else{
+                    gotoPage(++currentPage);
+                    // $("#num"+currentPage).addClass("current").siblings().removeClass("current");
+                }
+            })
+          });
+  </script>
+
+  <script>
+  function OnReviewOrder(e) {
+    orderId = e.value;
+    $.get("/bf/api/vendors/{{ vendor_id }}/orders/" + orderId + "/review", function(data, status) {
+      e.disabled = "true";
+    });
+  };
+    function OnDeleteOrder(e) {
+      orderId = e.value;
+      var msg = "Are you sure you want to delete this item?";
+      if (confirm(msg) == true) {
+        $.post("/bf/api/vendors/{{ vendor_id }}/orders/" + orderId + "/delete", function(data,status){
+          var c = $("#tr"+orderId);
+//          var p = $("#tbody{{ vendor_id }}");
+          c.empty();
+        });
+        return true;
+      } else {
+        return false;
+      }
+    }
+  </script>
+
+</body>
+</html>
