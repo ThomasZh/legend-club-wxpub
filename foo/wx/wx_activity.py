@@ -57,24 +57,13 @@ from dao import triprouter_share_dao
 from dao import club_dao
 from dao import activity_share_dao
 
-from auth import auth_email
-from auth import auth_phone
-
-from wx_wrap import getAccessTokenByClientCredential
-from wx_wrap import getJsapiTicket
-from wx_wrap import Sign
-from wx_wrap import getNonceStr
-from wx_wrap import getOrderSign
-from wx_wrap import getPaySign
-from wx_wrap import getAccessToken
-from wx_wrap import getUserInfo
+from foo.wx import wx_wrap
 from xml_parser import parseWxOrderReturn, parseWxPayReturn
 from global_const import *
 
 
-
 # 活动首页
-class WxActivityListHandler(tornado.web.RequestHandler):
+class WxActivityListHandler(BaseHandler):
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
@@ -121,7 +110,7 @@ class WxActivityListHandler(tornado.web.RequestHandler):
 
 
 #推荐活动列表
-class WxRecommendActivityHandler(tornado.web.RequestHandler):
+class WxRecommendActivityHandler(BaseHandler):
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
@@ -231,9 +220,9 @@ class WxRecommendActivityInfoHandler(BaseHandler):
         wx_app_secret = wx_app_info['wx_app_secret']
         wx_notify_domain = wx_app_info['wx_notify_domain']
 
-        _access_token = getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
-        _jsapi_ticket = getJsapiTicket(_access_token)
-        _sign = Sign(_jsapi_ticket, wx_notify_domain+self.request.uri).sign()
+        _access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(_access_token)
+        _sign = wx_wrap.Sign(_jsapi_ticket, wx_notify_domain+self.request.uri).sign()
         logging.info("------------------------------------nonceStr: "+_sign['nonceStr'])
         logging.info("------------------------------------jsapi_ticket: "+_sign['jsapi_ticket'])
         logging.info("------------------------------------timestamp: "+str(_sign['timestamp']))
@@ -306,9 +295,9 @@ class WxActivityInfoHandler(BaseHandler):
         wx_notify_domain = wx_app_info['wx_notify_domain']
 
         logging.info("------------------------------------uri: "+self.request.uri)
-        _access_token = getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
-        _jsapi_ticket = getJsapiTicket(_access_token)
-        _sign = Sign(_jsapi_ticket, wx_notify_domain+self.request.uri).sign()
+        _access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(_access_token)
+        _sign = wx_wrap.Sign(_jsapi_ticket, wx_notify_domain+self.request.uri).sign()
         logging.info("------------------------------------nonceStr: "+_sign['nonceStr'])
         logging.info("------------------------------------jsapi_ticket: "+_sign['jsapi_ticket'])
         logging.info("------------------------------------timestamp: "+str(_sign['timestamp']))
@@ -330,7 +319,7 @@ class WxActivityInfoHandler(BaseHandler):
 
 
 # 活动二维码
-class WxActivityQrcodeHandler(tornado.web.RequestHandler):
+class WxActivityQrcodeHandler(BaseHandler):
     def get(self, vendor_id, activity_id):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got activity_id %r in uri", activity_id)
@@ -348,133 +337,33 @@ class WxActivityQrcodeHandler(tornado.web.RequestHandler):
 
 class WxActivityApplyStep0Handler(BaseHandler):
     def get(self, vendor_id, activity_id, guest_club_id):
+        logging.info("GET %r", self.request.uri)
 
-        logging.info("guest_club_id+++++++++++%r",guest_club_id)
-
-        wx_app_id=''
         activity = activity_dao.activity_dao().query(activity_id)
-        activity_club = activity['vendor_id']
+        logging.info("got activity['vendor_id']=[%r]", activity['vendor_id'])
         # 不是我的活动 直接跳走（此时guest_club_id肯定不是0）
-        if vendor_id != activity_club:
-            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(guest_club_id)
+        if vendor_id != activity['vendor_id']:
+            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(activity['vendor_id'])
             wx_notify_domain = wx_app_info['wx_notify_domain']
-            redirect_url = wx_notify_domain+"/bf/wx/vendors/"+guest_club_id+"/activitys/"+ activity_id+"_"+ vendor_id +"/apply/step0"
+
+            redirect_url = wx_notify_domain + "/bf/wx/vendors/" +\
+                activity['vendor_id'] +\
+                "/activitys/" + activity_id +\
+                "_" + vendor_id + "/apply/step0"
+            self.redirect(redirect_url)
         else:
-            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
-            wx_app_id = wx_app_info['wx_app_id']
-            wx_notify_domain = wx_app_info['wx_notify_domain']
-            logging.info("got wx_app_id %r in uri", wx_app_id)
-            redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ wx_app_id +"&redirect_uri="+ wx_notify_domain +"/bf/wx/vendors/"+vendor_id+"/activitys/"+ activity_id+"_"+ guest_club_id +"/apply/step01&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
+            self.set_secure_cookie("club_id", vendor_id)
 
-        # FIXME 这里应改为从缓存取自己的access_token然后查myinfo是否存在wx_openid
-        # 存在就直接用，不存在再走微信授权并更新用户信息 /api/myinfo-as-wx-user
-        access_token=self.get_secure_cookie("access_token")
-        logging.info("access_token %r======", access_token)
-
-        if access_token:
-            try:
-                url = API_DOMAIN + "/api/myinfo-as-wx-user"
-                http_client = HTTPClient()
-                headers = {"Authorization":"Bearer "+access_token}
-                response = http_client.fetch(url, method="GET", headers=headers)
-                logging.info("got response.body %r", response.body)
-                user = json_decode(response.body)
-                account_id=user['_id']
-                avatar=user['avatar']
-                nickname=user['nickname']
-
-                self.create_club_user(vendor_id, account_id)
-
-                activity = activity_dao.activity_dao().query(activity_id)
-                activity['begin_time'] = timestamp_friendly_date(float(activity['begin_time'])) # timestamp -> %m月%d 星期%w
-                activity['end_time'] = timestamp_friendly_date(float(activity['end_time'])) # timestamp -> %m月%d 星期%w
-
-                self.render('wx/activity-apply-step1.html',
-                        guest_club_id = guest_club_id,
-                        vendor_id=vendor_id,
-                        wx_app_id=wx_app_id,
-                        activity=activity)
-            except:
-                self.redirect(redirect_url)
-        else:
+            redirect_url = "/bf/wx/vendors/" + vendor_id +\
+                "/activitys/" + activity_id +\
+                "_" + guest_club_id + "/apply/step1"
             self.redirect(redirect_url)
 
 
-class WxActivityApplyStep01Handler(BaseHandler):
+class WxActivityApplyStep1Handler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, vendor_id, activity_id, guest_club_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        logging.info("got activity_id %r in uri", activity_id)
-
-        user_agent = self.request.headers["User-Agent"]
-        lang = self.request.headers["Accept-Language"]
-
-        wx_code = self.get_argument("code", "")
-        logging.info("got wx_code=[%r] from argument", wx_code)
-
-        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
-        wx_app_id = wx_app_info['wx_app_id']
-        wx_notify_domain = wx_app_info['wx_notify_domain']
-        logging.info("got wx_app_id %r in uri", wx_app_id)
-        wx_app_secret = wx_app_info['wx_app_secret']
-
-        if not wx_code:
-            redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ wx_app_id +"&redirect_uri="+ wx_notify_domain +"/bf/wx/vendors/"+vendor_id+"/activitys/"+ activity_id +"_"+ guest_club_id +"/apply/step01&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
-            self.redirect(redirect_url)
-            return
-
-        accessToken = getAccessToken(wx_app_id, wx_app_secret, wx_code);
-        access_token = accessToken["access_token"];
-        logging.info("got access_token %r", access_token)
-        wx_openid = accessToken["openid"];
-        logging.info("got wx_openid %r", wx_openid)
-
-        wx_userInfo = getUserInfo(access_token, wx_openid)
-        nickname = wx_userInfo["nickname"]
-        #nickname = unicode(nickname).encode('utf-8')
-        logging.info("got nickname=[%r]", nickname)
-        avatar = wx_userInfo["headimgurl"]
-        logging.info("got avatar=[%r]", avatar)
-
-        # 表情符号乱码，无法存入数据库，所以过滤掉
-        try:
-            # UCS-4
-            Emoji = re.compile(u'[\U00010000-\U0010ffff]')
-            nickname = Emoji.sub(u'\u25FD', nickname)
-            # UCS-2
-            Emoji = re.compile(u'[\uD800-\uDBFF][\uDC00-\uDFFF]')
-            nickname = Emoji.sub(u'\u25FD', nickname)
-            logging.info("got nickname=[%r]", nickname)
-        except re.error:
-            logging.error("got nickname=[%r]", nickname)
-            nickname = "anonymous"
-
-        url = API_DOMAIN + "/api/auth/wx/register"
-        http_client = HTTPClient()
-        random = str(uuid.uuid1()).replace('-', '')
-        headers = {"Authorization":"Bearer "+random}
-        _json = json_encode({'wx_openid':wx_openid,'nickname':nickname,'avatar':avatar})
-        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-        logging.info("got response.body %r", response.body)
-        data = json_decode(response.body)
-        session_ticket = data['rs']
-        account_id = session_ticket['account_id']
-
-        self.set_secure_cookie("access_token", session_ticket['access_token'])
-        self.set_secure_cookie("expires_at", str(session_ticket['expires_at']))
-        self.set_secure_cookie("account_id",account_id)
-        # self.set_secure_cookie("wx_openid",wx_openid)
-        # self.set_secure_cookie("nickname",nickname)
-        # self.set_secure_cookie("avatar",avatar)
-
-        self.create_club_user(vendor_id, account_id)
-
-        self.redirect('/bf/wx/vendors/' + vendor_id + '/activitys/'+activity_id+'_'+guest_club_id+'/apply/step1')
-
-
-class WxActivityApplyStep1Handler(BaseHandler):
-    def get(self, vendor_id, activity_id, guest_club_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        logging.info("got activity_id %r in uri", activity_id)
+        logging.info("GET %r", self.request.uri)
 
         wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
         wx_app_id = wx_app_info['wx_app_id']
@@ -492,6 +381,7 @@ class WxActivityApplyStep1Handler(BaseHandler):
 
 
 class WxActivityApplyStep2Handler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def post(self):
         vendor_id = self.get_argument("vendor_id", "")
         logging.info("got vendor_id %r", vendor_id)
@@ -662,67 +552,15 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
         _timestamp = (int)(time.time())
         if actual_payment != 0:
             # wechat 统一下单
-            # _openid = self.get_secure_cookie("wx_openid")
-            # logging.info("got _openid %r", _openid)
-            # 从comm中统一取
             myinfo = self.get_myinfo_login()
             _openid = myinfo['login']
-
             _store_id = 'Aplan'
             logging.info("got _store_id %r", _store_id)
             _product_description = _activity['title']
             logging.info("got _product_description %r", _product_description)
-
-            key = wx_mch_key
-            nonceA = getNonceStr();
-            logging.info("got nonceA %r", nonceA)
             #_ip = self.request.remote_ip
             _remote_ip = self.request.headers['X-Real-Ip']
-            logging.info("got _remote_ip %r", _remote_ip)
-            total_fee = str(_total_amount)
-            logging.info("got total_fee %r", total_fee)
-            notify_url = wx_notify_domain + '/bf/wx/orders/notify'
-            logging.info("got notify_url %r", notify_url)
-            signA = getOrderSign(_remote_ip, notify_url, wx_app_id, wx_mch_id, nonceA, _openid, key, _store_id, _order_id, _product_description, total_fee)
-            logging.info("got signA %r", signA)
-
-            _xml = '<xml>' \
-                + '<appid>' + wx_app_id + '</appid>' \
-                + '<attach>' + _store_id + '</attach>' \
-                + '<body>' + _product_description + '</body>' \
-                + '<mch_id>' + wx_mch_id + '</mch_id>' \
-                + '<nonce_str>' + nonceA + '</nonce_str>' \
-                + '<notify_url>' + notify_url + '</notify_url>' \
-                + '<openid>' + _openid + '</openid>' \
-                + '<out_trade_no>' + _order_id + '</out_trade_no>' \
-                + '<spbill_create_ip>' + _remote_ip + '</spbill_create_ip>' \
-                + '<total_fee>' + str(_total_amount) + '</total_fee>' \
-                + '<trade_type>JSAPI</trade_type>' \
-                + '<sign>' + signA + '</sign>' \
-                + '</xml>'
-            url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
-            http_client = HTTPClient()
-            response = http_client.fetch(url, method="POST", body=_xml)
-            logging.info("got response %r", response.body)
-            _order_return = parseWxOrderReturn(response.body)
-
-            logging.info("got _timestamp %r", str(_timestamp))
-            try:
-                prepayId = _order_return['prepay_id']
-            except:
-                _order_return['prepay_id'] = ''
-                prepayId = ''
-            logging.info("got prepayId %r", prepayId)
-            try:
-                nonceB = _order_return['nonce_str']
-            except:
-                _order_return['nonce_str'] = ''
-                nonceB = ''
-            signB = getPaySign(_timestamp, wx_app_id, nonceB, prepayId, key)
-            logging.info("got signB %r", signB)
-            _order_return['pay_sign'] = signB
-            _order_return['timestamp'] = _timestamp
-            _order_return['app_id'] = wx_app_id
+            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, _order_id, actual_payment, _timestamp)
 
             # wx统一下单记录保存
             _order_return['_id'] = _order_return['prepay_id']
@@ -731,16 +569,16 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
             # 微信统一下单返回成功
             order_unified = None
             if(_order_return['return_msg'] == 'OK'):
-                order_unified = {'_id':_order_id,'prepay_id': prepayId, 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
+                order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
             else:
-                order_unified = {'_id':_order_id,'prepay_id': prepayId, 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
+                order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
             # 微信统一下单返回成功
             # TODO: 更新订单索引中，订单状态pay_status,prepay_id
             self.update_order_unified(order_unified)
 
             # FIXME, 将服务模板转为字符串，客户端要用
             _servTmpls = _activity['ext_fee_template']
-            _activity['json_serv_tmpls'] = tornado.escape.json_encode(_servTmpls);
+            _activity['json_serv_tmpls'] = json_encode(_servTmpls);
             _activity['begin_time'] = timestamp_friendly_date(float(_activity['begin_time'])) # timestamp -> %m月%d 星期%w
             _activity['end_time'] = timestamp_friendly_date(float(_activity['end_time'])) # timestamp -> %m月%d 星期%w
             # 金额转换成元
@@ -809,6 +647,7 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
 
 # 添加当前订单的成员
 class WxActivityApplyStep3Handler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, vendor_id, activity_id):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got activity_id %r in uri", activity_id)

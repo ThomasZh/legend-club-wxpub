@@ -10,6 +10,7 @@ import tornado.web
 from foo import comm
 from foo.auth import auth_email
 from foo.auth import auth_phone
+from foo.auth import auth_wx
 from wx import wx_activity
 from wx import wx_voucher
 from wx import wx_triprouter
@@ -39,16 +40,8 @@ def map():
         (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)/place-order-success', getattr(eshop, 'EshopProductPlaceOrderSuccessHandler')),
 
         # authenticated
-        (r'/ops/auth/email/login', getattr(auth_email, 'AuthEmailLoginHandler')),
-        (r'/ops/auth/email/register', getattr(auth_email, 'AuthEmailRegisterHandler')),
-        (r'/ops/auth/email/forgot-pwd', getattr(auth_email, 'AuthEmailForgotPwdHandler')),
-        (r'/ops/auth/email/reset-pwd', getattr(auth_email, 'AuthEmailResetPwdHandler')),
-        (r'/ops/auth/welcome', getattr(auth_email, 'AuthWelcomeHandler')),
-        (r'/ops/auth/logout', getattr(auth_email, 'AuthLogoutHandler')),
-        (r'/ops/auth/phone/login', getattr(auth_phone, 'AuthPhoneLoginHandler')),
-        (r'/ops/auth/phone/register', getattr(auth_phone, 'AuthPhoneRegisterHandler')),
-        (r'/ops/auth/phone/verify-code', getattr(auth_phone, 'AuthPhoneVerifyCodeHandler')),
-        (r'/ops/auth/phone/lost-pwd', getattr(auth_phone, 'AuthPhoneLostPwdHandler')),
+        (r'/bf/wxpub/auth/login', getattr(auth_wx, 'AuthWxLoginHandler')),
+        (r'/bf/wxpub/auth/login/step2', getattr(auth_wx, 'AuthWxLoginStep2Handler')),
 
 
         # bike-forever ajax handler result
@@ -91,7 +84,6 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)", getattr(wx_activity, 'WxActivityInfoHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)/qrcode", getattr(wx_activity, 'WxActivityQrcodeHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)/apply/step0", getattr(wx_activity, 'WxActivityApplyStep0Handler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)/apply/step01", getattr(wx_activity, 'WxActivityApplyStep01Handler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)/apply/step1", getattr(wx_activity, 'WxActivityApplyStep1Handler')),
         (r"/bf/wxpay", getattr(wx_activity, 'WxActivityApplyStep2Handler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)/apply/step3", getattr(wx_activity, 'WxActivityApplyStep3Handler')),

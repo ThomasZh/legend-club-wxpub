@@ -21,6 +21,7 @@ import tornado.web
 import logging
 import time
 import sys
+import uuid
 from global_const import *
 from tornado.escape import json_encode, json_decode
 from tornado.httpclient import HTTPClient
@@ -52,7 +53,11 @@ class singleton(object):
 
 class PageNotFoundHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('comm/page_404.html')
+        self.render('comm/page-404.html')
+
+
+def generate_uuid_str():
+    return str(uuid.uuid1()).replace('-', '')
 
 
 def timestamp_friendly_date(value):
@@ -138,6 +143,19 @@ def time_span(ts):
 
 
 class BaseHandler(tornado.web.RequestHandler):
+
+    def wx_register(self, wx_openid, nickname, avatar):
+        url = API_DOMAIN + "/api/auth/wx/register"
+        http_client = HTTPClient()
+        random = generate_uuid_str()
+        headers = {"Authorization":"Bearer "+random}
+        _json = json_encode({'wx_openid':wx_openid, 'nickname':nickname, 'avatar':avatar})
+        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        session_ticket = data['rs']
+        return session_ticket
+
 
     def get_points_log(self, _account_id, activity_id, _filter):
         headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}

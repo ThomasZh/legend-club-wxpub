@@ -89,7 +89,9 @@
 	<div class="main routines">
     <!-- <span class="bm">活动介绍</span> -->
     <div class="m1">
+      {% if article and article.has_key('paragraphs') %}
       {% raw article['paragraphs'] %}
+      {% end %}
     </div>
 	</div>
 

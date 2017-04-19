@@ -25,6 +25,8 @@ import time
 from tornado.escape import json_decode
 from tornado.httpclient import HTTPClient
 
+from xml_parser import parseWxOrderReturn, parseWxPayReturn
+
 
 def getAccessTokenByClientCredential(appId, appSecret):
     url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appId+"&secret="+appSecret
@@ -48,19 +50,53 @@ def getNonceStr():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(15))
 
 
-def getOrderSign(remoteIp, notify_url, appId, mchId, nonceA, openId, key, storeId, orderId, productDescription, total_fee):
-    logging.info("got remoteIp %r", remoteIp)
-    logging.info("got notify_url %r", notify_url)
-    logging.info("got appId %r", appId)
-    logging.info("got mchId %r", mchId)
+# wechat 统一下单
+def getUnifiedOrder(remote_ip, wx_app_id, store_id, product_description, wx_notify_domain, wx_mch_id, wx_mch_key, openid, order_id, actual_payment, timestamp):
+    key = wx_mch_key
+    nonceA = getNonceStr();
     logging.info("got nonceA %r", nonceA)
-    logging.info("got openId %r", openId)
-    logging.info("got key %r", key)
-    logging.info("got storeId %r", storeId)
-    logging.info("got orderId %r", orderId)
-    logging.info("got productDescription %r", productDescription)
+    total_fee = str(actual_payment)
     logging.info("got total_fee %r", total_fee)
+    notify_url = wx_notify_domain + '/bf/wx/orders/notify'
+    logging.info("got notify_url %r", notify_url)
+    signA = getOrderSign(remote_ip, notify_url, wx_app_id, wx_mch_id, nonceA, openid, key, store_id, order_id, product_description, total_fee)
+    logging.info("got signA %r", signA)
 
+    _xml = '<xml>' \
+        + '<appid>' + wx_app_id + '</appid>' \
+        + '<attach>' + store_id + '</attach>' \
+        + '<body>' + product_description + '</body>' \
+        + '<mch_id>' + wx_mch_id + '</mch_id>' \
+        + '<nonce_str>' + nonceA + '</nonce_str>' \
+        + '<notify_url>' + notify_url + '</notify_url>' \
+        + '<openid>' + openid + '</openid>' \
+        + '<out_trade_no>' + order_id + '</out_trade_no>' \
+        + '<spbill_create_ip>' + remote_ip + '</spbill_create_ip>' \
+        + '<total_fee>' + str(actual_payment) + '</total_fee>' \
+        + '<trade_type>JSAPI</trade_type>' \
+        + '<sign>' + signA + '</sign>' \
+        + '</xml>'
+    url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_xml)
+    logging.info("got response %r", response.body)
+    order_return = parseWxOrderReturn(response.body)
+
+    if not order_return.has_key('prepay_id'):
+        order_return['prepay_id'] = ""
+    logging.info("got prepayId %r", order_return['prepay_id'])
+    if not order_return.has_key('nonce_str'):
+        order_return['nonce_str'] = ''
+    signB = getPaySign(timestamp, wx_app_id, order_return['nonce_str'], order_return['prepay_id'], key)
+    logging.info("got signB %r", signB)
+    order_return['pay_sign'] = signB
+    order_return['timestamp'] = timestamp
+    order_return['app_id'] = wx_app_id
+
+    return order_return
+
+
+def getOrderSign(remoteIp, notify_url, appId, mchId, nonceA, openId, key, storeId, orderId, productDescription, total_fee):
     # "http://" + domain + "/bf/wx/orders/notify"
     # 'http://'+ domain + '/bf/wx/voucher-orders/notify'
     stringA = "appid=" + appId + \
