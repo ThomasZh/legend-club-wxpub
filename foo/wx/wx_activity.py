@@ -609,10 +609,12 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
                 bonus_points = {
                     'club_id':vendor_id,
                     'account_id':_account_id,
-                    '_type': 'buy_activity',
+                    'account_type':'user',
+                    'action': 'buy_activity',
                     'item_type': 'activity',
                     'item_id': activity_id,
                     'item_name': _activity['title'],
+                    'bonus_type':'bonus',
                     'points': points,
                     'order_id': order_index['_id']
                 }
@@ -777,6 +779,7 @@ class WxOrderNotifyHandler(BaseHandler):
         if _result_code == 'SUCCESS' :
             # 查询过去是否填报，有则跳过此步骤。主要是防止用户操作回退键，重新回到此页面
             order_index = self.get_order_index(_order_id)
+            logging.info("got order_index=[%r]", order_index)
             # 用于更新积分、优惠券
             vendor_id = order_index['club_id']
             if order_index['pay_status'] == 30:
@@ -792,19 +795,20 @@ class WxOrderNotifyHandler(BaseHandler):
                 }
                 self.update_order_payed(order_payed)
 
-                order = self.get_symbol_object(_order_id)
                 # 如使用积分抵扣，则将积分减去
-                _bonus = order['bonus']
-                if _bonus < 0:
+                points = int(order_index['points_used'])
+                if points < 0:
                     # 修改个人积分信息
                     bonus_points = {
                         'club_id':vendor_id,
                         'account_id':order_index['account_id'],
-                        '_type': 'buy_activity',
+                        'account_type':'user',
+                        'action': 'buy_activity',
                         'item_type': order_index['item_type'],
                         'item_id': order_index['item_id'],
                         'item_name': order_index['item_name'],
-                        'points': _bonus,
+                        'bonus_type':'bonus',
+                        'points': points,
                         'order_id': order_index['_id']
                     }
                     self.create_points(bonus_points)

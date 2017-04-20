@@ -146,15 +146,16 @@ class ApiActivityShareXHR(BaseHandler):
             bonus_points = {
                 'club_id':vendor_id,
                 'account_id':_account_id,
-                '_type': 'share_activity',
+                'account_type':'user',
+                'action': 'share_activity',
                 'item_type': 'activity',
                 'item_id': activity_id,
                 'item_name': _activity['title'],
+                'bonus_type':'bonus',
                 'points': points,
                 'order_id': DEFAULT_USER_ID
             }
             self.create_points(bonus_points)
-            # self.points_increase(vendor_id, _account_id, bonus_points)
 
         _json = {'rs':'success'}
         logging.info("got result code>>>>>>>>>>>>>>>>>>> %r", _json)
