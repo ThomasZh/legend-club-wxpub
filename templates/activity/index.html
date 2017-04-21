@@ -45,7 +45,7 @@
       <div class="bot_con"><!--start of card-->
         <div class="imger">
           <img src="{{ activity['img'] }}">
-          <div class="bookmarks {{ themes[activity['phase']] }}">{{phases[activity['phase']]}}</div>
+          <div class="bookmarks {{ themes[activity['phase']] }}">{{ phases[activity['phase'] ]}}</div>
           <span class="shadow-black">¥{{ activity['amount'] }}</span>
         </div>
         <div class="card-footer">
@@ -120,7 +120,7 @@
      */
     function createCategoryItem(item){
       var li = '<li data-id="'+item['_id']+'">';
-          li +='  <img src="'+item['img']+'">';
+          li +='  <img src="'+item['bk_img_url']+'!200x200">';
           li +='  <span class="recommend-info">'+item['title']+'</span>';
           li +='</li>';
       return li;

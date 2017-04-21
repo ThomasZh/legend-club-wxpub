@@ -154,10 +154,10 @@ class BaseHandler(tornado.web.RequestHandler):
         return club
 
 
-    def get_activities(self, club_id, _status):
+    def get_activities(self, club_id, _status, private):
         headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
 
-        params = {"filter":"club", "club_id":club_id, "_status":_status, "page":1, "limit":20}
+        params = {"filter":"club", "club_id":club_id, "_status":_status, "private":private, "page":1, "limit":20}
         url = url_concat(API_DOMAIN + "/api/activities", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET", headers=headers)

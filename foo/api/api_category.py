@@ -64,6 +64,7 @@ class ApiCategoryListXHR(tornado.web.RequestHandler):
         logging.info("got vendor_id %r in uri", vendor_id)
 
         _array = category_dao.category_dao().query_by_vendor(vendor_id)
+        logging.info("got categories=[%r]", _array)
         docs_list = list(_array)
         self.write(JSON.dumps(docs_list, default=json_util.default))
         self.finish()

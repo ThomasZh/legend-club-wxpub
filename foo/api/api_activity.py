@@ -50,17 +50,28 @@ from dao import vendor_member_dao
 
 # 受欢迎活动列表
 class ApiActivityPopularListXHR(tornado.web.RequestHandler):
-    def get(self, vendor_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        #sBefore = self.get_argument("before", "") #格式 2016-06-01 22:36
-        #sLimit = self.get_argument("limit", "")
-        #_array = activity_dao.activity_dao().query_by_popular(vendor_id, sBefore, sLimit)
-        _array = activity_dao.activity_dao().query_by_popular(vendor_id)
-        for _activity in _array:
-            _activity['begin_time'] = timestamp_friendly_date(float(_activity['begin_time'])) # timestamp -> %m月%d 星期%w
-            _activity['end_time'] = timestamp_friendly_date(float(_activity['end_time'])) # timestamp -> %m月%d 星期%w
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
 
-        docs_list = list(_array)
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+
+        _status = ACTIVITY_STATUS_RECRUIT
+        popular = 1
+        params = {"filter":"club", "club_id":club_id, "_status":_status, "popular":popular, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/activities", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got get_activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        activities = rs['data']
+
+        # _array = activity_dao.activity_dao().query_by_popular(vendor_id)
+        for activity in activities:
+            activity['begin_time'] = timestamp_friendly_date(float(activity['begin_time'])) # timestamp -> %m月%d 星期%w
+            activity['end_time'] = timestamp_friendly_date(float(activity['end_time'])) # timestamp -> %m月%d 星期%w
+
+        docs_list = list(activities)
         self.write(JSON.dumps(docs_list, default=json_util.default))
         self.finish()
 
@@ -68,7 +79,8 @@ class ApiActivityPopularListXHR(tornado.web.RequestHandler):
 # 完成活动列表
 class ApiActivityCompletedListXHR(tornado.web.RequestHandler):
     def get(self, vendor_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
+        logging.info("GET %r", self.request.uri)
+
         before = float(self.get_argument("before", ""))
         # limit = int(self.get_argument("limit", ""))
         _array = activity_dao.activity_dao().query_pagination_by_status(
@@ -90,31 +102,43 @@ class ApiActivityCompletedListXHR(tornado.web.RequestHandler):
 # 获取参加某活动的成员
 class ApiActivityMemberListXHR(tornado.web.RequestHandler):
     def get(self, vendor_id, activity_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        logging.info("got activity_id %r in uri", activity_id)
+        logging.info("GET %r", self.request.uri)
 
-        _array = apply_dao.apply_dao().query_by_activity(activity_id)
-        for data in _array:
-            _member = vendor_member_dao.vendor_member_dao().query_not_safe(vendor_id, data['account_id'])
-            try:
-                logging.info("got account_avatar %r", _member['account_avatar'])
-                data['account_avatar'] = _member['account_avatar']
-            except:
-                logging.warn("got account_avatar is null")
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
 
-        docs_list = list(_array)
+        _status = ACTIVITY_STATUS_RECRUIT
+        popular = 1
+        params = {"filter":"item", "item_id":activity_id, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/applies", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got get_activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        applies = rs['data']
+
+        # _array = apply_dao.apply_dao().query_by_activity(activity_id)
+        # for data in _array:
+        #     _member = vendor_member_dao.vendor_member_dao().query_not_safe(vendor_id, data['account_id'])
+        #     try:
+        #         logging.info("got account_avatar %r", _member['account_avatar'])
+        #         data['account_avatar'] = _member['account_avatar']
+        #     except:
+        #         logging.warn("got account_avatar is null")
+
+        docs_list = list(applies)
         logging.info("got json %r", JSON.dumps(docs_list, default=json_util.default))
         self.write(JSON.dumps(docs_list, default=json_util.default))
         self.finish()
 
 
-# 获取参加某活动的成员
-class ApiActivityInfoXHR(tornado.web.RequestHandler):
+# 获取参加某活动的费用信息
+class ApiActivityInfoXHR(BaseHandler):
     def get(self, vendor_id, activity_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        logging.info("got activity_id %r in uri", activity_id)
+        logging.info("GET %r", self.request.uri)
 
-        activity = activity_dao.activity_dao().query(activity_id)
+        activity = self.get_activity(activity_id)
+        # activity = activity_dao.activity_dao().query(activity_id)
 
         # 金额转换成元
         # activity['amount'] = float(activity['amount']) / 100
@@ -130,8 +154,7 @@ class ApiActivityInfoXHR(tornado.web.RequestHandler):
 # 分享活动获得积分
 class ApiActivityShareXHR(BaseHandler):
     def get(self, vendor_id, activity_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        logging.info("got activity_id %r in uri", activity_id)
+        logging.info("GET %r", self.request.uri)
 
         _account_id = self.get_argument("account_id", "")
         logging.info("got _account_id %r", _account_id)
@@ -139,7 +162,8 @@ class ApiActivityShareXHR(BaseHandler):
         # 一个活动分享，只能获取一次积分奖励
         points_logs = self.get_points_log(_account_id, activity_id, "share_activity")
         if len(points_logs) == 0:
-            _activity = activity_dao.activity_dao().query(activity_id)
+            activity = self.get_activity(activity_id)
+            # _activity = activity_dao.activity_dao().query(activity_id)
             _bonus_template = bonus_template_dao.bonus_template_dao().query(activity_id)
             points = int(_bonus_template['activity_shared'])
             # 修改个人积分信息
@@ -150,7 +174,7 @@ class ApiActivityShareXHR(BaseHandler):
                 'action': 'share_activity',
                 'item_type': 'activity',
                 'item_id': activity_id,
-                'item_name': _activity['title'],
+                'item_name': activity['title'],
                 'bonus_type':'bonus',
                 'points': points,
                 'order_id': DEFAULT_USER_ID

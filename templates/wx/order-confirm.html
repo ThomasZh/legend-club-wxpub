@@ -19,14 +19,14 @@
   <!-- top panel -->
   <div class="ui-whitespace top-pane ui-flex ui-flex-pack-center ui-flex-align-center">
     <div>确认订单</div>
-    <p>{{order_return['return_msg']}}</p>
+    <p>{{ order_return['return_msg'] }}</p>
   </div>
   <!-- 活动摘要 -->
   <div class="white-bg padding-top-10 padding-bottom-10 margin-bottom-10 ">
     <!-- 下面这个加 margin-left 父容器必须加: overflow-hidden -->
     <div class="ui-whitespace  ui-flex">
        <div class="line-hight-nml ">
-         <img src="{{activity['bk_img_url']}}" class="thumbnail ">
+         <img src="{{ activity['img'] }}" class="thumbnail ">
        </div>
        <div class="right-item-info">
          <p class="ui-txt-default ">{{activity['title']}}</p>
@@ -54,7 +54,7 @@
   <div class="white-bg padding-top-10 padding-bottom-10 margin-bottom-10 overflow-hidden">
     <div class="ui-whitespace font-normal">
       <p class="ui-txt-default higher">参加人数：<span class="applicant_num flt-right">0</span></p>
-      <p class="ui-txt-default higher">基础费用：<span class="flt-right">{{order_index['activity_amount']}}元/人</span></p>
+      <p class="ui-txt-default higher">基础费用：<span class="flt-right">{{ order_index['activity_amount'] }}元/人</span></p>
       <div class="ui-txt-default higher">附加服务：</div>
       <div class="ui-txt-info ui-txt-justify extserv-items"></div>
       <div class="ui-txt-default higher">保险：</div>
@@ -89,7 +89,7 @@
   <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
   <!-- 该活动的服务模板 -->
-  <script type='text/template', id='data-sevtmpl'>{{activity['json_serv_tmpls']}}</script>
+  <script type='text/template', id='data-sevtmpl'>{{ activity['json_serv_tmpls'] }}</script>
   <!-- 订单 -->
 	<script type='text/template', id='data-ordID'>{{ order_index['_id'] }}</script>
 
@@ -99,12 +99,12 @@
   		WeixinJSBridge.invoke(
   			'getBrandWCPayRequest',
   			{
-  				"appId":"{{order_return['app_id']}}",     //公众号名称，由商户传入
-  			  "timeStamp":"{{order_return['timestamp']}}",         //时间戳，自1970年以来的秒数
-  			  "nonceStr":"{{order_return['nonce_str']}}", //随机串
-  			  "package":"prepay_id={{order_return['prepay_id']}}",
+  				"appId":"{{ order_return['app_id'] }}",     //公众号名称，由商户传入
+  			  "timeStamp":"{{ order_return['timestamp'] }}",         //时间戳，自1970年以来的秒数
+  			  "nonceStr":"{{ order_return['nonce_str'] }}", //随机串
+  			  "package":"prepay_id={{ order_return['prepay_id'] }}",
   			  "signType":"MD5",         //微信签名方式：
-  			  "paySign":"{{order_return['pay_sign']}}" //微信签名
+  			  "paySign":"{{ order_return['pay_sign'] }}" //微信签名
   			},
   			function(res){
   				WeixinJSBridge.log(res.err_msg);
@@ -114,7 +114,7 @@
   				  // 但并不保证它绝对可靠。
   				 	//	alert("支付成功!");
   				 	//WeixinJSBridge.call('closeWindow');
-            location.href = "/bf/wx/vendors/{{ vendor_id }}/activitys/{{activity['_id']}}/apply/step3?order_id={{order_index['_id']}}";
+            location.href = "/bf/wx/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/apply/step3?order_id={{ order_index['_id'] }}";
   				} else if (res.err_msg == "get_brand_wcpay_request:cancel") {
   				 	//	alert("用户取消支付!");
   				} else {
@@ -127,7 +127,7 @@
 
   	function callpay() {
       if ({{ order_index['actual_payment'] }} == 0) {
-        location.href = "/bf/wx/vendors/{{ vendor_id }}/activitys/{{activity['_id']}}/apply/step3?order_id={{order_index['_id']}}";
+        location.href = "/bf/wx/vendors/{{ vendor_id }}/activitys/{{ activity['_id'] }}/apply/step3?order_id={{ order_index['_id'] }}";
       } else {
   		  if (typeof WeixinJSBridge == "undefined"){
   	   		if( document.addEventListener ) {
