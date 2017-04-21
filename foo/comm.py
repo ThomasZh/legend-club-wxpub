@@ -144,6 +144,40 @@ def time_span(ts):
 
 class BaseHandler(tornado.web.RequestHandler):
 
+    def get_club_basic_info(self, club_id):
+        params = {"filter":"basic"}
+        url = url_concat(API_DOMAIN + "/api/clubs/" + club_id, params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        data = json_decode(response.body)
+        club = data['rs']
+        return club
+
+
+    def get_activities(self, club_id, _status):
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+
+        params = {"filter":"club", "club_id":club_id, "_status":_status, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/activities", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got get_activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        return rs['data']
+
+
+    def get_activity(self, activity_id):
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+
+        url = API_DOMAIN + "/api/activities/"+activity_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got get_activity response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        return data['rs']
+
+
     def wx_register(self, wx_openid, nickname, avatar):
         url = API_DOMAIN + "/api/auth/wx/register"
         http_client = HTTPClient()
@@ -339,16 +373,6 @@ class BaseHandler(tornado.web.RequestHandler):
         data = json_decode(response.body)
         account = data['rs']
         return account
-
-
-    def get_club_basic_info(self, club_id):
-        params = {"filter":"basic"}
-        url = url_concat(API_DOMAIN + "/api/clubs/" + club_id, params)
-        http_client = HTTPClient()
-        response = http_client.fetch(url, method="GET")
-        data = json_decode(response.body)
-        club = data['rs']
-        return club
 
 
     def get_article(self, article_id):

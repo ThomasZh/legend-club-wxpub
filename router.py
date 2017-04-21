@@ -30,15 +30,6 @@ def map():
 
     config = [
 
-        (r'/webapp', getattr(eshop, 'EshopHomeHandler')),
-        (r'/webapp/eshop', getattr(eshop, 'EshopHomeHandler')),
-        (r'/webapp/eshop/clubs/([a-z0-9]*)', getattr(eshop, 'EshopIndexHandler')),
-        (r'/webapp/eshop/clubs/([a-z0-9]*)/articles/([a-z0-9]*)', getattr(eshop, 'EshopArticleHandler')),
-        (r'/webapp/eshop/clubs/([a-z0-9]*)/articles/([a-z0-9]*)/add-comment', getattr(eshop, 'EshopArticleAddCommentHandler')),
-        (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)', getattr(eshop, 'EshopProductHandler')),
-        (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)/place-order', getattr(eshop, 'EshopProductPlaceOrderHandler')),
-        (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)/place-order-success', getattr(eshop, 'EshopProductPlaceOrderSuccessHandler')),
-
         # authenticated
         (r'/bf/wxpub/auth/login', getattr(auth_wx, 'AuthWxLoginHandler')),
         (r'/bf/wxpub/auth/login/step2', getattr(auth_wx, 'AuthWxLoginStep2Handler')),
@@ -126,6 +117,16 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/pc/certs", getattr(wx_personal_center, 'WxPcCertListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/pc/certs/([a-z0-9]*)", getattr(wx_personal_center, 'WxPcCertInfoHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/pc/tasks", getattr(wx_personal_center, 'WxPcTaskListHandler')),
+
+
+        (r'/webapp', getattr(eshop, 'EshopHomeHandler')),
+        (r'/webapp/eshop', getattr(eshop, 'EshopHomeHandler')),
+        (r'/webapp/eshop/clubs/([a-z0-9]*)', getattr(eshop, 'EshopIndexHandler')),
+        (r'/webapp/eshop/clubs/([a-z0-9]*)/articles/([a-z0-9]*)', getattr(eshop, 'EshopArticleHandler')),
+        (r'/webapp/eshop/clubs/([a-z0-9]*)/articles/([a-z0-9]*)/add-comment', getattr(eshop, 'EshopArticleAddCommentHandler')),
+        (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)', getattr(eshop, 'EshopProductHandler')),
+        (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)/place-order', getattr(eshop, 'EshopProductPlaceOrderHandler')),
+        (r'/webapp/eshop/clubs/([a-z0-9]*)/products/([a-z0-9]*)/place-order-success', getattr(eshop, 'EshopProductPlaceOrderSuccessHandler')),
 
 
         (r"/MP_verify_rZAV6WH7J2WhqAIs.txt", getattr(comm, 'WxMpVerifyHandler')),

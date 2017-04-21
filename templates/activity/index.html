@@ -6,8 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="format-detection" content="telephone=no">
-  <title>沐雨骑行</title>
-  <!-- <script type="text/javascript" src="http://tajs.qq.com/stats?sId=37342703" charset="UTF-8"></script> -->
+  <title>{{ club['name'] }}</title>
   <link rel="stylesheet" href="{{ static_url('frozenui-1.3.0/css/frozen.css') }}">
   <link rel="stylesheet" href="{{ static_url('customer/css/customer.css') }}">
 </head>
@@ -21,10 +20,8 @@
     <div class="ui-slider customer-banner-height hidden">
       <ul class="ui-slider-content ">
         <li class="">
-          <span style="background-image:url({{ static_url('customer/img/muyuqixing.jpg') }})"></span>
-          <div class="slider-footer">
-            沐雨骑行
-          </div>
+          <span style="background-image:url({{ club['img'] }})"></span>
+          <div class="slider-footer">{{ club['name'] }}</div>
         </li>
       </ul>
     </div>
@@ -43,26 +40,26 @@
   <section>
     {% set phases = {'0':'招募中','1':'已成行','2':'已满员','3':'已结束'} %}
     {% set themes = {'0':'green','1':'orange','2':'red','3':'gray'} %}
-    {% for activity in activitys %}
-    <a href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{activity['_id']}}">
+    {% for activity in activities %}
+    <a href="/bf/wx/vendors/{{ club['_id'] }}/activitys/{{ activity['_id'] }}">
       <div class="bot_con"><!--start of card-->
         <div class="imger">
-          <img src="{{activity['bk_img_url']}}">
-          <div class="bookmarks {{themes[activity['phase']]}}">{{phases[activity['phase']]}}</div>
-          <span class="shadow-black">¥{{activity['amount']}}</span>
+          <img src="{{ activity['img'] }}">
+          <div class="bookmarks {{ themes[activity['phase']] }}">{{phases[activity['phase']]}}</div>
+          <span class="shadow-black">¥{{ activity['amount'] }}</span>
         </div>
         <div class="card-footer">
-          <span class="card-footer-title">{{activity['title']}}</span>
+          <span class="card-footer-title">{{ activity['title'] }}</span>
           <span class="card-footer-title right"></span>
           <div class="card-footer-desc">
             <span>
               {% if activity['begin_time'] == activity['end_time'] %}
-                {{activity['begin_time']}}
+                {{ activity['begin_time'] }}
               {% else %}
-                {{activity['begin_time']}} ~ {{activity['end_time']}}
+                {{ activity['begin_time'] }} ~ {{ activity['end_time'] }}
               {% end %}
             </span>
-            <span class="right">{{activity['distance']}}公里</span>
+            <span class="right">{{ activity['mileage'] }}公里</span>
           </div>
         </div>
       </div><!--end of card-->
@@ -81,7 +78,7 @@
   $(function(){
 
     // 获取分类
-    $.getJSON('/bf/api/vendors/{{ vendor_id }}/categorys', function(result){
+    $.getJSON('/bf/api/vendors/{{ club['_id'] }}/categorys', function(result){
       console.log(result);
       var items = '';
       for(var i in result){
@@ -91,7 +88,7 @@
     });
 
     // 先要获取热门活动
-    $.getJSON('/bf/api/vendors/{{ vendor_id }}/activitys/popular', function(result){
+    $.getJSON('/bf/api/vendors/{{ club['_id'] }}/activitys/popular', function(result){
       console.log(result);
       $('.ui-loading-wrap').addClass('hidden');
       $('.ui-slider').removeClass('hidden');
@@ -123,7 +120,7 @@
      */
     function createCategoryItem(item){
       var li = '<li data-id="'+item['_id']+'">';
-          li +='  <img src="'+item['bk_img_url']+'">';
+          li +='  <img src="'+item['img']+'">';
           li +='  <span class="recommend-info">'+item['title']+'</span>';
           li +='</li>';
       return li;
@@ -141,9 +138,9 @@
 
     // 生成幻灯片元素，包含可点击链接
     function createSlideBy(item){
-      var li =  '<li><a href="/bf/wx/vendors/{{ vendor_id }}/activitys/' + item._id + '">';
+      var li =  '<li><a href="/bf/wx/vendors/{{ club['_id'] }}/activitys/' + item._id + '">';
           li += '<span style="background-image:url(';
-          li +=   item.bk_img_url;
+          li +=   item.img;
           li += ')"></span>'
           li += '<div class="slider-footer">';
           li +=   item.title;

@@ -64,14 +64,14 @@ from global_const import *
 
 # 活动首页
 class WxActivityListHandler(BaseHandler):
-    def get(self, vendor_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+        activities = self.get_activities(club_id, ACTIVITY_STATUS_RECRUIT)
 
         _now = time.time()
-        # 查询结果，不包含隐藏的活动
-        _array = activity_dao.activity_dao().query_not_hidden_pagination_by_status(
-                vendor_id, ACTIVITY_STATUS_RECRUIT, _now, PAGE_SIZE_LIMIT)
-        logging.info("got activity>>>>>>>>> %r",len(_array))
+        # # 查询结果，不包含隐藏的活动
 
         # 按报名状况查询每个活动的当前状态：
         # 0: 报名中, 1: 已成行, 2: 已满员, 3: 已结束
@@ -83,30 +83,24 @@ class WxActivityListHandler(BaseHandler):
         # 小于member_min, 报名中
         # 大于member_min，小于member_max，已成行
         # 大于等于member_max，已满员
-        if len(_array) > 0 :
-            for _activity in _array:
-                _member_min = int(_activity['member_min'])
-                _member_max = int(_activity['member_max'])
-                if _now > _activity['end_time']:
-                    _activity['phase'] = '3'
-                else:
-                    _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
-                    _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
-                    _activity['phase'] = '0' if _applicant_num < _member_min else '1'
-                # 格式化显示时间
-                _activity['begin_time'] = timestamp_friendly_date(_activity['begin_time']) # timestamp -> %m月%d 星期%w
-                _activity['end_time'] = timestamp_friendly_date(_activity['end_time']) # timestamp -> %m月%d 星期%w
-                # 金额转换成元
-                if not _activity['base_fee_template']:
-                    _activity['amount'] = 0
-                else:
-                    for base_fee_template in _activity['base_fee_template']:
-                        _activity['amount'] = float(base_fee_template['fee']) / 100
-                        break
+        for activity in activities:
+            # _member_min = int(_activity['member_min'])
+            # _member_max = int(_activity['member_max'])
+            activity['phase'] = '0'
+            if _now > activity['end_time']:
+                activity['phase'] = '3'
+            # else:
+            #     _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
+            #     _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
+            #     _activity['phase'] = '0' if _applicant_num < _member_min else '1'
 
-        self.render('wx/activity-index.html',
-                vendor_id=vendor_id,
-                activitys=_array)
+            # 格式化显示时间
+            activity['begin_time'] = timestamp_friendly_date(activity['begin_time']) # timestamp -> %m月%d 星期%w
+            activity['end_time'] = timestamp_friendly_date(activity['end_time']) # timestamp -> %m月%d 星期%w
+
+        self.render('activity/index.html',
+                club=club,
+                activities=activities)
 
 
 #推荐活动列表
@@ -248,7 +242,12 @@ class WxActivityInfoHandler(BaseHandler):
     def get(self, vendor_id, activity_id):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got activity_id %r in uri", activity_id)
-        _activity = activity_dao.activity_dao().query(activity_id)
+
+        _activity = self.get_activity(activity_id)
+        activity_counter = self.get_counter(activity_id)
+        _applicant_num = activity_counter['apply']
+
+        # _activity = activity_dao.activity_dao().query(activity_id)
         # 按报名状况查询每个活动的当前状态：
         # 0: 报名中, 1: 已成行, 2: 已满员, 3: 已结束
         # @2016/06/06
@@ -268,7 +267,7 @@ class WxActivityInfoHandler(BaseHandler):
         if _now > _activity['end_time']:
             _activity['phase'] = '3'
         else:
-            _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
+            # _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
             logging.info("got _applicant_num %r in uri", _applicant_num)
             _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
             _activity['phase'] = '0' if _applicant_num < _member_min else '1'
@@ -279,12 +278,12 @@ class WxActivityInfoHandler(BaseHandler):
 
         # 金额转换成元 默认将第一个基本服务的费用显示为活动价格
         # _activity['amount'] = float(_activity['amount']) / 100
-        if not _activity['base_fee_template']:
-            _activity['amount'] = 0
-        else:
-            for base_fee_template in _activity['base_fee_template']:
-                _activity['amount'] = float(base_fee_template['fee']) / 100
-                break
+        # if not _activity['base_fee_template']:
+        #     _activity['amount'] = 0
+        # else:
+        #     for base_fee_template in _activity['base_fee_template']:
+        #         _activity['amount'] = float(base_fee_template['fee']) / 100
+        #         break
 
         article = self.get_article(activity_id)
 
@@ -307,7 +306,7 @@ class WxActivityInfoHandler(BaseHandler):
         _account_id = self.get_secure_cookie("account_id")
         _bonus_template = bonus_template_dao.bonus_template_dao().query(_activity['_id'])
 
-        self.render('wx/activity-info.html',
+        self.render('activity/activity-info.html',
                 guest_club_id = GUEST_CLUB_ID,
                 vendor_id=vendor_id,
                 activity=_activity,
@@ -324,37 +323,42 @@ class WxActivityQrcodeHandler(BaseHandler):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got activity_id %r in uri", activity_id)
 
-        _activity = activity_dao.activity_dao().query(activity_id)
+        activity = self.get_activity(activity_id)
+
+        # _activity = activity_dao.activity_dao().query(activity_id)
         _qrcode = group_qrcode_dao.group_qrcode_dao().query(activity_id)
         # 为活动添加二维码属性
-        _activity['wx_qrcode_url'] = _qrcode['wx_qrcode_url']
+        activity['wx_qrcode_url'] = _qrcode['wx_qrcode_url']
         logging.debug(_qrcode)
 
-        self.render('wx/activity-qrcode.html',
+        self.render('activity/activity-qrcode.html',
                 vendor_id=vendor_id,
-                activity=_activity)
+                activity=activity)
 
 
 class WxActivityApplyStep0Handler(BaseHandler):
     def get(self, vendor_id, activity_id, guest_club_id):
         logging.info("GET %r", self.request.uri)
 
-        activity = activity_dao.activity_dao().query(activity_id)
-        logging.info("got activity['vendor_id']=[%r]", activity['vendor_id'])
+        activity = self.get_activity(activity_id)
+        club_id = activity['club_id']
+
+        # activity = activity_dao.activity_dao().query(activity_id)
+        logging.info("got club_id=[%r]", club_id)
         # 不是我的活动 直接跳走（此时guest_club_id肯定不是0）
-        if vendor_id != activity['vendor_id']:
-            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(activity['vendor_id'])
+        if vendor_id != club_id:
+            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
             wx_notify_domain = wx_app_info['wx_notify_domain']
 
             redirect_url = wx_notify_domain + "/bf/wx/vendors/" +\
-                activity['vendor_id'] +\
+                club_id +\
                 "/activitys/" + activity_id +\
                 "_" + vendor_id + "/apply/step0"
             self.redirect(redirect_url)
         else:
-            self.set_secure_cookie("club_id", vendor_id)
+            self.set_secure_cookie("club_id", club_id)
 
-            redirect_url = "/bf/wx/vendors/" + vendor_id +\
+            redirect_url = "/bf/wx/vendors/" + club_id +\
                 "/activitys/" + activity_id +\
                 "_" + guest_club_id + "/apply/step1"
             self.redirect(redirect_url)
@@ -369,11 +373,12 @@ class WxActivityApplyStep1Handler(AuthorizationHandler):
         wx_app_id = wx_app_info['wx_app_id']
         logging.info("got wx_app_id %r in uri", wx_app_id)
 
-        activity = activity_dao.activity_dao().query(activity_id)
+        activity = self.get_activity(activity_id)
+        # activity = activity_dao.activity_dao().query(activity_id)
         activity['begin_time'] = timestamp_friendly_date(float(activity['begin_time'])) # timestamp -> %m月%d 星期%w
         activity['end_time'] = timestamp_friendly_date(float(activity['end_time'])) # timestamp -> %m月%d 星期%w
 
-        self.render('wx/activity-apply-step1.html',
+        self.render('activity/activity-apply-step1.html',
                 guest_club_id = guest_club_id,
                 vendor_id=vendor_id,
                 wx_app_id=wx_app_id,
