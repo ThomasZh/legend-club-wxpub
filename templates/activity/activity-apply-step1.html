@@ -95,7 +95,7 @@
     <div class="ui-form ui-border-t overflow-hidden insurancecfg">
     </div>
 
-    {% if activity['cash_only'] %}
+    {% if activity['cash_only'] == "0" %}
         <div class="ui-whitespace maring-top-10">
           <p class="ui-txt-info font-normal ">
             代金券
@@ -229,6 +229,7 @@
 
     // 获取个人信息(积分)选项
     $.getJSON('/bf/api/vendors/{{ vendor_id }}/customer-profile/my', function(result){
+      console.log(result);
       customerProfile = result;//保存下来后边计算时需要
       createBonusItems(result);
       caculateTotalFees();//重新算一次
@@ -254,6 +255,7 @@
 
     // 生成积分选项
     function createBonusItems(item){
+      console.log(item);
       var innerHTML = '';
         innerHTML += '<div class="ui-form-item ui-form-item-checkbox ui-border-b">';
         innerHTML += '  <label class="ui-checkbox" >';
@@ -372,7 +374,11 @@
       });
 
       // 当前积分
-      var bonus = parseInt( customerProfile['remaining_points'] );
+      var bonus = 0;
+      console.log(customerProfile);
+      if (typeof(customerProfile) != "undefined") {
+        bonus = parseInt( customerProfile['remaining_points'] );
+      }
       if (bonus_checked) {
         if (total_fees < bonus) {
           var use_bonus = total_fees;
