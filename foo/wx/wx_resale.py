@@ -182,7 +182,7 @@ class WxResaleActivityInfoHandler(BaseHandler):
         _account_id = self.get_secure_cookie("account_id")
         _bonus_template = bonus_template_dao.bonus_template_dao().query(_activity['_id'])
 
-        self.render('activity/activity-info.html',
+        self.render('resale/activity-info.html',
                 guest_club_id = guest_club_id,
                 vendor_id=vendor_id,
                 activity=_activity,
