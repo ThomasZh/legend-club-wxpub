@@ -585,6 +585,7 @@ class WxActivityApplyStep3Handler(AuthorizationHandler):
                 apply_index["booking_time"] = activity['begin_time']
                 # 取活动基本服务费用信息
                 apply_index["group_name"] = _old_order['base_fees'][0]['name']
+                logging.info("create apply=[%r]", apply_index)
                 apply_id = self.create_apply(apply_index)
 
                 # budge_num increase
@@ -593,16 +594,17 @@ class WxActivityApplyStep3Handler(AuthorizationHandler):
                 # TODO notify this message to vendor's administrator by SMS
 
                 # 更新联系人资料
-                _contact = contact_dao.contact_dao().query_contact(vendor_id, _account_id, apply_index["real_name"])
+                apply_index['account_id'] = _account_id
+                _contact = contact_dao.contact_dao().query_by_realname(_account_id, apply_index["real_name"])
+                logging.info("got old contact=[%r]", _contact)
                 if not _contact: # 如果不存在
                     apply_index["_id"] = apply_id
-                    # 移除多余的参数直接入库
-                    apply_index.pop("item_id", None)
-                    apply_index.pop("order_id", None)
                     contact_dao.contact_dao().create(apply_index)
+                    logging.info("create contact=[%r]", apply_index)
                 else: # 用新资料更新
                     apply_index["_id"] = _contact["_id"]
                     contact_dao.contact_dao().update(apply_index)
+                    logging.info("update contact=[%r]", apply_index)
 
             _bonus_template = bonus_template_dao.bonus_template_dao().query(activity_id)
             _qrcode = group_qrcode_dao.group_qrcode_dao().query(activity_id)

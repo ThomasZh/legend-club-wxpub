@@ -25,10 +25,10 @@
   <div class="">
     <form id="applicants-form" method="POST" action="/bf/wx/vendors/{{ vendor_id }}/activitys/{{activity['_id']}}/apply/step3">
       {% raw xsrf_form_html() %}
-      <input type="hidden" name="id" value="{{activity['_id']}}"/>
-      <input type="hidden" name="order_id" value="{{order_id}}"/>
+      <input type="hidden" name="id" value="{{ activity['_id'] }}"/>
+      <input type="hidden" name="order_id" value="{{ order_id }}"/>
       <!-- add account id to fetch user contacts by ajax @2016/06/14 -->
-      <input type="hidden" name="account_id" value="{{account_id}}"/>
+      <input type="hidden" name="account_id" value="{{ account_id }}"/>
       <!-- 根据报名人数动态创建的表单 -->
       <!-- @2016/05/31 -->
     </form>
@@ -50,7 +50,7 @@
   <script src="{{ static_url('customer/id.number.validator.js') }}"></script>
 
   <!-- 订单 -->
-	<script type='text/template', id='data-ordID'>{{order_id}}</script>
+	<script type='text/template', id='data-ordID'>{{ order_id }}</script>
 
   <script>
 
@@ -196,7 +196,7 @@
         applicantForm += '    <label class="ui-border-r">';
         applicantForm += '      备注说明';
         applicantForm += '    </label>';
-        applicantForm += '    <textarea name="note" placeholder="{{activity['notes']}}" maxlength="50"></textarea>';
+        applicantForm += '    <textarea name="note" placeholder="{{ activity['notes'] }}" maxlength="50"></textarea>';
         applicantForm += '  </div>';
 
         // 一组结束

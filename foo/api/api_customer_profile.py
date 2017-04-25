@@ -159,12 +159,12 @@ class ApiCustomerProfileMyInfoXHR(BaseHandler):
 # 获取当前用户的联系人（以前报名时添加的人）
 class ApiCustomerProfileMyContactListXHR(tornado.web.RequestHandler):
     def get(self, vendor_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
+        logging.info("GET %r", vendor_id)
 
         account_id = self.get_secure_cookie("account_id")
-        logging.info("got _account_id %r", account_id)
+        contacts = contact_dao.contact_dao().query_by_account(account_id);
+        logging.info("got my=[%r] contacts=[%r]", account_id, contacts)
 
-        contacts = contact_dao.contact_dao().query_by_account(vendor_id, account_id);
         self.write(JSON.dumps(contacts, default=json_util.default))
         self.finish()
 

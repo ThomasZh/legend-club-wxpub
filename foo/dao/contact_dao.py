@@ -45,27 +45,22 @@ class contact_dao(singleton):
         logging.info("create contact success......");
 
 
-    def update(self,json):
+    def update(self, json):
         _id = json["_id"];
         self.__contact_collection.update({"_id":_id},{"$set":json});
         logging.info("update contact success......");
 
 
-    def query_by_account(self, vendor_id, account_id):
-        cursor = self.__contact_collection.find({
-                "vendor_id":vendor_id,
-                "account_id":account_id})
+    def query_by_account(self, account_id):
+        cursor = self.__contact_collection.find({"account_id":account_id})
         array = []
         for i in cursor:
             array.append(i)
         return array
 
 
-    def query_contact(self, vendor_id, account_id, name):
-        cursor = self.__contact_collection.find({
-                "vendor_id":vendor_id,
-                "account_id":account_id,
-                "name":name})
+    def query_by_realname(self, account_id, real_name):
+        cursor = self.__contact_collection.find({"account_id":account_id,"real_name":real_name})
         data = None
         for i in cursor:
             data = i
