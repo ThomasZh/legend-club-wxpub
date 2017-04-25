@@ -70,21 +70,22 @@ class AuthWxLoginStep2Handler(BaseHandler):
         lang = self.request.headers["Accept-Language"]
         wx_code = self.get_argument("code", "")
 
-        if not wx_code:
-            club_id = self.get_secure_cookie("club_id")
-            logging.info("got club_id=[%r] from cookie", club_id)
-            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
-            logging.info("got wx_app_info=[%r]", wx_app_info)
-            wx_app_id = wx_app_info['wx_app_id']
-            wx_notify_domain = wx_app_info['wx_notify_domain']
+        club_id = self.get_secure_cookie("club_id")
+        logging.info("got club_id=[%r] from cookie", club_id)
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        wx_app_secret = wx_app_info['wx_app_secret']
 
+        if not wx_code:
             redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +\
                 wx_app_id + "&redirect_uri=" +\
                 wx_notify_domain +"/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
             self.redirect(redirect_url)
             return
 
-        accessToken = wx_wrap.getAccessToken(WX_APP_ID, WX_APP_SECRET, wx_code);
+        accessToken = wx_wrap.getAccessToken(wx_app_id, wx_app_secret, wx_code);
         access_token = accessToken["access_token"];
         logging.info("got access_token %r", access_token)
         wx_openid = accessToken["openid"];

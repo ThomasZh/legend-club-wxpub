@@ -483,7 +483,7 @@ class AuthorizationHandler(BaseHandler):
         http_client = HTTPClient()
         _json = json_encode(order_index)
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-        logging.info("got response.body %r", response.body)
+        logging.info("create order=[%r] response=[%r]", order_index, response.body)
 
 
     def check_apply(self, apply_id):

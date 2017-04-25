@@ -12,6 +12,7 @@ from foo.auth import auth_email
 from foo.auth import auth_phone
 from foo.auth import auth_wx
 from wx import wx_activity
+from wx import wx_resale
 from wx import wx_voucher
 from wx import wx_triprouter
 from wx import wx_personal_center
@@ -66,8 +67,8 @@ def map():
 
 
         # 推荐活动列表
-        (r"/bf/wx/vendors/([a-z0-9]*)/activitys/recommend", getattr(wx_activity, 'WxRecommendActivityHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)", getattr(wx_activity, 'WxRecommendActivityInfoHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/activitys/recommend", getattr(wx_resale, 'WxResaleActivityIndexHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)", getattr(wx_resale, 'WxResaleActivityInfoHandler')),
 
 
         # bike-forever wexin activity

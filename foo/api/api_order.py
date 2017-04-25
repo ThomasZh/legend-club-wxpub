@@ -130,7 +130,7 @@ class ApiOrderInfoXHR(AuthorizationHandler):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got order_id %r in uri", order_id)
 
-        _order = self.get_symbol_object(order_id)
+        _order = self.get_order_index(order_id)
         # 价格转换成元
         _order['amount'] = float(_order['amount']) / 100
         _order['actual_payment'] = float(_order['actual_payment']) / 100

@@ -14,7 +14,7 @@
 </head>
 <body ontouchstart class="padding-bottom-70">
   <div class="banner">
-    <img src="{{ activity['img'] }}" />
+    <img src="{{ activity['img'] }}!700x467" />
     {% set phases = {'0':'招募中','1':'已成行','2':'已满员','3':'已结束'} %}
     {% set themes = {'0':'green','1':'orange','2':'red','3':'gray'} %}
     <div class="bookmarks {{themes[activity['phase']]}}">{{ phases[activity['phase']] }}</div>

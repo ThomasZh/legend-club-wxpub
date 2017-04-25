@@ -111,140 +111,6 @@ class WxActivityListHandler(BaseHandler):
                 activities=activities)
 
 
-#推荐活动列表
-class WxRecommendActivityHandler(BaseHandler):
-    def get(self, vendor_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-
-        _now = time.time()
-        # # 查询结果，不包含隐藏的活动
-        # _array = [activity_dao.activity_dao().query_activitys_notme(
-        #         vendor_id, ACTIVITY_STATUS_RECRUIT, _now, PAGE_SIZE_LIMIT)]
-        _array = []
-
-        activitys_share = activity_share_dao.activity_share_dao().query_by_vendor(vendor_id)
-        for activity in activitys_share:
-            _id = activity['activity']
-            arr = activity_dao.activity_dao().query(_id)
-            _array.append(arr)
-
-        logging.info("got recommend activity>>>>>>>>> %r",_array)
-
-        # 按报名状况查询每个活动的当前状态：
-        # 0: 报名中, 1: 已成行, 2: 已满员, 3: 已结束
-        # @2016/06/06
-        #
-        # 当前时间大于活动结束时间 end_time， 已结束
-        # 否则
-        # member_max: 最大成行人数, member_min: 最小成行人数
-        # 小于member_min, 报名中
-        # 大于member_min，小于member_max，已成行
-        # 大于等于member_max，已满员
-        if len(_array) > 0 :
-            for _activity in _array:
-                _member_min = int(_activity['member_min'])
-                _member_max = int(_activity['member_max'])
-                if _now > _activity['end_time']:
-                    _activity['phase'] = '3'
-                else:
-                    _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
-                    _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
-                    _activity['phase'] = '0' if _applicant_num < _member_min else '1'
-                # 格式化显示时间
-                _activity['begin_time'] = timestamp_friendly_date(_activity['begin_time']) # timestamp -> %m月%d 星期%w
-                _activity['end_time'] = timestamp_friendly_date(_activity['end_time']) # timestamp -> %m月%d 星期%w
-                # 金额转换成元
-                if not _activity['base_fee_template']:
-                    _activity['amount'] = 0
-                else:
-                    for base_fee_template in _activity['base_fee_template']:
-                        _activity['amount'] = float(base_fee_template['fee']) / 100
-                        break
-
-        self.render('wx/recommend-activity.html',
-                vendor_id=vendor_id,
-                activitys=_array)
-
-
-# 推荐活动详情
-class WxRecommendActivityInfoHandler(BaseHandler):
-    def get(self, vendor_id, activity_id, guest_club_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
-        logging.info("got activity_id %r in uri", activity_id)
-        logging.info("got guest_club_id %r in uri", guest_club_id)
-
-        _activity = activity_dao.activity_dao().query(activity_id)
-
-        # 按报名状况查询每个活动的当前状态：
-        # 0: 报名中, 1: 已成行, 2: 已满员, 3: 已结束
-        # @2016/06/06
-        #
-        # 当前时间大于活动结束时间 end_time， 已结束
-        # 否则
-        # member_max: 最大成行人数, member_min: 最小成行人数
-        # 小于member_min, 报名中
-        # 大于member_min，小于member_max，已成行
-        # 大于等于member_max，已满员
-        _now = time.time();
-        _member_min = int(_activity['member_min'])
-        _member_max = int(_activity['member_max'])
-        logging.info("got _member_min %r in uri", _member_min)
-        logging.info("got _member_max %r in uri", _member_max)
-
-        if _now > _activity['end_time']:
-            _activity['phase'] = '3'
-        else:
-            _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
-            logging.info("got _applicant_num %r in uri", _applicant_num)
-            _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
-            _activity['phase'] = '0' if _applicant_num < _member_min else '1'
-
-        # 格式化时间显示
-        _activity['begin_time'] = timestamp_friendly_date(float(_activity['begin_time'])) # timestamp -> %m月%d 星期%w
-        _activity['end_time'] = timestamp_friendly_date(float(_activity['end_time'])) # timestamp -> %m月%d 星期%w
-
-        # 金额转换成元 默认将第一个基本服务的费用显示为活动价格
-        # _activity['amount'] = float(_activity['amount']) / 100
-        if not _activity['base_fee_template']:
-            _activity['amount'] = 0
-        else:
-            for base_fee_template in _activity['base_fee_template']:
-                _activity['amount'] = float(base_fee_template['fee']) / 100
-                break
-
-        article = self.get_article(activity_id)
-
-        logging.info("------------------------------------uri: "+self.request.uri)
-
-        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
-        wx_app_id = wx_app_info['wx_app_id']
-        logging.info("got wx_app_id %r in uri", wx_app_id)
-        wx_app_secret = wx_app_info['wx_app_secret']
-        wx_notify_domain = wx_app_info['wx_notify_domain']
-
-        _access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
-        _jsapi_ticket = wx_wrap.getJsapiTicket(_access_token)
-        _sign = wx_wrap.Sign(_jsapi_ticket, wx_notify_domain+self.request.uri).sign()
-        logging.info("------------------------------------nonceStr: "+_sign['nonceStr'])
-        logging.info("------------------------------------jsapi_ticket: "+_sign['jsapi_ticket'])
-        logging.info("------------------------------------timestamp: "+str(_sign['timestamp']))
-        logging.info("------------------------------------url: "+_sign['url'])
-        logging.info("------------------------------------signature: "+_sign['signature'])
-
-        _account_id = self.get_secure_cookie("account_id")
-        _bonus_template = bonus_template_dao.bonus_template_dao().query(_activity['_id'])
-
-        self.render('wx/activity-info.html',
-                guest_club_id = guest_club_id,
-                vendor_id=vendor_id,
-                activity=_activity,
-                article=article,
-                wx_app_id=wx_app_id,
-                wx_notify_domain=wx_notify_domain,
-                sign=_sign, account_id=_account_id,
-                bonus_template=_bonus_template)
-
-
 # 活动详情
 class WxActivityInfoHandler(BaseHandler):
     def get(self, vendor_id, activity_id):
@@ -254,7 +120,7 @@ class WxActivityInfoHandler(BaseHandler):
         _activity = self.get_activity(activity_id)
         _applicant_num = 0
         activity_counter = self.get_counter(activity_id)
-        if activity_counter:
+        if activity_counter and activity_counter.has_key('apply'):
             _applicant_num = int(activity_counter['apply'])
 
         # _activity = activity_dao.activity_dao().query(activity_id)
@@ -674,7 +540,7 @@ class WxActivityApplyStep3Handler(AuthorizationHandler):
         # @2016/06/14
         _account_id = self.get_secure_cookie("account_id")
 
-        self.render('wx/activity-apply-step3.html',
+        self.render('activity/activity-apply-step3.html',
                 vendor_id=vendor_id,
                 activity=activity,
                 order_id=_order_id,
@@ -697,7 +563,7 @@ class WxActivityApplyStep3Handler(AuthorizationHandler):
             # 为活动添加二维码属性
             activity['wx_qrcode_url'] = _qrcode['wx_qrcode_url']
             logging.info(_qrcode)
-            self.render('wx/activity-apply-step3.html',
+            self.render('activity/activity-apply-step3.html',
                     vendor_id=vendor_id,
                     activity=activity,
                     order_id=_order_id,
@@ -743,7 +609,7 @@ class WxActivityApplyStep3Handler(AuthorizationHandler):
             # 为活动添加二维码属性
             activity['wx_qrcode_url'] = _qrcode['wx_qrcode_url']
             logging.info(_qrcode)
-            self.render('wx/activity-apply-step4.html',
+            self.render('activity/activity-apply-step4.html',
                     vendor_id=vendor_id,
                     activity=activity,
                     bonus_template=_bonus_template)
@@ -828,16 +694,16 @@ class WxOrderNotifyHandler(BaseHandler):
                     # self.points_increase(vendor_id, order_index['account_id'], bonus)
 
                 # 如使用代金券抵扣，则将代金券减去
-                _vouchers = order['vouchers']
+                _vouchers = order_index['vouchers']
                 for _voucher in _vouchers:
                     # status=2, 已使用
                     voucher_dao.voucher_dao().update({'_id':_voucher['_id'], 'status':2, 'last_update_time':_timestamp})
-                    _customer_profile = mongodao().query_vendor_member_not_safe(vendor_id, order['account_id'])
+                    _customer_profile = mongodao().query_vendor_member_not_safe(vendor_id, order_index['account_id'])
                     # 修改个人代金券信息
                     _voucher_amount = int(_customer_profile['vouchers']) - int(_voucher['fee'])
                     if _voucher_amount < 0:
                         _voucher_amount = 0
-                    _json = {'vendor_id':vendor_id, 'account_id':order['account_id'], 'last_update_time':_timestamp,
+                    _json = {'vendor_id':vendor_id, 'account_id':order_index['account_id'], 'last_update_time':_timestamp,
                         'vouchers':_voucher_amount}
                     vendor_member_dao.vendor_member_dao().update(_json)
         else:

@@ -142,11 +142,15 @@ class ApiCustomerProfileMyInfoXHR(BaseHandler):
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
-        _account_id = self.get_secure_cookie("account_id")
-        logging.info("got _account_id %r", _account_id)
-        _customer_profile = self.get_club_user(vendor_id, _account_id)
-
-        _json = JSON.dumps(_customer_profile, default=json_util.default)
+        account_id = self.get_secure_cookie("account_id")
+        logging.info("got account_id %r", account_id)
+        customer_profile = self.get_club_user(vendor_id, account_id)
+        if customer_profile:
+            if not customer_profile.has_key('remaining_points'):
+                customer_profile['remaining_points'] = 0
+        else:
+            customer_profile = {'remaining_points':0}
+        _json = JSON.dumps(customer_profile, default=json_util.default)
         logging.info("got _customer_profile %r", _json)
         self.write(_json)
         self.finish()
