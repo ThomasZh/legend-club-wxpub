@@ -410,6 +410,7 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
             "vouchers": _vouchers,
             "points_used": points,
             "bonus_points": bonus_points, # 活动奖励积分
+            "booking_time": _activity['begin_time'],
         }
         self.create_order(order_index)
 

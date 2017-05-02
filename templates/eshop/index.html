@@ -62,24 +62,7 @@
         <div class="tab-panel">
           <div class="tab-panel-item tab-active">
             <article class="m-list list-theme2">
-              {% for activity in activitys %}
-              <a href="/webapp/eshop/clubs/{{ club['_id'] }}/products/{{ activity['_id'] }}" class="list-item">
-                <div class="list-img">
-                  <img src="{{ activity['bk_img_url'] }}!370x320" data-url="{{ activity['bk_img_url'] }}!370x320">
-                </div>
-                <div class="list-mes">
-                  <h3 class="list-title">{{ activity['title'] }}</h3>
-                  <div class="list-mes-item">
-                    <div>
-                      <span class="list-price"><em>¥</em>{{ activity['amount'] }}</span>
-                      <span class="list-del-price">¥45.65</span>
-                    </div>
-                    <div>15人购买</div>
-                  </div>
-                </div>
-              </a>
-              {% end %}
-              <!-- <a is="oneProduct" v-for="(product, idx) in products" v-bind:product="product" v-bind:idx="idx"></a> -->
+              <a is="oneProduct" v-for="(product, idx) in products" v-bind:product="product" v-bind:idx="idx"></a>
             </article>
           </div>
           <div class="tab-panel-item">
@@ -211,21 +194,22 @@
 
           $.ajax({
             type: "GET",
-            url: "{{ API_DOMAIN }}/api/articles?idx=" + idx + "&limit=" + limit + "&filter=club&club_id={{ club['_id'] }}&category=0bbf89e2f73411e69a3c00163e023e51",
+            url: "{{ API_DOMAIN }}/api/activities?idx=" + idx + "&limit=" + limit + "&filter=club&club_id={{ club['_id'] }}&_status=20",
             async: true,
             dataType: "json",
             contentType: 'application/json',
-            success: function(datas, status, xhr) {
+            success: function(data, status, xhr) {
+              datas = data.rs.data;
               console.log(datas);
-              for (var i = 0, l = datas.rs.length; i < l; i++) {
-                product = datas.rs[i];
+              for (var i = 0, l = datas.length; i < l; i++) {
+                product = datas[i];
                 product.url = "/webapp/eshop/clubs/" + product.club_id + "/products/" + product._id;
                 product.img += "!370x320";
                 _self.products.push(product);
                 _self.products_num += 1;
               }
 
-              if (datas.rs.length < limit) {
+              if (datas.length < limit) {
                 $("#queryMoreProductsBtn").css('display', 'none');
               }
 
