@@ -125,6 +125,8 @@ class EshopProductHandler(BaseHandler):
         activity = self.get_activity(product_id)
         # 金额转换成元 默认将第一个基本服务的费用显示为活动价格
         activity['amount'] = float(activity['amount']) / 100
+        for fee in activity['base_fee_template']:
+            fee['fee'] = float(fee['fee']) / 100
 
         article_id = product_id
         # update read_num
@@ -177,6 +179,8 @@ class EshopProductPlaceOrderHandler(AuthorizationHandler):
         activity = self.get_activity(product_id)
         # 金额转换成元 默认将第一个基本服务的费用显示为活动价格
         activity['amount'] = float(activity['amount']) / 100
+        for fee in activity['base_fee_template']:
+            fee['fee'] = float(fee['fee']) / 100
 
         self.render('eshop/place-order.html',
                 API_DOMAIN=API_DOMAIN,

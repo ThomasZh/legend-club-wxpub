@@ -111,7 +111,7 @@
             <h3 class="list-title">{{! product.title }}</h3>\
             <div class="list-mes-item">\
               <div>\
-                <span class="list-price"><em>¥</em>34.7</span>\
+                <span class="list-price"><em>¥</em>{{! product.amount }}</span>\
                 <span class="list-del-price">¥45.65</span>\
               </div>\
               <div>15人购买</div>\
@@ -205,6 +205,7 @@
                 product = datas[i];
                 product.url = "/webapp/eshop/clubs/" + product.club_id + "/products/" + product._id;
                 product.img += "!370x320";
+                product.amount = product.amount / 100;
                 _self.products.push(product);
                 _self.products_num += 1;
               }
