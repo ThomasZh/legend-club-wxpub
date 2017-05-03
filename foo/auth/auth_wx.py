@@ -58,6 +58,7 @@ class AuthWxLoginHandler(BaseHandler):
         redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +\
             wx_app_id + "&redirect_uri=" +\
             wx_notify_domain +"/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
+        logging.info("redirect to=[%r]", redirect_url)
         self.redirect(redirect_url)
 
 
@@ -82,6 +83,7 @@ class AuthWxLoginStep2Handler(BaseHandler):
             redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +\
                 wx_app_id + "&redirect_uri=" +\
                 wx_notify_domain +"/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
+            logging.info("redirect to=[%r]", redirect_url)
             self.redirect(redirect_url)
             return
 

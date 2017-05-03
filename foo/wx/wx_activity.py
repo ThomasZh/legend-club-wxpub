@@ -224,6 +224,7 @@ class WxActivityApplyStep0Handler(BaseHandler):
                 club_id +\
                 "/activitys/" + activity_id +\
                 "_" + vendor_id + "/apply/step0"
+            logging.info("redirect to=[%r]", redirect_url)
             self.redirect(redirect_url)
         else:
             self.set_secure_cookie("club_id", club_id)
@@ -231,6 +232,7 @@ class WxActivityApplyStep0Handler(BaseHandler):
             redirect_url = "/bf/wx/vendors/" + club_id +\
                 "/activitys/" + activity_id +\
                 "_" + guest_club_id + "/apply/step1"
+            logging.info("redirect to=[%r]", redirect_url)
             self.redirect(redirect_url)
 
 
