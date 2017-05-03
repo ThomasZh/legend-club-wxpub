@@ -177,6 +177,7 @@ class EshopProductPlaceOrderHandler(AuthorizationHandler):
         club = rs['rs']
 
         activity = self.get_activity(product_id)
+        logging.info("got activity %r", activity)
         # 金额转换成元 默认将第一个基本服务的费用显示为活动价格
         activity['amount'] = float(activity['amount']) / 100
         for fee in activity['base_fee_template']:

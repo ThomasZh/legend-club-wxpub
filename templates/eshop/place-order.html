@@ -14,18 +14,12 @@
   <!-- 引入YDUI样式 -->
   <link rel="stylesheet" href="{{ static_url('ydui/css/ydui.css') }}">
   <!-- <link rel="stylesheet" href="{{ static_url('css/legend.css') }}" /> -->
-  <link rel="stylesheet" href="{{ static_url('jquery-weui/lib/weui.min.css') }}">
+  <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+  <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
 
   <style>
     .primary-color {
       background-color: #01acc6 !important;
-    }
-
-    .g-scrollview:after {
-      content: '';
-      display: block;
-      width: 100%;
-      height: 0;
     }
   </style>
 
@@ -78,7 +72,7 @@
         <div class="m-cell">
           <div class="cell-item">
             <div class="cell-left">时间：</div>
-            <div class="cell-right"><input class="cell-input" type="date" name="date" value="2017-04-09" placeholder="" /></div>
+            <div class="cell-right"><input class="cell-input" type="date" name="date" placeholder="" /></div>
           </div>
         </div>
 
@@ -92,14 +86,14 @@
           </div>
           <div class="cell-item">
             <div class="cell-right">
-              <textarea name="note" class="cell-textarea" placeholder="请输入详细要求和收货地址（订单只限北京城区，四环内免费送货）"></textarea>
+              <textarea id="note" name="note" class="cell-textarea" placeholder="请输入详细要求和收货地址（订单只限北京城区，四环内免费送货）"></textarea>
             </div>
           </div>
         </div>
 
         <!-- 使用：样式模块以按钮为例 -->
         <div class="m-button">
-          <button type="submit" class="btn-block btn-primary primary-color">下单</button>
+          <button id="submit_btn" type="submit" class="btn-block btn-primary primary-color">下单</button>
         </div>
       </form>
 
@@ -110,7 +104,33 @@
   <script src="{{ static_url('js/jquery-2.2.4.min.js') }}"></script>
   <!-- 引入YDUI脚本 -->
   <script src="{{ static_url('ydui/js/ydui.js') }}"></script>
+  <script src="{{ static_url('jquery-weui/js/jquery-weui.min.js') }}"></script>
+  <script type="text/javascript">
+  $(function(){
+    // 设置选择时间置后两天
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth()+1;
+    var day = date.getDate()+2;
+        month = month < 10 ? '0' + month: month;
+        day = day<10?'0'+day:day;
+    $("input[type='date']").val(year+'-'+month+'-'+day);
+    // 检测是否填写完整
+    $("#submit_btn").on("click",function(){
+      var phoneNum = $("input[type='number']").val();
+      var note = $("#note").val();
+      if (phoneNum == ""){
+        $.alert("请填写联系方式！");
+        return false;
+      };
+      if (note == ""){
+        $.alert("请填写收获地址！");
+        return false;
+      };
+    })
 
+  });
+  </script>
 </body>
 
 </html>
