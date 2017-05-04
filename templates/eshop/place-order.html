@@ -119,12 +119,12 @@
     $("#submit_btn").on("click",function(){
       var phoneNum = $("input[type='number']").val();
       var note = $("#note").val();
-      if (phoneNum == ""){
-        $.alert("请填写联系方式！");
+      if (phoneNum == "" || !(/^1[3|4|5|8][0-9]\d{4,8}$/.test(phoneNum))){
+        $.alert("请填写正确的手机号码！");
         return false;
       };
       if (note == ""){
-        $.alert("请填写收获地址！");
+        $.alert("请填写详细的收获地址！");
         return false;
       };
     })
