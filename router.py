@@ -111,7 +111,7 @@ def map():
 
 
         # bike-forever wexin personal-center
-        (r"/bf/wx/vendors/([a-z0-9]*)/pc0", getattr(wx_personal_center, 'WxPersonalCenter0Handler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/pc0", getattr(wx_personal_center, 'WxPersonalCenterStep0Handler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/pc1", getattr(wx_personal_center, 'WxPersonalCenter1Handler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/pc", getattr(wx_personal_center, 'WxPersonalCenterHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/pc/orders", getattr(wx_personal_center, 'WxPcOrderListHandler')),

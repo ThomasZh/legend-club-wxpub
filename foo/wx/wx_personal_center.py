@@ -64,80 +64,37 @@ from global_const import *
 
 
 # 个人中心首页
-class WxPersonalCenter0Handler(BaseHandler):
+class WxPersonalCenterStep0Handler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
-        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
-        wx_app_id = wx_app_info['wx_app_id']
-        logging.info("got wx_app_id %r in uri", wx_app_id)
-        wx_notify_domain = wx_app_info['wx_notify_domain']
-
-        redirect_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + wx_app_id + "&redirect_uri=" + wx_notify_domain + "/bf/wx/vendors/" + vendor_id + "/pc1&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
-        # FIXME 这里应改为从缓存取自己的access_token然后查myinfo是否存在wx_openid
-        # 存在就直接用，不存在再走微信授权并更新用户信息 /api/myinfo-as-wx-user
-        access_token=self.get_secure_cookie("access_token")
+        access_token = self.get_secure_cookie("access_token")
         logging.info("access_token %r======", access_token)
 
-        if access_token:
-            try:
-                url = API_DOMAIN + "/api/myinfo-as-wx-user"
-                http_client = HTTPClient()
-                headers = {"Authorization":"Bearer "+access_token}
-                response = http_client.fetch(url, method="GET", headers=headers)
-                logging.info("got response.body %r", response.body)
-                data = json_decode(response.body)
-                user = data['rs']
-                account_id=user['_id']
-                avatar=user['avatar']
-                nickname=user['nickname']
+        params = {"filter":"login"}
+        url = url_concat(API_DOMAIN + "/api/myinfo", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer "+access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        user = data['rs']
+        account_id = user['account_id']
+        avatar = user['avatar']
+        nickname = user['nickname']
 
-                timestamp = time.time()
-                vendor_member = vendor_member_dao.vendor_member_dao().query_not_safe(vendor_id, tmp_account_id)
-                if not vendor_member:
-                    memeber_id = str(uuid.uuid1()).replace('-', '')
-                    _json = {'_id':memeber_id, 'vendor_id':vendor_id,
-                        'account_id':account_id, 'account_nickname':nickname, 'account_avatar':avatar,
-                        'comment':'...',
-                        'bonus':0, 'history_bonus':0, 'vouchers':0, 'crets':0,
-                        'rank':0, 'tour_leader':False,
-                        'distance':0,
-                        'create_time':timestamp, 'last_update_time':timestamp}
-                    vendor_member_dao.vendor_member_dao().create(_json)
-                    logging.info("create vendor member %r", account_id)
-                else:
-                    _json = {'vendor_id':vendor_id,
-                        'account_id':account_id, 'account_nickname':nickname, 'account_avatar':avatar,
-                        'last_update_time':timestamp}
-                    vendor_member_dao.vendor_member_dao().update(_json)
+        url = API_DOMAIN + "/api/clubs/" + vendor_id + "/users/" + account_id
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        customer_profile = data['rs']
 
-                customer_profile = vendor_member_dao.vendor_member_dao().query_not_safe(vendor_id, account_id)
-                try:
-                    customer_profile['bonus']
-                except:
-                    customer_profile['bonus'] = 0
-                # 金额转换成元
-                # customer_profile['bonus'] = float(customer_profile['bonus']) / 100
-                # logging.info("got bonus %r", customer_profile['bonus'])
-                # 转换成元
-                try:
-                    customer_profile['vouchers']
-                except:
-                    customer_profile['vouchers'] = 0
-                customer_profile['vouchers'] = float(customer_profile['vouchers']) / 100
-
-                # 加上任务数量
-                personal_tasks = personal_task_dao.personal_task_dao().query_by_vendor_account(vendor_id,account_id)
-                customer_profile['tasks'] = len(personal_tasks)
-
-                self.render('wx/personal-center.html',
-                        vendor_id=vendor_id,
-                        profile=customer_profile)
-
-            except:
-                self.redirect(redirect_url)
-        else:
-            self.redirect(redirect_url)
+        self.render('wx/personal-center.html',
+                vendor_id=vendor_id,
+                profile=customer_profile)
 
 
 class WxPersonalCenter1Handler(tornado.web.RequestHandler):

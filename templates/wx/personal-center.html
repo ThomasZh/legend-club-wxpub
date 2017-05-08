@@ -46,11 +46,11 @@
 
             <div class="row no-gutter main">
               <div class="col-80">
-                <a><img class="avator" src="{{ profile['account_avatar'] }}"></a>
-                <a><span class="vip-name">{{ profile['account_nickname'] }}</span></a>
+                <a><img class="avator" src="{{ profile['avatar'] }}"></a>
+                <a><span class="vip-name">{{ profile['nickname'] }}</span></a>
               </div>
               <div class="col-20">
-                <div class="vip">L{{ profile['rank'] }}会员</div>
+                <div class="vip">L{{ profile['_rank'] }}会员</div>
               </div>
             </div>
 
@@ -139,7 +139,7 @@
                     <div class="item-media"><img src="{{ static_url( 'customer/img/level.png' ) }}" style='width: 1.6rem;'></div>
                     <div class="item-inner">
                       <div class="item-title-row">
-                        <div class="item-title">{{ profile['tasks'] }}</div>
+                        <div class="item-title">0</div>
                       </div>
                     </div>
                   </div>
@@ -173,7 +173,7 @@
                     <div class="item-media"><img src="{{ static_url( 'customer/img/point.png' ) }}" style='width: 1.6rem;'></div>
                     <div class="item-inner">
                       <div class="item-title-row">
-                        <div class="item-title">{{ profile['bonus'] }}</div>
+                        <div class="item-title">{{ profile['remaining_points'] }}</div>
                       </div>
                     </div>
                   </div>
@@ -190,7 +190,7 @@
                     <div class="item-media"><img src="{{ static_url( 'customer/img/louchers.png' ) }}" style='width: 1.6rem;'></div>
                     <div class="item-inner">
                       <div class="item-title-row">
-                        <div class="item-title">{{ profile['vouchers'] }}元</div>
+                        <div class="item-title">{{ profile['remaining_vouchers'] }}元</div>
                       </div>
                     </div>
                   </div>
