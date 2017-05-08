@@ -43,6 +43,12 @@ class WxMpVerify2Handler(tornado.web.RequestHandler):
         return
 
 
+class WxMpVerify3Handler(tornado.web.RequestHandler):
+    def get(self):
+        self.finish('qdkkOWgyqqLTrijx')
+        return
+
+
 class singleton(object):
     _singleton = None;
     def __new__(cls):
@@ -143,6 +149,16 @@ def time_span(ts):
 
 
 class BaseHandler(tornado.web.RequestHandler):
+
+    def get_club_detail_info(self, club_id):
+        params = {"filter":"detail"}
+        url = url_concat(API_DOMAIN + "/api/clubs/" + club_id, params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        data = json_decode(response.body)
+        club = data['rs']
+        return club
+
 
     def get_club_basic_info(self, club_id):
         params = {"filter":"basic"}
@@ -626,29 +642,8 @@ class AuthorizationHandler(BaseHandler):
                 if int(expires_at) > _timestamp:
                     return access_token
                 else:
-                    # Logic: refresh_token
-                    refresh_token = self.get_secure_cookie("refresh_token")
-                    if not refresh_token:
-                        return None
-                    else:
-                        try:
-                            url = API_DOMAIN+"/api/auth/tokens"
-                            http_client = HTTPClient()
-                            headers={"Authorization":"Bearer "+refresh_token}
-                            data = {"action":"refresh"}
-                            _json = json_encode(data)
-                            logging.info("request %r body %r", url, _json)
-                            response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-                            logging.info("got response %r", response.body)
-                            data = json_decode(response.body)
-                            session_ticket = data['rs']
-                            self.set_secure_cookie("access_token", session_ticket['access_token'])
-                            self.set_secure_cookie("expires_at", str(session_ticket['expires_at']))
-                            self.set_secure_cookie("refresh_token", session_ticket['refresh_token'])
-                            return session_ticket['access_token']
-                        except:
-                            return None
                     return None
+
 
 def markdown_html(markdown_content):
     html = markdown.markdown(markdown_content)

@@ -111,6 +111,55 @@ class WxActivityListHandler(BaseHandler):
                 activities=activities)
 
 
+# 活动历史列表
+class WxActivityHistoryListHandler(BaseHandler):
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+        private = 0
+        activities = self.get_activities(club_id, ACTIVITY_STATUS_COMPLETED, private)
+
+        _now = time.time()
+        # # 查询结果，不包含隐藏的活动
+
+        # 按报名状况查询每个活动的当前状态：
+        # 0: 报名中, 1: 已成行, 2: 已满员, 3: 已结束
+        # @2016/06/06
+        #
+        # 当前时间大于活动结束时间 end_time， 已结束
+        # 否则
+        # member_max: 最大成行人数, member_min: 最小成行人数
+        # 小于member_min, 报名中
+        # 大于member_min，小于member_max，已成行
+        # 大于等于member_max，已满员
+        for activity in activities:
+            # _member_min = int(activity['member_min'])
+            # _member_max = int(activity['member_max'])
+            activity['phase'] = '0'
+            if _now > activity['end_time']:
+                activity['phase'] = '3'
+            # else:
+            #     _applicant_num = 0
+            #     activity_counter = self.get_counter(activity_id)
+            #     if activity_counter:
+            #         _applicant_num = int(activity_counter['apply'])
+            #
+            #     activity['phase'] = '2' if _applicant_num >= _member_max else '1'
+            #     activity['phase'] = '0' if _applicant_num < _member_min else '1'
+
+            # 格式化显示时间
+            activity['begin_time'] = timestamp_friendly_date(activity['begin_time']) # timestamp -> %m月%d 星期%w
+            activity['end_time'] = timestamp_friendly_date(activity['end_time']) # timestamp -> %m月%d 星期%w
+
+            # 格式化价格
+            activity['amount'] = float(activity['amount']) / 100
+
+        self.render('activity/index.html',
+                club=club,
+                activities=activities)
+
+
 # 活动详情
 class WxActivityInfoHandler(BaseHandler):
     def get(self, vendor_id, activity_id):
@@ -140,13 +189,16 @@ class WxActivityInfoHandler(BaseHandler):
         logging.info("got _member_min %r in uri", _member_min)
         logging.info("got _member_max %r in uri", _member_max)
 
-        if _now > _activity['end_time']:
+        if _activity['_status'] > ACTIVITY_STATUS_RECRUIT:
             _activity['phase'] = '3'
         else:
-            # _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
-            logging.info("got _applicant_num %r in uri", _applicant_num)
-            _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
-            _activity['phase'] = '0' if _applicant_num < _member_min else '1'
+            if _now > _activity['end_time']:
+                _activity['phase'] = '3'
+            else:
+                # _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
+                logging.info("got _applicant_num %r in uri", _applicant_num)
+                _activity['phase'] = '2' if _applicant_num >= _member_max else '1'
+                _activity['phase'] = '0' if _applicant_num < _member_min else '1'
 
         # 格式化时间显示
         _activity['begin_time'] = timestamp_friendly_date(float(_activity['begin_time'])) # timestamp -> %m月%d 星期%w

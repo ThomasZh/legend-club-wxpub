@@ -16,6 +16,7 @@ from wx import wx_resale
 from wx import wx_voucher
 from wx import wx_triprouter
 from wx import wx_personal_center
+from wx import wx_vendor
 from wx import wx_wrap
 from wx import xml_parser
 from api import api_category
@@ -66,6 +67,10 @@ def map():
         (r"/bf/api/vendors/([a-z0-9]*)/customer-profile/customers", getattr(api_customer_profile, 'ApiCustomerListXHR')),
 
 
+        # 俱乐部首页
+        (r"/bf/wx/vendors/([a-z0-9]*)/info", getattr(wx_vendor, 'WxVendorInfoHandler')),
+
+
         # 推荐活动列表
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/recommend", getattr(wx_resale, 'WxResaleActivityIndexHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)", getattr(wx_resale, 'WxResaleActivityInfoHandler')),
@@ -73,6 +78,7 @@ def map():
 
         # bike-forever wexin activity
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys", getattr(wx_activity, 'WxActivityListHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/activitys/history", getattr(wx_activity, 'WxActivityHistoryListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)", getattr(wx_activity, 'WxActivityInfoHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)/qrcode", getattr(wx_activity, 'WxActivityQrcodeHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)/apply/step0", getattr(wx_activity, 'WxActivityApplyStep0Handler')),
@@ -132,7 +138,7 @@ def map():
 
         (r"/MP_verify_rZAV6WH7J2WhqAIs.txt", getattr(comm, 'WxMpVerifyHandler')),
         (r"/MP_verify_UwBwsF7uHi57Xd6e.txt", getattr(comm, 'WxMpVerify2Handler')),
-
+        (r'/MP_verify_qdkkOWgyqqLTrijx.txt', getattr(comm, 'WxMpVerify3Handler')),
 
         # comm
         ('.*', getattr(comm, 'PageNotFoundHandler'))

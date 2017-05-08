@@ -32,7 +32,7 @@ def getAccessTokenByClientCredential(appId, appSecret):
     url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appId+"&secret="+appSecret
     http_client = HTTPClient()
     response = http_client.fetch(url, method="GET")
-    logging.info("got response %r", response.body)
+    logging.info("getAccessTokenByClientCredential response %r", response.body)
     accessToken = json_decode(response.body)
     return accessToken["access_token"]
 
@@ -41,7 +41,7 @@ def getJsapiTicket(accessToken):
     url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+accessToken+"&type=jsapi"
     http_client = HTTPClient()
     response = http_client.fetch(url, method="GET")
-    logging.info("got response %r", response.body)
+    logging.info("getJsapiTicket response %r", response.body)
     jsapiTicket = json_decode(response.body)
     return jsapiTicket["ticket"]
 

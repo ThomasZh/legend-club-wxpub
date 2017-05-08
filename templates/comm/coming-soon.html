@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{ club['name'] }}</title>
+  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta content="telephone=no" name="format-detection" />
+
+  <!-- 引入fontawesome字体 -->
+  <link rel="stylesheet" href="{{ static_url('css/font-awesome.min.css') }}">
+  <!-- 引入YDUI样式 -->
+  <link rel="stylesheet" href="{{ static_url('ydui/css/ydui.css') }}">
+  <!-- <link rel="stylesheet" href="{{ static_url('jquery-weui/lib/weui.min.css') }}"> -->
+  <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+  <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+  <link rel="stylesheet" href="{{ static_url('css/legend.css') }}" />
+
+  <!-- 引入YDUI自适应解决方案类库 -->
+  <script src="{{ static_url('ydui/js/ydui.flexible.js') }}"></script>
+
+  <style>
+    .primary-color {
+      background-color: #01acc6 !important;
+    }
+
+    .g-scrollview:after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 0;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="g-flexview">
+    <!-- Page Contents -->
+    <div id="mainForm" class="g-scrollview">
+
+      <!-- Hero Header -->
+      <div class="hero-header hero-big bg-3 animated fadeindown" v-bind:style="article.style">
+        <div class="hero-author">
+          <div class="media-top-object">
+            <img v-bind:src="article.avatar" alt="" class="media-left avatar">
+            <div class="media-body left-align">
+              <p class="white-text">Coming Soon</p>
+              <span class="white-text small"><em>Coming Soon</em></span>
+            </div>
+          </div>
+        </div>
+        <div class="opacity-overlay-gradient"></div>
+
+        <div class="fixed-action-btn floating-button animated bouncein delay-3 horizontal click-to-toggle">
+          <a v-on:click="sendLike" class="btn-floating btn-large accent-color">
+            <i id="likeIconBtn" class="fa fa-thumbs-o-up" style="font-size:20px"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Article Content -->
+      <div class="animated fadeinup delay-1">
+        <div class="p-20">
+          <h1>Coming Soon</h1>
+          <blockquote class="accent-border">{{ club['introduction'] }}</blockquote>
+        </div>
+      </div>
+
+      <!-- 使用：样式模块以按钮为例 -->
+      <div class="m-button">
+        <a href="/webapp/eshop/clubs/{{ club['_id'] }}" class="btn-block btn-primary primary-color" id="J_Btn">发表评论</a>
+      </div>
+
+      <!-- Footer -->
+      {% module Template("eshop/block-footer.html", club=club) %}
+
+    </div>
+    <!-- /Page Contents -->
+  </div>
+
+  <!-- 引入jQuery 2.0+ -->
+  <script src="{{ static_url('js/jquery-2.2.4.min.js') }}"></script>
+  <!-- 引入YDUI脚本 -->
+  <script src="{{ static_url('ydui/js/ydui.js') }}"></script>
+  <!-- <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script> -->
+  <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+  <!-- <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script> -->
+  <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+  <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+  <!-- <script src="{{ static_url('shuttle/js/main.js') }}"></script> -->
+
+</body>
+</html>

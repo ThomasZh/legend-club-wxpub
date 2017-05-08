@@ -50,14 +50,17 @@ class AuthWxLoginHandler(BaseHandler):
 
         club_id = self.get_secure_cookie("club_id")
         logging.info("got club_id=[%r] from cookie", club_id)
-        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
-        logging.info("got wx_app_info=[%r]", wx_app_info)
-        wx_app_id = wx_app_info['wx_app_id']
-        wx_notify_domain = wx_app_info['wx_notify_domain']
+        wx_app_id = WX_APP_ID
+        wx_notify_domain = WX_NOTIFY_DOMAIN
+        if club_id:
+            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+            logging.info("got wx_app_info=[%r]", wx_app_info)
+            wx_app_id = wx_app_info['wx_app_id']
+            wx_notify_domain = wx_app_info['wx_notify_domain']
 
         redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +\
             wx_app_id + "&redirect_uri=" +\
-            wx_notify_domain +"/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
+            wx_notify_domain + "/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
         logging.info("redirect to=[%r]", redirect_url)
         self.redirect(redirect_url)
 
@@ -73,16 +76,22 @@ class AuthWxLoginStep2Handler(BaseHandler):
 
         club_id = self.get_secure_cookie("club_id")
         logging.info("got club_id=[%r] from cookie", club_id)
-        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
-        logging.info("got wx_app_info=[%r]", wx_app_info)
-        wx_app_id = wx_app_info['wx_app_id']
-        wx_notify_domain = wx_app_info['wx_notify_domain']
-        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_app_id = WX_APP_ID
+        wx_notify_domain = WX_NOTIFY_DOMAIN
+        wx_app_secret = WX_APP_SECRET
+        if club_id:
+            wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+            logging.info("got wx_app_info=[%r]", wx_app_info)
+            wx_app_id = wx_app_info['wx_app_id']
+            wx_notify_domain = wx_app_info['wx_notify_domain']
+            wx_app_secret = wx_app_info['wx_app_secret']
+        else:
+            club_id = CLUB_ID
 
         if not wx_code:
             redirect_url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +\
                 wx_app_id + "&redirect_uri=" +\
-                wx_notify_domain +"/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
+                wx_notify_domain + "/bf/wxpub/auth/login/step2&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
             logging.info("redirect to=[%r]", redirect_url)
             self.redirect(redirect_url)
             return
@@ -104,7 +113,7 @@ class AuthWxLoginStep2Handler(BaseHandler):
         self.set_secure_cookie("access_token", session_ticket['access_token'])
         self.set_secure_cookie("expires_at", str(session_ticket['expires_at']))
         self.set_secure_cookie("account_id", session_ticket['account_id'])
-        self.create_club_user(CLUB_ID, session_ticket['account_id'])
+        self.create_club_user(club_id, session_ticket['account_id'])
 
         login_next = self.get_secure_cookie("login_next")
         self.redirect(login_next)
