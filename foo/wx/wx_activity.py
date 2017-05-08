@@ -119,6 +119,7 @@ class WxActivityHistoryListHandler(BaseHandler):
         club = self.get_club_basic_info(club_id)
         private = 0
         activities = self.get_activities(club_id, ACTIVITY_STATUS_COMPLETED, private)
+        logging.info("GET activities %r", activities)
 
         _now = time.time()
         # # 查询结果，不包含隐藏的活动
@@ -136,7 +137,7 @@ class WxActivityHistoryListHandler(BaseHandler):
         for activity in activities:
             # _member_min = int(activity['member_min'])
             # _member_max = int(activity['member_max'])
-            activity['phase'] = '0'
+            activity['phase'] = '3'
             if _now > activity['end_time']:
                 activity['phase'] = '3'
             # else:

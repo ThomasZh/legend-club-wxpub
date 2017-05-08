@@ -165,6 +165,7 @@ class BaseHandler(tornado.web.RequestHandler):
         url = url_concat(API_DOMAIN + "/api/clubs/" + club_id, params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
+        logging.info("got response.body %r", response.body)
         data = json_decode(response.body)
         club = data['rs']
         return club
