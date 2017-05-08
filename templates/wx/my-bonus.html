@@ -16,15 +16,13 @@
     <link rel="stylesheet" href="{{ static_url('light7/css/light7-swiper.min.css') }}">
     <!--include Vux style-->
     <link rel="stylesheet" href="{{ static_url('vux/dist/vux.css') }}">
+    <!-- customer css files -->
+    <link rel="stylesheet" href="{{ static_url('customer/css/assem-self.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/self.css') }}">
     <!--include Vue yourself-->
     <script src="{{ static_url('vux/vue.js') }}"></script>
     <!--include the components you need-->
     <script src="{{ static_url('vux/dist/components/rater/index.js') }}"></script>
-
-
-    <!-- customer css files -->
-    <link rel="stylesheet" href="{{ static_url('customer/css/assem-self.css') }}">
-
 <!--
     <link rel="stylesheet" href="{{ static_url('suimobile/css/sm.css') }}">
     <link rel="stylesheet" href="{{ static_url('suimobile/css/sm-extend.css') }}">
@@ -49,19 +47,16 @@
               <ul>
                 {% for bonus in vendor_bonus %}
                 <li>
-                  <a href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{ bonus['res_id'] }}" class="item-link item-content">
-                    <div class="item-media"><img src="{{ bonus['bk_img_url'] }}" style='width: 4rem;'></div>
-                    <div class="item-inner">
+                  <a href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{ bonus['order_id'] }}" class="item-link item-content">
+                    <div class="item-inner bonus_box">
                       <div class="item-title-row">
+                        <div class="item-text" id="bouns_title">{{ bonus['item_name'] }}</div>
                         <div class="item-after">{{ bonus['create_time'] }}</div>
                       </div>
-                      {% if bonus['type'] == 1 %}
-                        <div class="item-subtitle">分享活动</div>
-                        <div class="item-text">+{{ bonus['bonus'] }}个积分</div>
-                      {% elif bonus['type'] == 3 %}
-                        <div class="item-subtitle">购买活动</div>
-                        <div class="item-text">{{ bonus['bonus'] }}个积分</div>
-                      {% end %}
+                      <div class="item-title-row">
+                        <div class="item-after">{{ bonus['action'] }}</div>
+                        <div class="item-text">积分 {{ bonus['points'] }}</div>
+                      </div>
                     </div>
                   </a>
                 </li>
@@ -79,7 +74,6 @@
       <script type='text/javascript' src='{{ static_url("light7/js/light7.min.js") }}' charset='utf-8'></script>
       <script type='text/javascript' src='{{ static_url("light7/js/light7-swiper.min.js") }}' charset='utf-8'></script>
       <script type='text/javascript' src='{{ static_url("light7/js/i18n/cn.js") }}' charset='utf-8'></script>
-
       <!-- customer js files -->
       <script type='text/javascript' src='{{ static_url("js/bf-app.js") }}' charset='utf-8'></script>
 

@@ -219,30 +219,48 @@ class WxPersonalCenterHandler(BaseHandler):
 
 # 我的历史订单列表页 @2016/06/07
 # 微信用户授权成功后回调用
-class WxPcOrderListHandler(tornado.web.RequestHandler):
+class WxPcOrderListHandler(AuthorizationHandler):
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
         _tab = self.get_argument("tab", "")
         logging.info("got _tab %r", _tab)
 
+        access_token = self.get_access_token()
         #_account_id = "728cce49388f423c9c464c4a97cc0a1a"
         account_id = self.get_secure_cookie("account_id")
         logging.info("got account_id=[%r] from cookie", account_id)
 
-        before = time.time()
-        orders = order_dao.order_dao().query_pagination_by_account(account_id, before, PAGE_SIZE_LIMIT)
+        params = {"filter":"account", "account_id":account_id, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/orders", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        orders = rs['data']
+
         for order in orders:
-            activity = activity_dao.activity_dao().query(order['activity_id'])
-            order['activity_title'] = activity['title']
-            logging.info("got activity_title %r", order['activity_title'])
-            order['activity_bk_img_url'] = activity['bk_img_url']
-            order['create_time'] = timestamp_datetime(order['create_time'])
-            # 价格转换成元
-            order['total_amount'] = float(order['total_amount']) / 100
-            for base_fee in order['base_fees']:
-                # 价格转换成元
-                order['activity_amount'] = float(base_fee['fee']) / 100
+            # 下单时间，timestamp -> %m月%d 星期%w
+            order['create_time'] = timestamp_datetime(float(order['create_time']))
+            # 合计金额
+            order['amount'] = float(order['amount']) / 100
+            order['actual_payment'] = float(order['actual_payment']) / 100
+        #
+        # before = time.time()
+        # orders = order_dao.order_dao().query_pagination_by_account(account_id, before, PAGE_SIZE_LIMIT)
+        # for order in orders:
+        #     activity = activity_dao.activity_dao().query(order['activity_id'])
+        #     order['activity_title'] = activity['title']
+        #     logging.info("got activity_title %r", order['activity_title'])
+        #     order['activity_bk_img_url'] = activity['bk_img_url']
+        #     order['create_time'] = timestamp_datetime(order['create_time'])
+        #     # 价格转换成元
+        #     order['total_amount'] = float(order['total_amount']) / 100
+        #     for base_fee in order['base_fees']:
+        #         # 价格转换成元
+        #         order['activity_amount'] = float(base_fee['fee']) / 100
 
         self.render('wx/my-orders.html',
                 vendor_id=vendor_id,
@@ -298,13 +316,15 @@ class WxPcVoucherListHandler(tornado.web.RequestHandler):
 
 
 # 我的微信订单详情页 @2016/06/08
-class WxPcOrderInfoHandler(tornado.web.RequestHandler):
+class WxPcOrderInfoHandler(AuthorizationHandler):
     def get(self, vendor_id, order_id):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got order_id %r in uri", order_id)
 
-        order = order_dao.order_dao().query(order_id)
-        _activity = activity_dao.activity_dao().query(order['activity_id'])
+        # order = order_dao.order_dao().query(order_id)
+        order = self.get_symbol_object(order_id)
+        logging.info("got order %r in uri", order)
+        _activity = self.get_activity(order['_id'])
         # FIXME, 将服务模板转为字符串，客户端要用
         _servTmpls = _activity['ext_fee_template']
         _activity['json_serv_tmpls'] = tornado.escape.json_encode(_servTmpls);
@@ -501,35 +521,61 @@ class WxPcOrderRepayHandler(tornado.web.RequestHandler):
 
 
 # 我的历史积分列表页
-class WxPcBonusListHandler(tornado.web.RequestHandler):
+class WxPcBonusListHandler(AuthorizationHandler):
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
         account_id = self.get_secure_cookie("account_id")
+        access_token = self.get_access_token()
 
-        _customer_profile = vendor_member_dao.vendor_member_dao().query(vendor_id, account_id)
+        # 获取当前积分
+        url = API_DOMAIN + "/api/clubs/"+vendor_id+"/users/" + account_id
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        _customer_profile = data['rs']
+        bonus_num = _customer_profile['remaining_points']
 
-        _before = time.time()
-        _vendor_bonus = bonus_dao.bonus_dao().query_pagination_by_vendor(vendor_id, account_id, _before, PAGE_SIZE_LIMIT)
+        #  查询积分变化
+        params = {"filter":"account", "account_id":account_id, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/points", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        orders = rs['data']
 
-        for _bonus in _vendor_bonus:
-            if _bonus['type'] == 1: # shared activity
-                _activity = activity_dao.activity_dao().query(_bonus['res_id'])
-                _bonus['title'] = _activity['title']
-                _bonus['bk_img_url'] = _activity['bk_img_url']
-            elif _bonus['type'] == 3: # buy activity
-                _activity = activity_dao.activity_dao().query(_bonus['res_id'])
-                _bonus['title'] = _activity['title']
-                _bonus['bk_img_url'] = _activity['bk_img_url']
-                logging.info("got bonus======== %r", _bonus)
+        for order in orders:
+            # 下单时间，timestamp -> %m月%d 星期%w
+            order['create_time'] = timestamp_date(float(order['create_time']))
+            if order['points'] > 0:
+                order['points'] = '+' + str(order['points'])
 
-            _bonus['create_time'] = timestamp_datetime(_bonus['create_time'])
-            logging.info("got bonus type %r", _bonus['type'])
+        # _before = time.time()
+        # _vendor_bonus = bonus_dao.bonus_dao().query_pagination_by_vendor(vendor_id, account_id, _before, PAGE_SIZE_LIMIT)
+        #
+        # for _bonus in _vendor_bonus:
+        #     if _bonus['type'] == 1: # shared activity
+        #         _activity = activity_dao.activity_dao().query(_bonus['res_id'])
+        #         _bonus['title'] = _activity['title']
+        #         _bonus['bk_img_url'] = _activity['bk_img_url']
+        #     elif _bonus['type'] == 3: # buy activity
+        #         _activity = activity_dao.activity_dao().query(_bonus['res_id'])
+        #         _bonus['title'] = _activity['title']
+        #         _bonus['bk_img_url'] = _activity['bk_img_url']
+        #         logging.info("got bonus======== %r", _bonus)
+        #
+        #     _bonus['create_time'] = timestamp_datetime(_bonus['create_time'])
+        #     logging.info("got bonus type %r", _bonus['type'])
 
         self.render('wx/my-bonus.html',
                 vendor_id=vendor_id,
-                bonus_num=_customer_profile['bonus'],
-                vendor_bonus=_vendor_bonus)
+                bonus_num=bonus_num,
+                vendor_bonus=orders)
 
 
 # 我的证书列表页
