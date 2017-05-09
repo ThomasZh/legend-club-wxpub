@@ -324,7 +324,7 @@ class WxPcOrderInfoHandler(AuthorizationHandler):
         # order = order_dao.order_dao().query(order_id)
         order = self.get_symbol_object(order_id)
         logging.info("got order %r in uri", order)
-        _activity = self.get_activity(order['_id'])
+        _activity = self.get_activity(order['item_id'])
         logging.info("got _activity %r", _activity)
         # FIXME, 将服务模板转为字符串，客户端要用
         _servTmpls = _activity['ext_fee_template']
@@ -356,14 +356,15 @@ class WxPcOrderInfoHandler(AuthorizationHandler):
         # _activity['amount'] = float(_activity['amount']) / 100
 
         order_fees = []
-        for ext_fee_id in order['ext_fees']:
-            for template in _activity['ext_fee_template']:
-                if ext_fee_id == template['_id']:
-                    # 价格转换成元
-                    _fee = float(template['fee']) / 100
-                    json = {"_id":ext_fee_id, "name":template['name'], "fee":_fee}
-                    order_fees.append(json)
-                    break
+        if order.has_key('ext_fees'):
+            for ext_fee_id in order['ext_fees']:
+                for template in _activity['ext_fee_template']:
+                    if ext_fee_id == template['_id']:
+                        # 价格转换成元
+                        _fee = float(template['fee']) / 100
+                        json = {"_id":ext_fee_id, "name":template['name'], "fee":_fee}
+                        order_fees.append(json)
+                        break
         order['fees'] = order_fees
 
         order_insurances = []

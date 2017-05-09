@@ -341,6 +341,7 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
             for order in orders:
                 if (_timestamp - order['create_time']) < 60:
                     self.redirect('/bf/wx/orders/wait')
+                    return
 
         # 订单总金额
         _total_amount = self.get_argument("total_amount", 0)

@@ -21,7 +21,7 @@
   <script src="{{ static_url('vux/vue.js') }}"></script>
   <!--include the components you need-->
   <script src="{{ static_url('vux/dist/components/rater/index.js') }}"></script>
-  
+
 </head>
 <body ontouchstart class="padding-bottom-70">
   <!-- top panel -->
@@ -34,7 +34,7 @@
     <a href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{activity['_id']}}">
       <div class="ui-whitespace ui-flex">
          <div class="line-hight-nml ">
-            <img src="{{activity['bk_img_url']}}" class="thumbnail ">
+            <img src="{{ activity['img'] }}" class="thumbnail ">
          </div>
          <div class="right-item-info">
            <p class="ui-txt-default ">{{activity['title']}}</p>
@@ -71,24 +71,24 @@
         <span class="flt-right">{{ order['create_time'] }}</span></p>
       <p class="ui-txt-default higher">订单状态：
         <span class="flt-right">
-          {% if order['status'] == 10 %}
+          {% if order['pay_status'] == 10 %}
             <span class="red">下单失败</span>
-          {% elif order['status'] == 20 %}
+          {% elif order['pay_status'] == 20 %}
             <span class="red">待支付</span>
-          {% elif order['status'] == 30 %}
+          {% elif order['pay_status'] == 30 %}
             <span class="red">待填报</span>
-          {% elif order['status'] == 31 %}
+          {% elif order['pay_status'] == 31 %}
             <span class="red">支付失败</span>
-          {% elif order['status'] == 50 %}
+          {% elif order['pay_status'] == 50 %}
             <span class=" ">待骑行</span>
-          {% elif order['status'] == 60 %}
+          {% elif order['pay_status'] == 60 %}
             <span class=" ">待评价</span>
-          {% elif order['status'] == 70 %}
+          {% elif order['pay_status'] == 70 %}
             <span class="green">活动完成</span>
           {% end %}
         </span></p>
       <p class="ui-txt-default higher">参加人数：<span class="applicant_num flt-right">0</span></p>
-      <p class="ui-txt-default higher">费用：<span class="flt-right">{{order['activity_amount']}}元/人</span></p>
+      <p class="ui-txt-default higher">费用：<span class="flt-right">{{ float(order['amount'])/100 }}元/人</span></p>
       <div class="ui-txt-default higher">附加服务：</div>
       <div class="ui-txt-info ui-txt-justify extserv-items"></div>
       <div class="ui-txt-default higher">保险：</div>
@@ -115,31 +115,31 @@
     <!-- 相应的要设定不同的 href值 -->
     <!-- @2016/06/13 -->
     <div class="ui-col ui-flex ui-flex-align-center ui-flex-pack-center green mock-green-btn">
-      {% if order['status'] == 10 %}
+      {% if order['pay_status'] == 10 %}
         <a id="odr-status-btn" href="#" class="ui-txt-white pay-btn full-width">
           下单失败
         </a>
-      {% elif order['status'] == 20 %}
+      {% elif order['pay_status'] == 20 %}
         <a id="odr-status-btn" href="/bf/wxrepay?vendor_id={{ vendor_id }}&order_id={{ order['_id'] }}" class="ui-txt-white pay-btn full-width">
           去支付
         </a>
-      {% elif order['status'] == 30 %}
+      {% elif order['pay_status'] == 30 %}
         <a id="odr-status-btn" href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{ order['activity_id'] }}/apply/step3?order_id={{ order['_id'] }}" class="ui-txt-white pay-btn full-width">
           填写报名
         </a>
-      {% elif order['status'] == 31 %}
+      {% elif order['pay_status'] == 31 %}
         <a id="odr-status-btn" href="#" class="ui-txt-white pay-btn full-width">
           支付失败
         </a>
-      {% elif order['status'] == 50 %}
+      {% elif order['pay_status'] == 50 %}
         <a id="odr-status-btn" href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}/applys" class="ui-txt-white pay-btn full-width">
           查看报名
         </a>
-      {% elif order['status'] == 60 %}
+      {% elif order['pay_status'] == 60 %}
         <a id="odr-status-btn" href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}/evaluate" class="ui-txt-white pay-btn full-width">
           评价
         </a>
-      {% elif order['status'] == 70 %}
+      {% elif order['pay_status'] == 70 %}
         <a id="odr-status-btn" href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}/applys" class="ui-txt-white pay-btn full-width">
           查看报名
         </a>

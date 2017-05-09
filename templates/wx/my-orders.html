@@ -207,7 +207,7 @@
               <ul>
 {% for order in orders %}
                 <li>
-                  <a href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['item_id'] }}" class="item-link item-content">
+                  <a href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}" class="item-link item-content">
                     <div class="item-inner">
                       <div class="item-title-row">
                         <div class="item-after">{{ order['create_time'] }}</div>
