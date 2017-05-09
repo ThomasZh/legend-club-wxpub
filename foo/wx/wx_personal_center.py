@@ -468,19 +468,21 @@ class WxPcOrderEvaluateHandler(tornado.web.RequestHandler):
         self.redirect('/bf/wx/vendors/' + vendor_id + '/pc')
 
 
-class WxPcOrderRepayHandler(tornado.web.RequestHandler):
+class WxPcOrderRepayHandler(AuthorizationHandler):
     def get(self):
         vendor_id = self.get_argument("vendor_id", "")
         logging.info("got vendor_id %r", vendor_id)
         order_id = self.get_argument("order_id", "")
         logging.info("got order_id %r", order_id)
 
-        _old_order = order_dao.order_dao().query(order_id)
+        _old_order = self.get_symbol_object(order_id)
+        logging.info("got _old_order %r", _old_order)
         # 查询过去是否填报，有则跳过此步骤。主要是防止用户操作回退键，重新回到此页面
-        if _old_order['status'] > 20 and _old_order['status'] != 31:
+        if _old_order['pay_status'] > 20 and _old_order['pay_status'] != 31:
             return
         else:
-            _activity = activity_dao.activity_dao().query(_old_order['activity_id'])
+            _activity = self.get_activity(_old_order['item_id'])
+            logging.info("got _activity %r", _activity)
             # FIXME, 将服务模板转为字符串，客户端要用
             _servTmpls = _activity['ext_fee_template']
             _activity['json_serv_tmpls'] = tornado.escape.json_encode(_servTmpls);
@@ -517,7 +519,8 @@ class WxPcOrderRepayHandler(tornado.web.RequestHandler):
 
             self.render('wx/order-confirm.html',
                 vendor_id=vendor_id,
-                return_msg='', order_return=_order_return,
+                return_msg='',
+                order_return=_order_return,
                 activity=_activity,
                 order=_old_order)
 

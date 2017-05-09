@@ -88,7 +88,7 @@
           {% end %}
         </span></p>
       <p class="ui-txt-default higher">参加人数：<span class="applicant_num flt-right">0</span></p>
-      <p class="ui-txt-default higher">费用：<span class="flt-right">{{ float(order['amount'])/100 }}元/人</span></p>
+      <p class="ui-txt-default higher">基础费用：<span class="flt-right">{{ order['activity_amount'] }}元/人</span></p>
       <div class="ui-txt-default higher">附加服务：</div>
       <div class="ui-txt-info ui-txt-justify extserv-items"></div>
       <div class="ui-txt-default higher">保险：</div>
@@ -124,7 +124,7 @@
           去支付
         </a>
       {% elif order['pay_status'] == 30 %}
-        <a id="odr-status-btn" href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{ order['activity_id'] }}/apply/step3?order_id={{ order['_id'] }}" class="ui-txt-white pay-btn full-width">
+        <a id="odr-status-btn" href="/bf/wx/vendors/{{ vendor_id }}/activitys/{{ order['item_id'] }}/apply/step3?order_id={{ order['_id'] }}" class="ui-txt-white pay-btn full-width">
           填写报名
         </a>
       {% elif order['pay_status'] == 31 %}
@@ -193,9 +193,9 @@
 
       $('.ui-loading-wrap').addClass('hidden');
       // 人数
-      $('.applicant_num').html(order.applicant_num+'人');
+      $('.applicant_num').html(order.quantity+'人');
       // 总金额
-      $('.total_fees').html(order.total_amount);
+      $('.total_fees').html(order.amount);
       // 购买的附加服务
       var ext_fees = order['ext_fees'];
       for(var i in ext_fees){
@@ -230,7 +230,7 @@
       }
 
       // 获取积分选项，并与订单中的配置比较显示
-      var bonus = order['bonus'];
+      var bonus = order['points'];
       if (bonus < 0) {
         var inrHTML = '<p class="padding-left-10">'
           +'使用积分抵'

@@ -57,30 +57,30 @@
             <div class="list-block media-list">
               <ul>
 {% for order in orders %}
-  {% if order['_status'] == 20 %}
+  {% if order['pay_status'] == 20 %}
                 <li>
                   <a href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}" class="item-link item-content">
                     <div class="item-inner">
                       <div class="item-title-row">
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
-                      <div class="item-subtitle">{{ order['activity_title'] }}</div>
-                      {% if order['_status'] == 10 %}
+                      <div class="item-subtitle">{{ order['item_name'] }}</div>
+                      {% if order['pay_status'] == 10 %}
                         <span class="flt-right-30">下单失败</span>
-                      {% elif order['_status'] == 20 %}
+                      {% elif order['pay_status'] == 20 %}
                         <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 30 %}
+                      {% elif order['pay_status'] == 30 %}
                         <span class="flt-right-30 red">待填报</span>
-                      {% elif order['_status'] == 31 %}
+                      {% elif order['pay_status'] == 31 %}
                         <span class="flt-right-30">支付失败</span>
-                      {% elif order['_status'] == 50 %}
+                      {% elif order['pay_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
-                      {% elif order['_status'] == 60 %}
+                      {% elif order['pay_status'] == 60 %}
                         <span class="flt-right-30">待评价</span>
-                      {% elif order['_status'] == 70 %}
+                      {% elif order['pay_status'] == 70 %}
                         <span class="flt-right-30">活动完成</span>
                       {% end %}
-                      <div class="item-text">{{ order['total_amount'] }}元</div>
+                      <div class="item-text">{{ order['amount'] }}元</div>
                     </div>
                   </a>
                 </li>
@@ -94,30 +94,30 @@
             <div class="list-block media-list">
               <ul>
 {% for order in orders %}
-  {% if order['_status'] == 30 %}
+  {% if order['pay_status'] == 30 %}
                 <li>
                   <a href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}" class="item-link item-content">
                     <div class="item-inner">
                       <div class="item-title-row">
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
-                      <div class="item-subtitle">{{ order['activity_title'] }}</div>
-                      {% if order['_status'] == 10 %}
+                      <div class="item-subtitle">{{ order['item_name'] }}</div>
+                      {% if order['pay_status'] == 10 %}
                         <span class="flt-right-30">下单失败</span>
-                      {% elif order['_status'] == 20 %}
+                      {% elif order['pay_status'] == 20 %}
                         <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 30 %}
+                      {% elif order['pay_status'] == 30 %}
                         <span class="flt-right-30 red">待填报</span>
-                      {% elif order['_status'] == 31 %}
+                      {% elif order['pay_status'] == 31 %}
                         <span class="flt-right-30">支付失败</span>
-                      {% elif order['_status'] == 50 %}
+                      {% elif order['pay_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
-                      {% elif order['_status'] == 60 %}
+                      {% elif order['pay_status'] == 60 %}
                         <span class="flt-right-30">待评价</span>
-                      {% elif order['_status'] == 70 %}
+                      {% elif order['pay_status'] == 70 %}
                         <span class="flt-right-30">活动完成</span>
                       {% end %}
-                      <div class="item-text">{{ order['total_amount'] }}元</div>
+                      <div class="item-text">{{ order['amount'] }}元</div>
                     </div>
                   </a>
                 </li>
@@ -131,30 +131,30 @@
             <div class="list-block media-list">
               <ul>
 {% for order in orders %}
-  {% if order['_status'] == 50 %}
+  {% if order['pay_status'] == 50 %}
                 <li>
                   <a href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}" class="item-link item-content">
                     <div class="item-inner">
                       <div class="item-title-row">
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
-                      <div class="item-subtitle">{{ order['activity_title'] }}</div>
-                      {% if order['_status'] == 10 %}
+                      <div class="item-subtitle">{{ order['item_name'] }}</div>
+                      {% if order['pay_status'] == 10 %}
                         <span class="flt-right-30">下单失败</span>
-                      {% elif order['_status'] == 20 %}
+                      {% elif order['pay_status'] == 20 %}
                         <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 30 %}
+                      {% elif order['pay_status'] == 30 %}
                         <span class="flt-right-30 red">待填报</span>
-                      {% elif order['_status'] == 31 %}
+                      {% elif order['pay_status'] == 31 %}
                         <span class="flt-right-30">支付失败</span>
-                      {% elif order['_status'] == 50 %}
+                      {% elif order['pay_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
-                      {% elif order['_status'] == 60 %}
+                      {% elif order['pay_status'] == 60 %}
                         <span class="flt-right-30">待评价</span>
-                      {% elif order['_status'] == 70 %}
+                      {% elif order['pay_status'] == 70 %}
                         <span class="flt-right-30">活动完成</span>
                       {% end %}
-                      <div class="item-text">{{ order['total_amount'] }}元</div>
+                      <div class="item-text">{{ order['amount'] }}元</div>
                     </div>
                   </a>
                 </li>
@@ -169,30 +169,30 @@
             <div class="list-block media-list">
               <ul>
 {% for order in orders %}
-  {% if order['_status'] == 60 %}
+  {% if order['pay_status'] == 60 %}
                 <li>
                   <a href="/bf/wx/vendors/{{ vendor_id }}/pc/orders/{{ order['_id'] }}" class="item-link item-content">
                     <div class="item-inner">
                       <div class="item-title-row">
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
-                      <div class="item-subtitle">{{ order['activity_title'] }}</div>
-                      {% if order['_status'] == 10 %}
+                      <div class="item-subtitle">{{ order['item_name'] }}</div>
+                      {% if order['pay_status'] == 10 %}
                         <span class="flt-right-30">下单失败</span>
-                      {% elif order['_status'] == 20 %}
+                      {% elif order['pay_status'] == 20 %}
                         <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 30 %}
+                      {% elif order['pay_status'] == 30 %}
                         <span class="flt-right-30 red">待填报</span>
-                      {% elif order['_status'] == 31 %}
+                      {% elif order['pay_status'] == 31 %}
                         <span class="flt-right-30">支付失败</span>
-                      {% elif order['_status'] == 50 %}
+                      {% elif order['pay_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
-                      {% elif order['_status'] == 60 %}
+                      {% elif order['pay_status'] == 60 %}
                         <span class="flt-right-30">待评价</span>
-                      {% elif order['_status'] == 70 %}
+                      {% elif order['pay_status'] == 70 %}
                         <span class="flt-right-30">活动完成</span>
                       {% end %}
-                      <div class="item-text">{{ order['total_amount'] }}元</div>
+                      <div class="item-text">{{ order['amount'] }}元</div>
                     </div>
                   </a>
                 </li>
