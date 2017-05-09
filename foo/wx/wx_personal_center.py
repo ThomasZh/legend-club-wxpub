@@ -325,6 +325,7 @@ class WxPcOrderInfoHandler(AuthorizationHandler):
         order = self.get_symbol_object(order_id)
         logging.info("got order %r in uri", order)
         _activity = self.get_activity(order['_id'])
+        logging.info("got _activity %r", _activity)
         # FIXME, 将服务模板转为字符串，客户端要用
         _servTmpls = _activity['ext_fee_template']
         _activity['json_serv_tmpls'] = tornado.escape.json_encode(_servTmpls);
