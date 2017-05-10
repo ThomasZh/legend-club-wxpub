@@ -299,6 +299,7 @@ class WxActivityApplyStep1Handler(AuthorizationHandler):
         logging.info("got wx_app_id %r in uri", wx_app_id)
 
         activity = self.get_activity(activity_id)
+        logging.info("got activity %r", activity)
         # activity = activity_dao.activity_dao().query(activity_id)
         activity['begin_time'] = timestamp_friendly_date(float(activity['begin_time'])) # timestamp -> %m月%d 星期%w
         activity['end_time'] = timestamp_friendly_date(float(activity['end_time'])) # timestamp -> %m月%d 星期%w
