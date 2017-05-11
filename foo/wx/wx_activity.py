@@ -190,6 +190,9 @@ class WxActivityInfoHandler(BaseHandler):
         logging.info("got _member_min %r in uri", _member_min)
         logging.info("got _member_max %r in uri", _member_max)
 
+        if not _activity.has_key('_status'):
+            _activity['_status'] = ACTIVITY_STATUS_DRAFT
+
         if _activity['_status'] > ACTIVITY_STATUS_RECRUIT:
             _activity['phase'] = '3'
         else:
