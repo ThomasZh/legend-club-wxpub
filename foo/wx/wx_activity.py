@@ -198,7 +198,7 @@ class WxActivityInfoHandler(BaseHandler):
         elif _activity['_status'] > ACTIVITY_STATUS_RECRUIT:
             _activity['phase'] = '3'
         else:
-            if _now > _activity['end_time']:
+            if _now > _activity['apply_end_time']:
                 _activity['phase'] = '3'
             else:
                 # _applicant_num = apply_dao.apply_dao().count_by_activity(_activity['_id'])
