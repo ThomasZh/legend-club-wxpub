@@ -193,7 +193,9 @@ class WxActivityInfoHandler(BaseHandler):
         if not _activity.has_key('_status'):
             _activity['_status'] = ACTIVITY_STATUS_DRAFT
 
-        if _activity['_status'] > ACTIVITY_STATUS_RECRUIT:
+        if _activity['_status'] < ACTIVITY_STATUS_RECRUIT:
+            _activity['phase'] = '3'
+        elif _activity['_status'] > ACTIVITY_STATUS_RECRUIT:
             _activity['phase'] = '3'
         else:
             if _now > _activity['end_time']:
