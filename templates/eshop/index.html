@@ -207,7 +207,7 @@
 
           $.ajax({
             type: "GET",
-            url: "{{ API_DOMAIN }}/api/activities?idx=" + idx + "&limit=" + limit + "&filter=club&club_id={{ club['_id'] }}&_status=20",
+            url: "{{ API_DOMAIN }}/api/items?idx=" + idx + "&limit=" + limit + "&filter=club&club_id={{ club['_id'] }}&_status=20",
             async: true,
             dataType: "json",
             contentType: 'application/json',
