@@ -64,14 +64,18 @@
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
                       <div class="item-subtitle">{{ order['item_name'] }}</div>
-                      {% if order['pay_status'] == 10 %}
-                        <span class="flt-right-30">下单失败</span>
-                      {% elif order['pay_status'] == 20 %}
-                        <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 0 %}
-                        <span class="flt-right-30 red">待填报</span>
-                      {% elif order['pay_status'] == 31 %}
-                        <span class="flt-right-30">支付失败</span>
+                      {% if order['_status'] == 0 %}
+                        {% if order['pay_status'] == 10 %}
+                          <span class="flt-right-30">待付款</span>
+                        {% elif order['pay_status'] == 20 %}
+                          <span class="flt-right-30 red">待付款</span>
+                        {% elif order['pay_status'] == 21 %}
+                          <span class="flt-right-30 red">下单失败</span>
+                        {% elif order['pay_status'] == 31 %}
+                          <span class="flt-right-30">支付失败</span>
+                        {% elif order['pay_status'] == 30 %}
+                          <span class="flt-right-30 red">待填报</span>
+                        {% end %}
                       {% elif order['_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
                       {% elif order['_status'] == 60 %}
@@ -101,14 +105,18 @@
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
                       <div class="item-subtitle">{{ order['item_name'] }}</div>
-                      {% if order['pay_status'] == 10 %}
-                        <span class="flt-right-30">下单失败</span>
-                      {% elif order['pay_status'] == 20 %}
-                        <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 0 %}
-                        <span class="flt-right-30 red">待填报</span>
-                      {% elif order['pay_status'] == 31 %}
-                        <span class="flt-right-30">支付失败</span>
+                      {% if order['_status'] == 0 %}
+                        {% if order['pay_status'] == 10 %}
+                          <span class="flt-right-30">待付款</span>
+                        {% elif order['pay_status'] == 20 %}
+                          <span class="flt-right-30 red">待付款</span>
+                        {% elif order['pay_status'] == 21 %}
+                          <span class="flt-right-30 red">下单失败</span>
+                        {% elif order['pay_status'] == 31 %}
+                          <span class="flt-right-30">支付失败</span>
+                        {% elif order['pay_status'] == 30 %}
+                          <span class="flt-right-30 red">待填报</span>
+                        {% end %}
                       {% elif order['_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
                       {% elif order['_status'] == 60 %}
@@ -139,14 +147,18 @@
                         <div class="item-after">{{ order['create_time'] }}</div>
                       </div>
                       <div class="item-subtitle">{{ order['item_name'] }}</div>
-                      {% if order['pay_status'] == 10 %}
-                        <span class="flt-right-30">下单失败</span>
-                      {% elif order['pay_status'] == 20 %}
-                        <span class="flt-right-30 red">待付款</span>
-                      {% elif order['_status'] == 0 %}
-                        <span class="flt-right-30 red">待填报</span>
-                      {% elif order['pay_status'] == 31 %}
-                        <span class="flt-right-30">支付失败</span>
+                      {% if order['_status'] == 0 %}
+                        {% if order['pay_status'] == 10 %}
+                          <span class="flt-right-30">待付款</span>
+                        {% elif order['pay_status'] == 20 %}
+                          <span class="flt-right-30 red">待付款</span>
+                        {% elif order['pay_status'] == 21 %}
+                          <span class="flt-right-30 red">下单失败</span>
+                        {% elif order['pay_status'] == 31 %}
+                          <span class="flt-right-30">支付失败</span>
+                        {% elif order['pay_status'] == 30 %}
+                          <span class="flt-right-30 red">待填报</span>
+                        {% end %}
                       {% elif order['_status'] == 50 %}
                         <span class="flt-right-30">待骑行</span>
                       {% elif order['_status'] == 60 %}
