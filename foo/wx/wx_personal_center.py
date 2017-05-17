@@ -220,6 +220,7 @@ class WxPersonalCenterHandler(BaseHandler):
 # 我的历史订单列表页 @2016/06/07
 # 微信用户授权成功后回调用
 class WxPcOrderListHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
@@ -317,6 +318,7 @@ class WxPcVoucherListHandler(tornado.web.RequestHandler):
 
 # 我的微信订单详情页 @2016/06/08
 class WxPcOrderInfoHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, vendor_id, order_id):
         logging.info("got vendor_id %r in uri", vendor_id)
         logging.info("got order_id %r in uri", order_id)
@@ -469,6 +471,7 @@ class WxPcOrderEvaluateHandler(tornado.web.RequestHandler):
 
 
 class WxPcOrderRepayHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
         vendor_id = self.get_argument("vendor_id", "")
         logging.info("got vendor_id %r", vendor_id)
@@ -527,6 +530,7 @@ class WxPcOrderRepayHandler(AuthorizationHandler):
 
 # 我的历史积分列表页
 class WxPcBonusListHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, vendor_id):
         logging.info("got vendor_id %r in uri", vendor_id)
 
