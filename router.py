@@ -139,6 +139,7 @@ def map():
         (r"/MP_verify_rZAV6WH7J2WhqAIs.txt", getattr(comm, 'WxMpVerifyHandler')),
         (r"/MP_verify_UwBwsF7uHi57Xd6e.txt", getattr(comm, 'WxMpVerify2Handler')),
         (r'/MP_verify_qdkkOWgyqqLTrijx.txt', getattr(comm, 'WxMpVerify3Handler')),
+        (r'/MP_verify_5ADJKiXMdg0ycJjx.txt', getattr(comm, 'WxMpVerify4Handler')),
 
         # comm
         ('.*', getattr(comm, 'PageNotFoundHandler'))
