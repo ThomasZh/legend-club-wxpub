@@ -795,6 +795,6 @@ class WxHhaHandler(tornado.web.RequestHandler):
 
         vendor_hha = vendor_hha_dao.vendor_hha_dao().query(vendor_id)
 
-        self.render('wx/hold-harmless-agreements.html',
+        self.render('activity/hold-harmless-agreements.html',
                 vendor_id=vendor_id,
                 vendor_hha=vendor_hha)
