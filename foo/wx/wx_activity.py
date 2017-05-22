@@ -686,6 +686,8 @@ class WxActivityApplyStep3Handler(AuthorizationHandler):
 # 通知url必须为直接可访问的url，不能携带参数。示例：notify_url：“https://pay.weixin.qq.com/wxpay/pay.action”
 class WxOrderNotifyHandler(BaseHandler):
     def post(self):
+        logging.info("POST %r", self.request.uri)
+
         # 返回参数
         #<xml>
         # <appid><![CDATA[wxaa328c83d3132bfb]]></appid>\n
@@ -773,6 +775,33 @@ class WxOrderNotifyHandler(BaseHandler):
                     _json = {'vendor_id':vendor_id, 'account_id':order_index['account_id'], 'last_update_time':_timestamp,
                         'vouchers':_voucher_amount}
                     vendor_member_dao.vendor_member_dao().update(_json)
+
+                # 如果是分销的订单，给分销商加上积分
+                if order_index['distributor_id'] != DEFAULT_USER_ID:
+                    logging.info("distributor_id=[%r]", order_index['distributor_id'])
+                    # 获取分销商返点信息
+                    club = self.get_club_basic_info(vendor_id)
+                    logging.info("club=[%r]", club)
+                    league_id = club['league_id']
+                    discount_rate = self.get_discount_rate(league_id, order_index['item_id'])
+                    logging.info("discount_rate=[%r]", discount_rate)
+                    points = order_index['actual_payment'] * discount_rate / 100
+                    logging.info("points=[%r]", points)
+                    # 修改分销商积分信息
+                    bonus_points = {
+                        'org_id':vendor_id,
+                        'org_type':'club',
+                        'account_id':order_index['distributor_id'],
+                        'account_type':'club',
+                        'action': 'resale_activity',
+                        'item_type': order_index['item_type'],
+                        'item_id': order_index['item_id'],
+                        'item_name': order_index['item_name'],
+                        'bonus_type':'bonus',
+                        'points': points,
+                        'order_id': order_index['_id']
+                    }
+                    self.create_points(bonus_points)
         else:
             # 调用微信支付接口，返回成功
             # TODO: 更新订单索引中，订单状态pay_status,transaction_id,payed_total_fee

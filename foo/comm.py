@@ -156,6 +156,18 @@ def time_span(ts):
 
 class BaseHandler(tornado.web.RequestHandler):
 
+    def get_discount_rate(self, league_id, item_id):
+        url = API_DOMAIN + "/api/leagues/"+league_id+"/items/" + item_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        data = json_decode(response.body)
+        item = data['rs']
+        if item:
+            return item['discount_rate']
+        else:
+            return 0
+
+
     def get_club_detail_info(self, club_id):
         params = {"filter":"detail"}
         url = url_concat(API_DOMAIN + "/api/clubs/" + club_id, params)
