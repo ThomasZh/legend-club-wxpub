@@ -546,7 +546,8 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
             if order_index['points_used'] < 0:
                 # 修改个人积分信息
                 bonus_points = {
-                    'club_id':vendor_id,
+                    'org_id':vendor_id,
+                    'org_type':'club',
                     'account_id':_account_id,
                     'account_type':'user',
                     'action': 'buy_activity',
@@ -744,7 +745,8 @@ class WxOrderNotifyHandler(BaseHandler):
                 if points < 0:
                     # 修改个人积分信息
                     bonus_points = {
-                        'club_id':vendor_id,
+                        'org_id':vendor_id,
+                        'org_type':'club',
                         'account_id':order_index['account_id'],
                         'account_type':'user',
                         'action': 'buy_activity',

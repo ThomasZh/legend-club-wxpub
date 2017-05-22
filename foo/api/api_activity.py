@@ -168,7 +168,8 @@ class ApiActivityShareXHR(BaseHandler):
             points = int(_bonus_template['activity_shared'])
             # 修改个人积分信息
             bonus_points = {
-                'club_id':vendor_id,
+                'org_id':vendor_id,
+                'org_type':'club',
                 'account_id':_account_id,
                 'account_type':'user',
                 'action': 'share_activity',
