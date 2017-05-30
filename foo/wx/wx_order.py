@@ -62,52 +62,39 @@ from xml_parser import parseWxOrderReturn, parseWxPayReturn
 from global_const import *
 
 
-# 俱乐部首页
-class WxVendorInfoHandler(BaseHandler):
-    def get(self, club_id):
+# 俱乐部操作员查看订单详情
+class WxVendorOrderInfoHandler(BaseHandler):
+    def get(self, club_id, order_id):
         logging.info("GET %r", self.request.uri)
 
-        club = self.get_club_detail_info(club_id)
-        logging.info("GET club=[%r]", club)
+        access_token = DEFAULT_USER_ID
 
-        self.render('comm/about-us.html',
-                club=club)
+        order = self.get_order_index(order_id)
+        order['create_time'] = timestamp_datetime(order['create_time'])
+        order['amount'] = float(order['amount']) / 100
+        order['actual_payment'] = float(order['actual_payment']) / 100
 
+        activity = self.get_activity(order['item_id'])
 
-# 俱乐部管理员绑定微信号码
-class WxVendorBindingHandler(BaseHandler):
-    def get(self, club_id, account_id):
-        logging.info("GET %r", self.request.uri)
-
-        club = self.get_club_basic_info(club_id)
-        logging.info("GET club=[%r]", club)
-
-        self.render('ops/binding-wx.html',
-                club=club,
-                account_id=account_id)
-
-
-# 俱乐部管理员绑定微信号码
-class WxVendorBindingStep1Handler(AuthorizationHandler):
-    @tornado.web.authenticated  # if no session, redirect to login page
-    def get(self, club_id, account_id):
-        logging.info("GET %r", self.request.uri)
-
-        access_token = self.get_access_token()
-        headers = {"Authorization":"Bearer "+access_token}
-
-        club = self.get_club_basic_info(club_id)
-        logging.info("GET club=[%r]", club)
-
-        myinfo = self.get_myinfo_login()
-        wx_openid = myinfo['login']
-
-        url = API_DOMAIN + "/api/clubs/"+ club_id +"/operators/"+ account_id +"/binding"
+        params = {"filter":"order", "order_id":order_id, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/applies", params)
         http_client = HTTPClient()
-        _json = json_encode({'binding_type':'wx', 'binding_id':wx_openid})
-        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
         logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        applies = rs['data']
 
-        self.render('ops/binding-wx-success.html',
-                club=club,
-                account_id=account_id)
+        for _apply in applies:
+            # 下单时间，timestamp -> %m月%d 星期%w
+            _apply['create_time'] = timestamp_datetime(float(_apply['create_time']))
+            if _apply['gender'] == 'male':
+                _apply['gender'] = u'男'
+            else:
+                _apply['gender'] = u'女'
+
+        self.render('order/order.html',
+                activity=activity,
+                applies=applies,
+                order=order)

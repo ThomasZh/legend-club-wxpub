@@ -26,6 +26,7 @@ from tornado.escape import json_decode
 from tornado.httpclient import HTTPClient
 
 from xml_parser import parseWxOrderReturn, parseWxPayReturn
+from comm import *
 
 
 def getAccessTokenByClientCredential(appId, appSecret):
@@ -166,3 +167,37 @@ def getUserInfo(token, openid):
     logging.info("got response %r", response.body)
     userInfo = json_decode(response.body)
     return userInfo
+
+
+def sendOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, order):
+    # touser = 店小二openid
+    # template_id = 订单支付成功
+    # url = 模版链接跳转地址
+    data = {
+        "touser": openid,
+        "template_id": "JLZvZAg15uXYMp528a9ZXFj554YCNBCShPxvDStUsp8",
+        "url": wx_notify_domain + "/bf/wx/vendors/"+order['club_id']+"/orders/"+order['_id'],
+        "data": {
+           "first": {
+               "value":u"有用户下单并支付成功; 来自系统: " + wx_notify_domain,
+               "color":"#173177"
+           },
+           "orderMoneySum": {
+               "value":str(float(order['actual_payment'])/100)+"元",
+               "color":"#173177"
+           },
+           "orderProductNam": {
+               "value":order['item_name'],
+               "color":"#173177"
+           },
+           "Remark": {
+               "value":u"下单时间: " + timestamp_datetime(order['create_time']),
+               "color":"#173177"
+           },
+        }
+    }
+    _json = json_encode(data)
+    url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_json)
+    logging.info("got response %r", response.body)

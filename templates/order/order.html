@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>订单</title>
+  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta content="telephone=no" name="format-detection" />
+
+  <!-- 引入fontawesome字体 -->
+  <link rel="stylesheet" href="{{ static_url('css/font-awesome.min.css') }}">
+  <!-- 引入YDUI样式 -->
+  <link rel="stylesheet" href="{{ static_url('ydui/css/ydui.css') }}">
+  <!-- <link rel="stylesheet" href="{{ static_url('css/legend.css') }}" /> -->
+  <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+  <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+
+  <style>
+    .primary-color {
+      background-color: #01acc6 !important;
+    }
+  </style>
+
+  <!-- 引入YDUI自适应解决方案类库 -->
+  <script src="{{ static_url('ydui/js/ydui.flexible.js') }}"></script>
+
+</head>
+
+<body>
+
+  <section class="g-flexview">
+    <section id="mainForm" class="g-scrollview">
+
+      <div class="page__bd">
+        <div class="weui-panel weui-panel_access">
+          <div class="weui-panel__bd">
+            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
+              <div class="weui-media-box__hd">
+                <img class="weui-media-box__thumb" src="{{ activity['img'] }}!200x200" alt="">
+              </div>
+              <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title">{{ activity['title'] }}</h4>
+                <p class="weui-media-box__desc">{{ activity['subtitle'] }}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <form>
+        <div class="m-celltitle">订单详情</div>
+        <div class="m-cell">
+          <div class="cell-item">
+            <div class="cell-left">订单号：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['_id'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">俱乐部：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['club_name'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">会员：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['nickname'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">报名人数：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['quantity'] }}人" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">下单金额：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['amount'] }}元" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">实际支付：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['actual_payment'] }}元" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">支付状态：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['pay_status'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">订单状态：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['_status'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">下单时间：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ order['create_time'] }}" /></div>
+          </div>
+        </div>
+
+        <div class="m-celltitle">报名详情</div>
+        {% for apply in applies %}
+        <div class="m-cell">
+          <div class="cell-item">
+            <div class="cell-left">真实姓名：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ apply['real_name'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">性别：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ apply['gender'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">身份证号码：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ apply['id_code'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">电话号码：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ apply['phone'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">身高：</div>
+            <div class="cell-right"><input class="cell-input" value="{{ apply['height'] }}" /></div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">备注：</div>
+            <div class="cell-right">
+              <textarea class="cell-textarea">{{ apply['note'] }}</textarea>
+            </div>
+          </div>
+        </div>
+        {% end %}
+
+        <!-- 使用：样式模块以按钮为例 -->
+        <div class="m-button">
+          <button id="submit_btn" type="submit" class="btn-block btn-primary primary-color">关闭</button>
+        </div>
+      </form>
+
+    </section>
+  </section>
+
+  <!-- 引入jQuery 2.0+ -->
+  <script src="{{ static_url('js/jquery-2.2.4.min.js') }}"></script>
+  <!-- 引入YDUI脚本 -->
+  <script src="{{ static_url('ydui/js/ydui.js') }}"></script>
+  <script src="{{ static_url('jquery-weui/js/jquery-weui.min.js') }}"></script>
+
+</body>
+
+</html>

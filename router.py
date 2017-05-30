@@ -18,6 +18,7 @@ from wx import wx_triprouter
 from wx import wx_personal_center
 from wx import wx_vendor
 from wx import wx_wrap
+from wx import wx_order
 from wx import xml_parser
 from api import api_category
 from api import api_activity
@@ -69,6 +70,9 @@ def map():
 
         # 俱乐部首页
         (r"/bf/wx/vendors/([a-z0-9]*)/info", getattr(wx_vendor, 'WxVendorInfoHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/binding", getattr(wx_vendor, 'WxVendorBindingHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/binding/step1", getattr(wx_vendor, 'WxVendorBindingStep1Handler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/orders/([a-z0-9]*)", getattr(wx_order, 'WxVendorOrderInfoHandler')),
 
 
         # 推荐活动列表
