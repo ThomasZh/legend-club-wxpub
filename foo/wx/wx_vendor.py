@@ -196,10 +196,10 @@ class WxVendorResellerApplyCashoutStep1Handler(AuthorizationHandler):
         http_client = HTTPClient()
         _json = json_encode({'apply_account_id':apply_account_id,
                 'apply_org_id':club_id,
-                'apply_org_type':'club',
+                'apply_org_type':'distributor',
                 'apply_wx_openid':wx_openid,
                 'org_id':supplier_id,
-                'org_type':'club',
+                'org_type':'supplier',
                 'bonus_type':'bonus',
                 'bonus_point':distributor['accumulated_points']})
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
