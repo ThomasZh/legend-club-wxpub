@@ -111,3 +111,41 @@ class WxVendorBindingStep1Handler(AuthorizationHandler):
         self.render('ops/binding-wx-success.html',
                 club=club,
                 account_id=account_id)
+
+
+# 联盟管理员绑定微信号码
+class WxLeagueBindingHandler(BaseHandler):
+    def get(self, league_id, account_id):
+        logging.info("GET %r", self.request.uri)
+
+        # club = self.get_club_basic_info(club_id)
+        # logging.info("GET club=[%r]", club)
+        # ops = self.get_admin_info()
+        # logging.info("GET ops %r", ops)
+
+        self.render('ops/league-building-wx.html',
+                league_id=league_id,
+                account_id=account_id)
+
+
+# 联盟管理员绑定微信号码
+class WxLeagueBindingStep1Handler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, league_id, account_id):
+        logging.info("GET %r", self.request.uri)
+
+        access_token = self.get_access_token()
+        headers = {"Authorization":"Bearer "+access_token}
+
+        myinfo = self.get_myinfo_login()
+        wx_openid = myinfo['login']
+
+        url = API_DOMAIN + "/api/clubs/"+ league_id +"/operators/"+ account_id +"/binding"
+        http_client = HTTPClient()
+        _json = json_encode({'binding_type':'wx', 'binding_id':wx_openid})
+        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        logging.info("got response.body %r", response.body)
+
+        self.render('ops/league-building-wx-success.html',
+                league_id=league_id,
+                account_id=account_id)

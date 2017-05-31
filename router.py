@@ -70,8 +70,13 @@ def map():
 
         # 俱乐部首页
         (r"/bf/wx/vendors/([a-z0-9]*)/info", getattr(wx_vendor, 'WxVendorInfoHandler')),
+        # 俱乐部管理员绑定微信
         (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/binding", getattr(wx_vendor, 'WxVendorBindingHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/binding/step1", getattr(wx_vendor, 'WxVendorBindingStep1Handler')),
+        # 联盟管理员绑定微信
+        (r"/bf/wx/leagues/([a-z0-9]*)/administrators/([a-z0-9]*)/binding", getattr(wx_vendor, 'WxLeagueBindingHandler')),
+        (r"/bf/wx/leagues/([a-z0-9]*)/administrators/([a-z0-9]*)/binding/step1", getattr(wx_vendor, 'WxLeagueBindingStep1Handler')),
+
         (r"/bf/wx/vendors/([a-z0-9]*)/orders/([a-z0-9]*)", getattr(wx_order, 'WxVendorOrderInfoHandler')),
 
 
