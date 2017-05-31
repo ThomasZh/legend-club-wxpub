@@ -82,7 +82,7 @@ class WxVendorBindingHandler(BaseHandler):
         club = self.get_club_basic_info(club_id)
         logging.info("GET club=[%r]", club)
 
-        self.render('ops/binding-wx.html',
+        self.render('ops/ops-binding-wx.html',
                 club=club,
                 account_id=account_id)
 
@@ -108,7 +108,7 @@ class WxVendorBindingStep1Handler(AuthorizationHandler):
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
         logging.info("got response.body %r", response.body)
 
-        self.render('ops/binding-wx-success.html',
+        self.render('ops/ops-binding-wx-success.html',
                 club=club,
                 account_id=account_id)
 
@@ -123,7 +123,7 @@ class WxLeagueBindingHandler(BaseHandler):
         # ops = self.get_admin_info()
         # logging.info("GET ops %r", ops)
 
-        self.render('ops/league-building-wx.html',
+        self.render('ops/admin-building-wx.html',
                 league_id=league_id,
                 account_id=account_id)
 
@@ -140,12 +140,70 @@ class WxLeagueBindingStep1Handler(AuthorizationHandler):
         myinfo = self.get_myinfo_login()
         wx_openid = myinfo['login']
 
-        url = API_DOMAIN + "/api/clubs/"+ league_id +"/operators/"+ account_id +"/binding"
+        url = API_DOMAIN + "/api/leagues/"+ league_id +"/administrators/"+ account_id +"/binding"
         http_client = HTTPClient()
         _json = json_encode({'binding_type':'wx', 'binding_id':wx_openid})
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
         logging.info("got response.body %r", response.body)
 
-        self.render('ops/league-building-wx-success.html',
+        self.render('ops/admin-building-wx-success.html',
                 league_id=league_id,
                 account_id=account_id)
+
+
+# 分销商发起提现申请
+# /bf/wx/vendors/{club_id}/ops/{apply_account_id}/apply-cash-out/suppliers/{supplier_id}
+class WxVendorResellerApplyCashoutHandler(BaseHandler):
+    def get(self, club_id, apply_account_id, supplier_id):
+        logging.info("GET %r", self.request.uri)
+
+        supplier = self.get_club_basic_info(supplier_id)
+        logging.info("GET supplier=[%r]", supplier)
+
+        # 查询我在此供应商的积分余额
+        distributor = self.get_distributor(supplier_id, club_id)
+
+        self.render('ops/apply-cashout.html',
+                club_id=club_id,
+                apply_account_id=apply_account_id,
+                distributor=distributor,
+                supplier=supplier)
+
+
+# 分销商发起提现申请
+# /bf/wx/vendors/{club_id}/ops/{apply_account_id}/apply-cash-out/suppliers/{supplier_id}/step1
+class WxVendorResellerApplyCashoutStep1Handler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id, apply_account_id, supplier_id):
+        logging.info("GET %r", self.request.uri)
+
+        access_token = self.get_access_token()
+        headers = {"Authorization":"Bearer "+access_token}
+
+        myinfo = self.get_myinfo_login()
+        wx_openid = myinfo['login']
+
+        club = self.get_club_basic_info(club_id)
+        league_id = club['league_id']
+
+        # 查询我在此供应商的积分余额
+        distributor = self.get_distributor(supplier_id, club_id)
+
+        supplier = self.get_club_basic_info(supplier_id)
+        logging.info("GET supplier=[%r]", supplier)
+
+        url = API_DOMAIN + "/api/points/leagues/"+ league_id +"/apply-cash-out"
+        http_client = HTTPClient()
+        _json = json_encode({'apply_account_id':apply_account_id,
+                'apply_org_id':club_id,
+                'apply_org_type':'club',
+                'apply_wx_openid':wx_openid,
+                'org_id':supplier_id,
+                'org_type':'club',
+                'bonus_type':'bonus',
+                'bonus_point':distributor['accumulated_points']})
+        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        logging.info("got response.body %r", response.body)
+
+        self.render('ops/apply-cashout-success.html',
+                supplier=supplier)

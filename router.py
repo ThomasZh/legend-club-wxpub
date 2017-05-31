@@ -76,7 +76,10 @@ def map():
         # 联盟管理员绑定微信
         (r"/bf/wx/leagues/([a-z0-9]*)/administrators/([a-z0-9]*)/binding", getattr(wx_vendor, 'WxLeagueBindingHandler')),
         (r"/bf/wx/leagues/([a-z0-9]*)/administrators/([a-z0-9]*)/binding/step1", getattr(wx_vendor, 'WxLeagueBindingStep1Handler')),
-
+        # 分销商发起提现申请
+        (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/apply-cash-out/suppliers/([a-z0-9]*)", getattr(wx_vendor, 'WxVendorResellerApplyCashoutHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/apply-cash-out/suppliers/([a-z0-9]*)/step1", getattr(wx_vendor, 'WxVendorResellerApplyCashoutStep1Handler')),
+        # 订单详细信息
         (r"/bf/wx/vendors/([a-z0-9]*)/orders/([a-z0-9]*)", getattr(wx_order, 'WxVendorOrderInfoHandler')),
 
 

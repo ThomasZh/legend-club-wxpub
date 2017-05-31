@@ -156,6 +156,15 @@ def time_span(ts):
 
 class BaseHandler(tornado.web.RequestHandler):
 
+    def get_distributor(self, club_id, distributor_id):
+        url = API_DOMAIN + "/api/points/clubs/"+club_id+"/distributors/"+distributor_id+"/balance"
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        data = json_decode(response.body)
+        distributor = data['data']
+        return distributor
+
+
     def get_club_ops_wx(self, club_id):
         params = {"page":1,"limit":20}
         url = url_concat(API_DOMAIN + "/api/clubs/" + club_id+"/ops-wx", params)
