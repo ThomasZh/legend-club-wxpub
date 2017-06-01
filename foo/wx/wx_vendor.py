@@ -205,5 +205,9 @@ class WxVendorResellerApplyCashoutStep1Handler(AuthorizationHandler):
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
         logging.info("got response.body %r", response.body)
 
+        # budge_num increase
+        self.counter_increase(league_id, "apply_cashout")
+        # TODO notify this message to vendor's administrator by SMS
+
         self.render('ops/apply-cashout-success.html',
                 supplier=supplier)
