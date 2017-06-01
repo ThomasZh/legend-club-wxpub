@@ -1,0 +1,44 @@
+.hero-header {
+  /* 背景图写死貌似不太好，是不是能后台配置各自的图片 */
+    background-image: url('../img/s3.png');
+    background-size: 100% 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+.hero-header.hero-big {
+  text-align: center;
+  padding-top: 40px;
+}
+
+.todo .todo-element label {
+  margin-left: 10px;
+  color: #333333;
+}
+.todo .todo-element span.small {
+  margin-left: 10px;
+  color: #666666;
+}
+
+.todo .todo-element span.more {
+    min-width: auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    text-align: center;
+    line-height: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 2px;
+    color: initial;
+    /*margin: 2px 0 0;*/
+    padding: 0;
+    opacity: 0.3;
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    box-sizing: border-box;
+}
+.todo .todo-element span.more i {
+  -webkit-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+}

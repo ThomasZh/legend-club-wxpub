@@ -1,0 +1,11 @@
+.hero-header {
+  /* 背景图写死貌似不太好，是不是能后台配置各自的图片 */
+    background-image: url('../img/s3.png');
+    background-size: 100% 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+h2 {
+  margin-bottom: 1rem;
+}

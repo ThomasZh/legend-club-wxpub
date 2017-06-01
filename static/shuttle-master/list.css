@@ -1,0 +1,44 @@
+/* style for list.html */
+
+.todo .todo-element {
+  /*padding: 10px 20px 10px 20px;*/
+}
+
+.todo .todo-element img {
+  width: 40px;
+  border-radius: 0;
+  left: 20px;
+  right: auto;
+}
+
+.todo .todo-element label {
+  margin-left: 60px;
+  color: #333333;
+}
+.todo .todo-element span.small {
+  margin-left: 60px;
+  color: #666666;
+}
+
+.todo .todo-element span.more {
+    min-width: auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    text-align: center;
+    line-height: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 2px;
+    color: initial;
+    /*margin: 2px 0 0;*/
+    padding: 0;
+    opacity: 0.3;
+    position: absolute;
+    top: 30px;
+    right: 15px;
+    box-sizing: border-box;
+}
+.todo .todo-element span.more i {
+  -webkit-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+}

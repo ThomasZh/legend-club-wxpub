@@ -1,0 +1,9 @@
+#validcode {
+  width: 80%;
+}
+
+.getcode-btn {
+  position: absolute;
+  padding: 0 1rem;
+  right: -6px;
+}
