@@ -226,3 +226,29 @@ class WxVendorResellerApplyCashoutStep1Handler(AuthorizationHandler):
 
         self.render('ops/apply-cashout-success.html',
                 supplier=supplier)
+
+
+# 查看提现申请详情
+# /bf/wx/vendors/{club_id}/apply-cashout/{apply_id}
+class WxVendorApplyCashoutInfoHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id, apply_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+        logging.info("GET club=[%r]", club)
+        league_id = club['league_id']
+        apply_cashout = self.get_apply_cashout(league_id, apply_id)
+        apply_cashout['bonus_point'] = float(apply_cashout['bonus_point'] / 100)
+        apply_cashout['create_time'] = timestamp_datetime(apply_cashout['create_time'])
+
+        supplier = self.get_club_basic_info(apply_cashout['org_id'])
+        logging.info("GET supplier=[%r]", supplier)
+
+        # 查询我在此供应商的积分余额
+        distributor = self.get_distributor(apply_cashout['org_id'], apply_cashout['apply_org_id'])
+
+        self.render('ops/apply-cashout-detail.html',
+                apply_cashout=apply_cashout,
+                supplier=supplier,
+                distributor=distributor)

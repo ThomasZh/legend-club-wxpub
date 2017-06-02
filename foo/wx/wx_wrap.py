@@ -210,7 +210,7 @@ def sendApplyCashoutToAdminMessage(access_token, wx_notify_domain, openid, apply
     data = {
         "touser": openid,
         "template_id": "WZMZRqQ1shN4mcAQ9Hr6kDYz_sgJltHEhlYf3q1vXaY",
-        "url": wx_notify_domain + "/bf/wx/vendors/"+apply_cashout['apply_org_id']+"/apply_cashout/"+apply_cashout['_id'],
+        "url": wx_notify_domain + "/bf/wx/vendors/"+apply_cashout['apply_org_id']+"/apply-cashout/"+apply_cashout['_id'],
         "data": {
            "first": {
                "value":u"联盟管理员, 有俱乐部发起提现申请",
@@ -252,7 +252,7 @@ def sendApplyCashoutToOpsMessage(access_token, wx_notify_domain, openid, apply_c
     data = {
         "touser": openid,
         "template_id": "WZMZRqQ1shN4mcAQ9Hr6kDYz_sgJltHEhlYf3q1vXaY",
-        "url": wx_notify_domain + "/bf/wx/vendors/"+apply_cashout['apply_org_id']+"/apply_cashout/"+apply_cashout['_id'],
+        "url": wx_notify_domain + "/bf/wx/vendors/"+apply_cashout['apply_org_id']+"/apply-cashout/"+apply_cashout['_id'],
         "data": {
            "first": {
                "value":apply_cashout['apply_nickname']+u", 您好, 提现申请已经收到",
