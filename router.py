@@ -86,6 +86,12 @@ def map():
         # 推荐活动列表
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/recommend", getattr(wx_resale, 'WxResaleActivityIndexHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)_([a-z0-9]*)", getattr(wx_resale, 'WxResaleActivityInfoHandler')),
+        # 分销商5个页面
+        (r"/bf/wx/vendors/([a-z0-9]*)/supplier-list", getattr(wx_resale, 'WxResaleSupplerListHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/supplier", getattr(wx_resale, 'WxResaleSupplerHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/goods-detail", getattr(wx_resale, 'WxResaleGoodsDetailHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/register-distributor", getattr(wx_resale, 'WxResaleRegisterDistributorHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/distributor-personal", getattr(wx_resale, 'WxResaleDistributorPersonalHandler')),
 
 
         # bike-forever wexin activity

@@ -1,4 +1,4 @@
-<!-- 供应商列表 @2017/05/23 -->
+<!-- 分销商页面 @2017/05/26 -->
 <!DOCTYPE html>
 <html class="no-js">
   <head>
@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
-    <link rel="stylesheet" href="{{ static_url('shuttle-master/list.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle-master/distributor.css') }}">
     <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
   </head>
   <body>
@@ -44,7 +44,7 @@
         <!-- <div class="open-left" id="open-left" data-activates="slide-out-left">
           <i class="ion-android-menu"></i>
         </div> -->
-        <h1 class="title">供应商列表</h1>
+        <h1 class="title">分销商</h1>
         <!-- <div class="open-right" id="open-right" data-activates="slide-out">
           <i class="ion-android-person"></i>
         </div> -->
@@ -54,26 +54,42 @@
       <!-- Page Contents -->
       <div class="page animated fadeinup">
 
+        <!-- Hero Header -->
+        <div class="hero-header hero-big animated fadeindown">
+          <div class="hero-author">
+            <img src="../img/avatar-poe.png" alt="" class="center avatar big">
+            <div class="center">
+              <h2 class="white-text m-0">老牛不弯</h2>
+              <span class="white-text small"><em>18611398479</em></span>
+            </div>
+          </div>
+          <div class="opacity-overlay-gradient"></div>
+        </div>
+
+        <div class="share-counter">
+          <div>
+            <h3>438</h3>
+            <p class="grey-text">积分</p>
+          </div>
+          <div>
+            <h3>86k</h3>
+            <p class="grey-text">用户</p>
+          </div>
+          <div>
+            <h3>1.6k</h3>
+            <p class="grey-text">销量</p>
+          </div>
+        </div>
+
         <div class="todo">
 
           <p class="todo-element" data-id="1">
-            <img alt="" src="../img/user4.jpg">
-            <label for="todo2">供应商甲</label>
-            <span class="small">这里是对他的简介。。。。</span>
+            <label for="todo2">供应商列表</label>
             <span class="more"><i class="ion-ios-arrow-right"></i></span>
           </p>
 
           <p class="todo-element" data-id="2">
-            <img alt="" src="../img/user4.jpg">
-            <label for="todo3">供应商乙</label>
-            <span class="small">这里是对他的简介。。。。</span>
-            <span class="more"><i class="ion-ios-arrow-right"></i></span>
-          </p>
-
-          <p class="todo-element" data-id="3">
-            <img alt="" src="../img/user4.jpg">
-            <label for="todo3">供应商丙</label>
-            <span class="small">这里是对他的简介。。。。</span>
+            <label for="todo3">商品列表</label>
             <span class="more"><i class="ion-ios-arrow-right"></i></span>
           </p>
 
@@ -81,6 +97,11 @@
 
       </div>
       <!-- End of Page Contents -->
+      <div class="fixed-action-btn">
+        <a class="btn-floating btn-large waves-effect waves-light accent-color modal-trigger" href="#">
+          <i class="ion-cash"></i>
+        </a>
+      </div>
     </div>
     <!-- End of Main Container -->
 
@@ -96,6 +117,6 @@
     <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
-    <script src="{{ static_url('shuttle-master/list.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/distributor.js') }}"></script>
   </body>
 </html>

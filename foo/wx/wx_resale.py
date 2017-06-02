@@ -191,3 +191,114 @@ class WxResaleActivityInfoHandler(BaseHandler):
                 wx_notify_domain=wx_notify_domain,
                 sign=_sign, account_id=_account_id,
                 bonus_template=_bonus_template)
+
+
+# 供应商列表
+class WxResaleSupplerListHandler(BaseHandler):
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+        logging.info("GET club %r", club)
+
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+        params = {"filter":"league","franchise_type":"供应商","page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/leagues/" + club['league_id'] + "/clubs", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got resale suppliers response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        suppliers = rs['data']
+
+        self.render('resale/supplier-list.html',
+                club=club,
+                suppliers=suppliers)
+
+
+# 单个供应商
+class WxResaleSupplerHandler(BaseHandler):
+    def get(self,league_id,club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+        params = {"page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got resale activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        activities = rs['data']
+
+        self.render('resale/supplier.html',
+                club=club,
+                activities=activities)
+
+
+# 供给分销的单个产品详情
+class WxResaleGoodsDetailHandler(BaseHandler):
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+        params = {"page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got resale activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        activities = rs['data']
+
+        self.render('resale/goods-detail.html',
+                club=club,
+                activities=activities)
+
+
+
+class WxResaleRegisterDistributorHandler(BaseHandler):
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+        params = {"page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got resale activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        activities = rs['data']
+
+        self.render('resale/register-distributor.html',
+                club=club,
+                activities=activities)
+
+
+
+class WxResaleDistributorPersonalHandler(BaseHandler):
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        club = self.get_club_basic_info(club_id)
+
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+        params = {"page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got resale activities response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        activities = rs['data']
+
+        self.render('resale/distributor-personal.html',
+                club=club,
+                activities=activities)

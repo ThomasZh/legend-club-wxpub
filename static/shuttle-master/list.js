@@ -7,7 +7,7 @@ $(function(){
 
     console.log($(this));
     console.log($(this).data('id'));
-    location.href = 'supplier.html?s=' + $(this).data('id');
+    location.href = '/bf/wx/vendors/([a-z0-9]*)/supplier?s=' + $(this).data('id');
   });
 
 
