@@ -195,15 +195,12 @@ class WxResaleActivityInfoHandler(BaseHandler):
 
 # 供应商列表
 class WxResaleSupplerListHandler(BaseHandler):
-    def get(self, club_id):
+    def get(self, league_id):
         logging.info("GET %r", self.request.uri)
 
-        club = self.get_club_basic_info(club_id)
-        logging.info("GET club %r", club)
-
         headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
-        params = {"filter":"league","franchise_type":"供应商","page":1, "limit":20}
-        url = url_concat(API_DOMAIN + "/api/leagues/" + club['league_id'] + "/clubs", params)
+        params = {"filter":"league","franchise_type":"供应商","page":1, "limit":100}
+        url = url_concat(API_DOMAIN + "/api/leagues/" + league_id + "/clubs", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET", headers=headers)
         logging.info("got resale suppliers response.body=[%r]", response.body)
@@ -212,30 +209,34 @@ class WxResaleSupplerListHandler(BaseHandler):
         suppliers = rs['data']
 
         self.render('resale/supplier-list.html',
-                club=club,
+                league_id=league_id,
                 suppliers=suppliers)
 
 
 # 单个供应商
 class WxResaleSupplerHandler(BaseHandler):
-    def get(self,league_id,club_id):
+    def get(self,league_id):
         logging.info("GET %r", self.request.uri)
 
-        club = self.get_club_basic_info(club_id)
+        access_token = self.get_secure_cookie("access_token")
+        id = self.get_argument("s","")
 
-        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
-        params = {"page":1, "limit":20}
-        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
+        url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises/"+id
         http_client = HTTPClient()
+        headers={"Authorization":"Bearer "+access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got resale activities response.body=[%r]", response.body)
+        logging.info("got response %r", response.body)
         data = json_decode(response.body)
-        rs = data['rs']
-        activities = rs['data']
+        franchise = data['rs']
+        franchise['create_time'] = timestamp_datetime(franchise['create_time'])
+        if not franchise['club'].has_key('img'):
+            franchise['club']['img'] = ''
 
         self.render('resale/supplier.html',
-                club=club,
-                activities=activities)
+                api_domain = API_DOMAIN,
+                access_token=access_token,
+                league_id=league_id,
+                franchise=franchise)
 
 
 # 供给分销的单个产品详情

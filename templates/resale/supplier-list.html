@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>Shuttle - Material Design Mobile Template</title>
+    <title>供应商列表</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -40,30 +40,27 @@
     <!-- Main Container -->
     <div id="main" class="main">
       <!-- Toolbar -->
-      <div id="toolbar" class="primary-color z-depth-1">
-        <!-- <div class="open-left" id="open-left" data-activates="slide-out-left">
-          <i class="ion-android-menu"></i>
-        </div> -->
-        <h1 class="title">供应商列表</h1>
-        <!-- <div class="open-right" id="open-right" data-activates="slide-out">
-          <i class="ion-android-person"></i>
-        </div> -->
-      </div>
+      <!-- <div class="open-left" id="open-left" data-activates="slide-out-left">
+        <i class="ion-android-menu"></i>
+      </div> -->
+      <!-- <h1 class="title">供应商列表</h1> -->
+      <!-- <div class="open-right" id="open-right" data-activates="slide-out">
+        <i class="ion-android-person"></i>
+      </div> -->
       <!-- End of Toolbar -->
 
       <!-- Page Contents -->
-      <div class="page animated fadeinup">
+      <div class="animated fadeinup">
 
         <div class="todo">
-        {% for supplier in suppliers %}
-          <p class="todo-element" data-id="1">
-            <img alt="" src="{{ supplier['img'] }}">
-            <label for="todo2">{{ supplier['name'] }}</label>
-            <span class="small">{{ supplier['introduction'] }}</span>
+        {% for i in range(len(suppliers)) %}
+          <p class="todo-element" data-id="{{ suppliers[i]['club_id'] }}">
+            <img alt="" src="{{ suppliers[i]['img'] }}!200x200">
+            <label for="todo2">{{ suppliers[i]['name'] }}</label>
+            <span class="small">{{ suppliers[i]['introduction'] }}</span>
             <span class="more"><i class="ion-ios-arrow-right"></i></span>
           </p>
         {% end %}
-
         </div>
 
       </div>
@@ -84,5 +81,23 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/list.js') }}"></script>
+
+    <script type="text/javascript">
+    // 分销商列表 @2017/05/23
+    $(function(){
+      console.log('to fetch distributor list...');
+
+      $('.todo-element').click(function(e){
+        console.log('todo element clicked!');
+
+        console.log($(this));
+        console.log($(this).data('id'));
+        location.href = '/bf/wx/vendors/{{ league_id }}/supplier?s=' + $(this).data('id');
+      });
+
+    });
+
+    </script>
   </body>
+
 </html>

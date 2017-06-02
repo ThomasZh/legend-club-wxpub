@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>Shuttle - Material Design Mobile Template</title>
+    <title>供应商</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -40,15 +40,15 @@
     <!-- Main Container -->
     <div id="main" class="main">
       <!-- Toolbar -->
-      <div id="toolbar" class="primary-color z-depth-1">
+      <!-- <div id="toolbar" class="primary-color z-depth-1"> -->
         <!-- <div class="open-left" id="open-left" data-activates="slide-out-left">
           <i class="ion-android-menu"></i>
         </div> -->
-        <h1 class="title">供应商主页</h1>
+        <!-- <h1 class="title">供应商主页</h1> -->
         <!-- <div class="open-right" id="open-right" data-activates="slide-out">
           <i class="ion-android-person"></i>
         </div> -->
-      </div>
+      <!-- </div> -->
       <!-- End of Toolbar -->
 
       <!-- Page Contents -->
@@ -57,10 +57,10 @@
         <div class="hero-header hero-big  animated fadeindown">
           <div class="hero-author">
             <div class="media-top-object">
-              <img src="../img/avatar-poe.png" alt="" class="media-left avatar">
+              <img src="{{ franchise['club']['img'] }}" alt="" class="media-left avatar">
               <div class="media-body left-align">
-                <h2 class="white-text ">木鱼传说</h2>
-                <span class="white-text small"><em>专注于户外活动</em></span>
+                <h2 class="white-text ">{{ franchise['club']['name'] }}</h2>
+                <span class="white-text small"><em>{{ franchise['club']['introduction'] }}</em></span>
                 <div class="card-feedback">
                   <div class="card-users white-text">
                     <i class="ion-ios-heart accent-text"></i> <span>346</span>
@@ -78,25 +78,14 @@
 
         <!-- Tabs -->
         <ul class="tabs m-b-20">
-          <li class="tab"><a class="active" href="#one">分类一</a></li>
-          <li class="tab"><a href="#two">分类二</a></li>
-          <li class="tab"><a href="#three">分类三</a></li>
+          <li class="tab"><a class="active" href="#one">活动</a></li>
+          <li class="tab"><a href="#two">精彩瞬间</a></li>
+          <li class="tab"><a href="#three">BLOG</a></li>
         </ul>
 
         <!-- Gallery One -->
-        <div id="one" class="grid m-t-20">
-          <div class="grid-item gallery-item-card">
-            <a href="../img/1.jpg" class="swipebox no-smoothState" title="This is dummy caption.">
-              <img src="../img/1.jpg" alt="image">
-              <div class="gallery-item-header">
-                <div class="gallery-item-author">
-                  <span>商品X</span>
-                  <span class="small">价格：100元</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
+        <div id="one" class="grid m-t-20"></div>
+
         <!-- Gallery Two -->
         <div id="two" class="grid m-t-20">
           <div class="grid-item gallery-item-card">
@@ -145,5 +134,51 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/supplier.js') }}"></script>
+    <script type="text/javascript">
+      $(function(){
+          function getLocalTime(nS) { //时间戳转换
+             return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+          };
+
+          function GetQueryString(name){
+               var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+               var r = window.location.search.substr(1).match(reg);
+               if(r!=null)return  unescape(r[2]); return null;
+          };
+
+          var limit = 20;//初始化数
+          var id = GetQueryString("s");
+          function gotoPage(pageNum) {
+              $.ajax({
+                type: "GET",
+                url: "{{api_domain}}/api/suppliers/"+id+"/items?_status=20&private=0&page="+pageNum+"&limit="+limit,
+                headers: {
+                  "Authorization": "Bearer {{ access_token }}"
+                },
+                contentType: 'application/json',
+                success: function(data, status, xhr) {
+                      console.log(data);
+                      data_obj = JSON.parse(data);
+                      data = data_obj.rs;
+                  var pageData = data.data;
+                  for (var i in pageData) {
+                    var inner_html = '<div class="grid-item gallery-item-card">';
+                    inner_html += '<a href="#" class="swipebox no-smoothState" title="This is dummy caption.">';
+                    inner_html += '<img src="'+pageData[i].img+'" alt="image">';
+                    inner_html += '<div class="gallery-item-header">';
+                    inner_html += '<div class="gallery-item-author">';
+                    inner_html += '<span>'+ pageData[i].item_name +'</span>';
+                    inner_html += '<span class="small">价格：'+pageData[i].amount+'元</span>';
+                    inner_html += '</div></div></a></div>';
+
+                    $('#one').append(inner_html);
+                    // member_num += 1;
+                    };
+                  }
+                })
+          }
+          gotoPage("1");
+        })
+    </script>
   </body>
 </html>
