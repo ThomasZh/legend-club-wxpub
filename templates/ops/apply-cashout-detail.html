@@ -54,27 +54,27 @@
         <div class="m-cell">
           <div class="cell-item">
             <div class="cell-left">申请号: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['_id'] }}" /></div>
+            <div class="cell-right">{{ apply_cashout['_id'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">{{ apply_cashout['apply_org_type'] }}: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['apply_org_name'] }}" /></div>
+            <div class="cell-right">{{ apply_cashout['apply_org_name'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">申请人: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['apply_nickname'] }}" /></div>
+            <div class="cell-right">{{ apply_cashout['apply_nickname'] }}"</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">剩余积分: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ distributor['remaining_points'] }}" /></div>
+            <div class="cell-right">{{ distributor['remaining_points'] }}元</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">提现金额: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['bonus_point'] }}元" /></div>
+            <div class="cell-right">{{ apply_cashout['bonus_point'] }}元</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">申请时间: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['create_time'] }}" /></div>
+            <div class="cell-right">{{ apply_cashout['create_time'] }}</div>
           </div>
         </div>
 
@@ -82,11 +82,11 @@
         <div class="m-cell">
           <div class="cell-item">
             <div class="cell-left">状态: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['_status'] }}" /></div>
+            <div class="cell-right">{{ apply_cashout['_status'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">原因: </div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply_cashout['_reason'] }}" /></div>
+            <div class="cell-right">{{ apply_cashout['_reason'] }}</div>
           </div>
         </div>
 

@@ -247,6 +247,14 @@ class WxVendorApplyCashoutInfoHandler(AuthorizationHandler):
             apply_cashout['_status'] = u"接受"
         elif apply_cashout['_status'] == 20:
             apply_cashout['_status'] = u"拒绝"
+        if apply_cashout['org_type'] = "supplier":
+            apply_cashout['org_type'] = u"供应商"
+        elif apply_cashout['org_type'] = "league":
+            apply_cashout['org_type'] = u"联盟"
+        if apply_cashout['apply_org_type'] = "supplier":
+            apply_cashout['apply_org_type'] = u"供应商"
+        elif apply_cashout['apply_org_type'] = "distributor":
+            apply_cashout['apply_org_type'] = u"分销商"
 
         supplier = self.get_club_basic_info(apply_cashout['org_id'])
         logging.info("GET supplier=[%r]", supplier)
