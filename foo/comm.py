@@ -165,6 +165,17 @@ class BaseHandler(tornado.web.RequestHandler):
         return distributor
 
 
+    def get_league_admin_wx(self, league_id):
+        params = {"page":1,"limit":20}
+        url = url_concat(API_DOMAIN + "/api/leagues/" + league_id + "/administrators-wx", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        data = json_decode(response.body)
+        rs = data['rs']
+        admins = rs['data']
+        return admins
+
+
     def get_club_ops_wx(self, club_id):
         params = {"page":1,"limit":20}
         url = url_concat(API_DOMAIN + "/api/clubs/" + club_id+"/ops-wx", params)

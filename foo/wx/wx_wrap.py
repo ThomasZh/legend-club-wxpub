@@ -201,3 +201,87 @@ def sendOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, order):
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)
     logging.info("got response %r", response.body)
+
+
+def sendApplyCashoutToAdminMessage(access_token, wx_notify_domain, openid, apply_cashout):
+    # touser = 联盟管理员openid
+    # template_id = 提现申请通知
+    # url = 模版链接跳转地址
+    data = {
+        "touser": openid,
+        "template_id": "WZMZRqQ1shN4mcAQ9Hr6kDYz_sgJltHEhlYf3q1vXaY",
+        "url": wx_notify_domain + "/bf/wx/vendors/"+apply_cashout['apply_org_id']+"/apply_cashout/"+apply_cashout['_id'],
+        "data": {
+           "first": {
+               "value":u"联盟管理员, 有俱乐部发起提现申请",
+               "color":"#173177"
+           },
+           "keyword1": {
+               "value":apply_cashout['apply_org_name']+": "+apply_cashout['apply_nickname'],
+               "color":"#173177"
+           },
+           "keyword2": {
+               "value":timestamp_datetime(apply_cashout['create_time']),
+               "color":"#173177"
+           },
+           "keyword3": {
+               "value":str(float(apply_cashout['bonus_point'])/100)+u"元",
+               "color":"#173177"
+           },
+           "keyword4": {
+               "value":u"微信",
+               "color":"#173177"
+           },
+           "remark": {
+               "value":u"请您及时登录联盟管理系统处理!",
+               "color":"#173177"
+           },
+        }
+    }
+    _json = json_encode(data)
+    url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_json)
+    logging.info("got response %r", response.body)
+
+
+def sendApplyCashoutToOpsMessage(access_token, wx_notify_domain, openid, apply_cashout):
+    # touser = 联盟管理员openid
+    # template_id = 提现申请通知
+    # url = 模版链接跳转地址
+    data = {
+        "touser": openid,
+        "template_id": "WZMZRqQ1shN4mcAQ9Hr6kDYz_sgJltHEhlYf3q1vXaY",
+        "url": wx_notify_domain + "/bf/wx/vendors/"+apply_cashout['apply_org_id']+"/apply_cashout/"+apply_cashout['_id'],
+        "data": {
+           "first": {
+               "value":apply_cashout['apply_nickname']+u", 您好, 提现申请已经收到",
+               "color":"#173177"
+           },
+           "keyword1": {
+               "value":apply_cashout['apply_org_name'],
+               "color":"#173177"
+           },
+           "keyword2": {
+               "value":timestamp_datetime(apply_cashout['create_time']),
+               "color":"#173177"
+           },
+           "keyword3": {
+               "value":str(float(apply_cashout['bonus_point'])/100)+u"元",
+               "color":"#173177"
+           },
+           "keyword4": {
+               "value":u"微信",
+               "color":"#173177"
+           },
+           "remark": {
+               "value":u"联盟管理员会在8小时内审核, 审核结果会通过公众号消息提醒您!",
+               "color":"#173177"
+           },
+        }
+    }
+    _json = json_encode(data)
+    url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_json)
+    logging.info("got response %r", response.body)

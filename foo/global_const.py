@@ -39,19 +39,25 @@ MONGO_PWD = "uWx-nJs-8J3-vA9"
 # WX_NOTIFY_DOMAIN = "https://www.bike-forever.com"
 
 # A计划（红）
-WX_APP_ID = "wxaa328c83d3132bfb"
-WX_APP_SECRET = "32bbf99a46d80b24bae81e8c8558c42f"
-WX_MCH_ID = "1340430801"
-WX_MCH_KEY = "b9f1ffe612aa11e6a4f6a45e60efbf2d"
-# WX_NOTIFY_DOMAIN = "http://planc2c.com"
-WX_NOTIFY_DOMAIN="http://7x24hs.com"
+# WX_APP_ID = "wxaa328c83d3132bfb"
+# WX_APP_SECRET = "32bbf99a46d80b24bae81e8c8558c42f"
+# WX_MCH_ID = "1340430801"
+# WX_MCH_KEY = "b9f1ffe612aa11e6a4f6a45e60efbf2d"
+# WX_NOTIFY_DOMAIN="http://7x24hs.com"
 
 # A计划服务号（绿）
 # WX_APP_ID = "wx445c952b09d519ec"
 # WX_APP_SECRET = "35b6fcfd5af1d13440b39fe4ab1b327f"
 # WX_MCH_ID = "1399535402"
 # WX_MCH_KEY = "Q1YywLGITEmEmj0d227Ms2e0hQe610JZ"
-# WX_NOTIFY_DOMAIN="http://7x24hs.com"
+# WX_NOTIFY_DOMAIN="http://domibake.com"
+
+# 俱乐部服务中心（绿）
+WX_APP_ID = "wxedab0b4bf94e1c9d"
+WX_APP_SECRET = "03325dea1b00c151cf6b7c1fe52ea2fa"
+WX_MCH_ID = "1419954602"
+WX_MCH_KEY = "91575df83aac11e79defa45e60efbf2d"
+WX_NOTIFY_DOMAIN="http://7x24hs.com"
 
 
 QRCODE_CREATE_URL = "http://qrcode.7x24hs.com/api/qrcode"

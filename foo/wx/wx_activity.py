@@ -577,14 +577,14 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
                 vendor_member_dao.vendor_member_dao().update(_json)
 
             # send message to wx 公众号客户 by template
-            wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+            wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
             logging.info("got wx_access_token %r", wx_access_token)
             # 通过wxpub，给俱乐部操作员发送通知
             ops = self.get_club_ops_wx(vendor_id)
             for op in ops:
                 wx_openid = op['binding_id']
                 logging.info("got wx_openid %r", wx_openid)
-                wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, wx_notify_domain, wx_openid, order_index)
+                wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
 
             self.render('wx/order-confirm.html',
                     vendor_id=vendor_id,
@@ -788,12 +788,15 @@ class WxOrderNotifyHandler(BaseHandler):
                         'vouchers':_voucher_amount}
                     vendor_member_dao.vendor_member_dao().update(_json)
 
+                # send message to wx 公众号客户 by template
+                wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
+                logging.info("got wx_access_token %r", wx_access_token)
                 # 通过wxpub，给俱乐部操作员发送通知
                 ops = self.get_club_ops_wx(vendor_id)
                 for op in ops:
                     wx_openid = op['binding_id']
                     logging.info("got wx_openid %r", wx_openid)
-                    wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, wx_notify_domain, wx_openid, order_index)
+                    wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
 
                 # 如果是分销的订单，给分销商加上积分
                 if order_index['distributor_id'] != DEFAULT_USER_ID:

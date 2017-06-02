@@ -181,7 +181,7 @@ class WxVendorResellerApplyCashoutStep1Handler(AuthorizationHandler):
         headers = {"Authorization":"Bearer "+access_token}
 
         myinfo = self.get_myinfo_login()
-        wx_openid = myinfo['login']
+        apply_wx_openid = myinfo['login']
 
         club = self.get_club_basic_info(club_id)
         league_id = club['league_id']
@@ -197,17 +197,32 @@ class WxVendorResellerApplyCashoutStep1Handler(AuthorizationHandler):
         _json = json_encode({'apply_account_id':apply_account_id,
                 'apply_org_id':club_id,
                 'apply_org_type':'distributor',
-                'apply_wx_openid':wx_openid,
+                'apply_wx_openid':apply_wx_openid,
                 'org_id':supplier_id,
                 'org_type':'supplier',
                 'bonus_type':'bonus',
                 'bonus_point':distributor['accumulated_points']})
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
         logging.info("got response.body %r", response.body)
+        rs = json_decode(response.body)
+        apply_cashout = rs['data']
 
         # budge_num increase
         self.counter_increase(league_id, "apply_cashout")
         # TODO notify this message to vendor's administrator by SMS
+
+        # notify this message to league's administrators by wx_template
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
+        logging.info("got wx_access_token %r", wx_access_token)
+        # 通过wxpub，给联盟管理员发送通知
+        admins = self.get_league_admin_wx(league_id)
+        for admin in admins:
+            wx_openid = admin['binding_id']
+            logging.info("got wx_openid %r", wx_openid)
+            wx_wrap.sendApplyCashoutToAdminMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, apply_cashout)
+
+        # 通过wxpub，给俱乐部操作员发送通知
+        wx_wrap.sendApplyCashoutToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, apply_wx_openid, apply_cashout)
 
         self.render('ops/apply-cashout-success.html',
                 supplier=supplier)
