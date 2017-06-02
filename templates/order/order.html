@@ -54,64 +54,65 @@
         <div class="m-cell">
           <div class="cell-item">
             <div class="cell-left">订单号：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['_id'] }}" /></div>
+            <div class="cell-right">{{ order['_id'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">俱乐部：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['club_name'] }}" /></div>
+            <div class="cell-right">{{ order['club_name'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">会员：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['nickname'] }}" /></div>
+            <div class="cell-right">{{ order['nickname'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">报名人数：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['quantity'] }}人" /></div>
+            <div class="cell-right">{{ order['quantity'] }}人</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">下单金额：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['amount'] }}元" /></div>
+            <div class="cell-right">{{ order['amount'] }}元</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">实际支付：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['actual_payment'] }}元" /></div>
+            <div class="cell-right">{{ order['actual_payment'] }}元</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">支付状态：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['pay_status'] }}" /></div>
+            <div class="cell-right">{{ order['pay_status'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">订单状态：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['_status'] }}" /></div>
+            <div class="cell-right">{{ order['_status'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">下单时间：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ order['create_time'] }}" /></div>
+            <div class="cell-right">{{ order['create_time'] }}</div>
           </div>
         </div>
 
+        {% if applies %}
         <div class="m-celltitle">报名详情</div>
         {% for apply in applies %}
         <div class="m-cell">
           <div class="cell-item">
             <div class="cell-left">真实姓名：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply['real_name'] }}" /></div>
+            <div class="cell-right">{{ apply['real_name'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">性别：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply['gender'] }}" /></div>
+            <div class="cell-right">{{ apply['gender'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">身份证号码：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply['id_code'] }}" /></div>
+            <div class="cell-right">{{ apply['id_code'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">电话号码：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply['phone'] }}" /></div>
+            <div class="cell-right">{{ apply['phone'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">身高：</div>
-            <div class="cell-right"><input class="cell-input" value="{{ apply['height'] }}" /></div>
+            <div class="cell-right">{{ apply['height'] }}</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">备注：</div>
@@ -120,6 +121,7 @@
             </div>
           </div>
         </div>
+        {% end %}
         {% end %}
 
         <!-- 使用：样式模块以按钮为例 -->
