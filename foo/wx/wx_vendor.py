@@ -241,12 +241,19 @@ class WxVendorApplyCashoutInfoHandler(AuthorizationHandler):
         apply_cashout = self.get_apply_cashout(league_id, apply_id)
         apply_cashout['bonus_point'] = float(apply_cashout['bonus_point'] / 100)
         apply_cashout['create_time'] = timestamp_datetime(apply_cashout['create_time'])
+        if apply_cashout['_status'] == 0:
+            apply_cashout['_status'] = u"待审核"
+        elif apply_cashout['_status'] == 10:
+            apply_cashout['_status'] = u"接受"
+        elif apply_cashout['_status'] == 20:
+            apply_cashout['_status'] = u"拒绝"
 
         supplier = self.get_club_basic_info(apply_cashout['org_id'])
         logging.info("GET supplier=[%r]", supplier)
 
         # 查询我在此供应商的积分余额
         distributor = self.get_distributor(apply_cashout['org_id'], apply_cashout['apply_org_id'])
+        distributor['remaining_points'] = float(distributor['remaining_points'] / 100)
 
         self.render('ops/apply-cashout-detail.html',
                 apply_cashout=apply_cashout,
