@@ -73,6 +73,19 @@ class WxVendorOrderInfoHandler(BaseHandler):
         order['create_time'] = timestamp_datetime(order['create_time'])
         order['amount'] = float(order['amount']) / 100
         order['actual_payment'] = float(order['actual_payment']) / 100
+        if order['pay_status'] == 30:
+            order['pay_status'] = u"支付成功"
+        elif order['pay_status'] == 31:
+            order['pay_status'] = u"支付失败"
+        elif order['pay_status'] == 21:
+            order['pay_status'] = u"下单失败"
+        elif order['pay_status'] == 20:
+            order['pay_status'] = u"未支付"
+
+        if order['_status'] == 0:
+            order['_status'] = u"未填报"
+        if order['_status'] == 50:
+            order['_status'] = u"填报成功"
 
         activity = self.get_activity(order['item_id'])
 
