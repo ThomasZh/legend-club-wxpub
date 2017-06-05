@@ -156,6 +156,18 @@ def time_span(ts):
 
 class BaseHandler(tornado.web.RequestHandler):
 
+    def get_bonus_points_log(self, water_id):
+        url = API_DOMAIN + "/api/points/" + water_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got get_bonus_points %r", response.body)
+        data = json_decode(response.body)
+        if data['err_code'] == 404:
+            return {}
+        water_log = data['data']
+        return water_log
+
+
     def get_apply_cashout(self, league_id, apply_id):
         url = API_DOMAIN + "/api/points/leagues/"+league_id+"/apply-cash-out/" + apply_id
         http_client = HTTPClient()

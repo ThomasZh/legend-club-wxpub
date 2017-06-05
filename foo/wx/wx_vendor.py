@@ -267,3 +267,26 @@ class WxVendorApplyCashoutInfoHandler(AuthorizationHandler):
                 apply_cashout=apply_cashout,
                 supplier=supplier,
                 distributor=distributor)
+
+
+# 查看积分变化详情
+# /bf/wx/vendors/{club_id}/bonus-points/{water_id}
+class WxVendorBonusPointChangedHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id, water_id):
+        logging.info("GET %r", self.request.uri)
+
+        bonus_points = self.get_bonus_points_log(water_id)
+        bonus_points['points'] = float(bonus_points['points'] / 100)
+        bonus_points['balance_after'] = float(bonus_points['balance_after'] / 100)
+        bonus_points['create_time'] = timestamp_datetime(bonus_points['create_time'])
+
+        club = self.get_club_basic_info(bonus_points['org_id'])
+        logging.info("GET club=[%r]", club)
+
+        user = self.get_user_basic_info(bonus_points['account_id'])
+
+        self.render('ops/bonus-points-changed.html',
+                bonus_points=bonus_points,
+                club=club,
+                user=user)

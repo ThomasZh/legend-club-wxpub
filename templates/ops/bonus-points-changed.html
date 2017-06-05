@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>提现申请</title>
+  <title>积分变更</title>
   <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
   <meta content="yes" name="apple-mobile-web-app-capable" />
   <meta content="black" name="apple-mobile-web-app-status-bar-style" />
@@ -38,11 +38,11 @@
           <div class="weui-panel__bd">
             <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
               <div class="weui-media-box__hd">
-                <img class="weui-media-box__thumb" src="{{ supplier['img'] }}!200x200" alt="">
+                <img class="weui-media-box__thumb" src="{{ club['img'] }}!200x200" alt="">
               </div>
               <div class="weui-media-box__bd">
-                <h4 class="weui-media-box__title">{{ supplier['name'] }}</h4>
-                <p class="weui-media-box__desc">{{ apply_cashout['org_type'] }}</p>
+                <h4 class="weui-media-box__title">{{ club['name'] }}</h4>
+                <p class="weui-media-box__desc">{{ bonus_points['org_type'] }}</p>
               </div>
             </a>
           </div>
@@ -50,43 +50,35 @@
       </div>
 
       <form>
-        <div class="m-celltitle">申请详情</div>
+        <div class="m-celltitle">变更详情</div>
         <div class="m-cell">
           <div class="cell-item">
-            <div class="cell-left">申请号: </div>
-            <div class="cell-right">{{ apply_cashout['_id'] }}</div>
+            <div class="cell-left">序号: </div>
+            <div class="cell-right">{{ bonus_points['_id'] }}</div>
           </div>
           <div class="cell-item">
-            <div class="cell-left">{{ apply_cashout['apply_org_type'] }}: </div>
-            <div class="cell-right">{{ apply_cashout['apply_org_name'] }}</div>
+            <div class="cell-left">执行人: </div>
+            <div class="cell-right">{{ user['nickname'] }}</div>
           </div>
           <div class="cell-item">
-            <div class="cell-left">申请人: </div>
-            <div class="cell-right">{{ apply_cashout['apply_nickname'] }}</div>
+            <div class="cell-left">执行: </div>
+            <div class="cell-right">{{ bonus_points['action'] }}</div>
           </div>
           <div class="cell-item">
-            <div class="cell-left">提现金额: </div>
-            <div class="cell-right">{{ apply_cashout['bonus_point'] }}元</div>
+            <div class="cell-left">活动: </div>
+            <div class="cell-right">{{ bonus_points['item_name'] }}</div>
+          </div>
+          <div class="cell-item">
+            <div class="cell-left">积分变化: </div>
+            <div class="cell-right">{{ bonus_points['points'] }}元</div>
           </div>
           <div class="cell-item">
             <div class="cell-left">剩余积分: </div>
-            <div class="cell-right">{{ distributor['remaining_points'] }}元</div>
+            <div class="cell-right">{{ bonus_points['balance_after'] }}元</div>
           </div>
           <div class="cell-item">
-            <div class="cell-left">申请时间: </div>
-            <div class="cell-right">{{ apply_cashout['create_time'] }}</div>
-          </div>
-        </div>
-
-        <div class="m-celltitle">审核结果</div>
-        <div class="m-cell">
-          <div class="cell-item">
-            <div class="cell-left">状态: </div>
-            <div class="cell-right">{{ apply_cashout['_status'] }}</div>
-          </div>
-          <div class="cell-item">
-            <div class="cell-left">原因: </div>
-            <div class="cell-right">{{ apply_cashout['_reason'] }}</div>
+            <div class="cell-left">变更时间: </div>
+            <div class="cell-right">{{ bonus_points['create_time'] }}</div>
           </div>
         </div>
 

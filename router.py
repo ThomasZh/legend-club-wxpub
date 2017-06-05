@@ -81,6 +81,8 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/apply-cash-out/suppliers/([a-z0-9]*)/step1", getattr(wx_vendor, 'WxVendorResellerApplyCashoutStep1Handler')),
         # 查看提现申请详情
         (r"/bf/wx/vendors/([a-z0-9]*)/apply-cashout/([a-z0-9]*)", getattr(wx_vendor, 'WxVendorApplyCashoutInfoHandler')),
+        # 查看积分变化详情
+        (r"/bf/wx/vendors/([a-z0-9]*)/bonus-points/([a-z0-9]*)", getattr(wx_vendor, 'WxVendorBonusPointChangedHandler')),
         # 订单详细信息
         (r"/bf/wx/vendors/([a-z0-9]*)/orders/([a-z0-9]*)", getattr(wx_order, 'WxVendorOrderInfoHandler')),
 
