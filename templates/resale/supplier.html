@@ -39,18 +39,6 @@
   <body>
     <!-- Main Container -->
     <div id="main" class="main">
-      <!-- Toolbar -->
-      <!-- <div id="toolbar" class="primary-color z-depth-1"> -->
-        <!-- <div class="open-left" id="open-left" data-activates="slide-out-left">
-          <i class="ion-android-menu"></i>
-        </div> -->
-        <!-- <h1 class="title">供应商主页</h1> -->
-        <!-- <div class="open-right" id="open-right" data-activates="slide-out">
-          <i class="ion-android-person"></i>
-        </div> -->
-      <!-- </div> -->
-      <!-- End of Toolbar -->
-
       <!-- Page Contents -->
       <div class="grey lighten-4 animated fadeinup">
         <!-- Hero Header -->
@@ -87,33 +75,10 @@
         <div id="one" class="grid m-t-20"></div>
 
         <!-- Gallery Two -->
-        <div id="two" class="grid m-t-20">
-          <div class="grid-item gallery-item-card">
-            <a href="../img/v1.jpg" class="swipebox no-smoothState" title="This is dummy caption.">
-              <img src="../img/v1.jpg" alt="image">
-              <div class="gallery-item-header">
-                <div class="gallery-item-author">
-                  <span>Jassie North</span>
-                  <span class="small">1hour ago - 62 Share</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
+        <div id="two" class="grid m-t-20"></div>
+
         <!-- Gallery Three -->
-        <div id="three" class="grid m-t-20">
-          <div class="grid-item gallery-item-card">
-            <a href="../img/2.jpg" class="swipebox no-smoothState" title="This is dummy caption.">
-              <img src="../img/2.jpg" alt="image">
-              <div class="gallery-item-header">
-                <div class="gallery-item-author">
-                  <span>Jassie North</span>
-                  <span class="small">1hour ago - 62 Share</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
+        <div id="three" class="animated fadeinup"></div>
 
 
       </div>
@@ -122,18 +87,17 @@
     <!-- End of Main Container -->
 
     <!-- Scripts -->
-    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
-    <script src="{{ static_url('shuttle/js/vendor/chart.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/supplier.js') }}"></script>
+
     <script type="text/javascript">
       $(function(){
           function getLocalTime(nS) { //时间戳转换
@@ -146,9 +110,9 @@
                if(r!=null)return  unescape(r[2]); return null;
           };
 
-          var limit = 20;//初始化数
+          var limit = 20;//初始化值
           var id = GetQueryString("s");
-          function gotoPage(pageNum) {
+          function one(pageNum) {
               $.ajax({
                 type: "GET",
                 url: "{{api_domain}}/api/suppliers/"+id+"/items?_status=20&private=0&page="+pageNum+"&limit="+limit,
@@ -170,14 +134,85 @@
                     inner_html += '<span>'+ pageData[i].item_name +'</span>';
                     inner_html += '<span class="small">价格：'+pageData[i].amount+'元</span>';
                     inner_html += '</div></div></a></div>';
-
                     $('#one').append(inner_html);
-                    // member_num += 1;
                     };
                   }
                 })
-          }
-          gotoPage("1");
+          };
+          one("1");
+          function two(pageNum) {
+              $.ajax({
+                type: "GET",
+                url: "{{api_domain}}/api/multimedias-pagination?filter=club&club_id="+id+"&page="+pageNum+"&limit="+limit,
+                headers: {
+                  "Authorization": "Bearer {{ access_token }}"
+                },
+                contentType: 'application/json',
+                success: function(data, status, xhr) {
+                      console.log(">>>>>>",data);
+                      data_obj = JSON.parse(data);
+                      data = data_obj.rs;
+                  var pageData = data.data;
+                  for (var i in pageData) {
+
+                    var inner_html = '<div class="grid-item">';
+                        inner_html += '<a href="'+pageData[i].url+'" class="swipebox no-smoothState" title="精彩瞬间">';
+                        inner_html += '<img src="'+pageData[i].url+'" alt="image">';
+                        inner_html += '</a>';
+                        inner_html += '</div>';
+                    $('#two').append(inner_html).masonry( 'appended', inner_html, true );;
+                  };
+                  // $('.grid').masonry({
+                  //     itemSelector: '.grid-item'
+                  // });
+                  }
+                })
+          };
+          two("1");
+          function three(pageNum) {
+              $.ajax({
+                type: "GET",
+                url: "{{api_domain}}/api/articles-pagination?filter=club&club_id="+id+"&status=publish&category=all&page="+pageNum+"&limit="+limit,
+                headers: {
+                  "Authorization": "Bearer {{ access_token }}"
+                },
+                contentType: 'application/json',
+                success: function(data, status, xhr) {
+                      console.log(data);
+                      data_obj = JSON.parse(data);
+                      data = data_obj.rs;
+                  var pageData = data.data;
+                  for (var i in pageData) {
+
+                    var inner_html = '<div class="card fullscreen">';
+                        inner_html += '<div class="card-image">';
+                        inner_html += '<a href="article.html"><img src="'+pageData[i].img+'" alt=""></a>';
+                        inner_html += '</div>';
+                        inner_html += '<div class="card-feedback">';
+                        inner_html +=   '<div class="card-users">';
+                        inner_html +=   '<i class="ion-ios-heart accent-text"></i> <span>'+pageData[i].like_num+'</span>';
+                        inner_html +=   '<i class="ion-chatbubble-working"></i> <span>'+pageData[i].comment_num+'</span>';
+                        inner_html += '</div>';
+                        inner_html += '<div class="card-share">';
+                        inner_html +=   '<i class="ion-android-share-alt"></i> <span>分享</span>';
+                        inner_html += '</div>';
+                        inner_html += '</div>';
+                        inner_html += '<div class="card-content">';
+                        inner_html +=   '<h5><strong>'+pageData[i].title+'</strong></h5>';
+                        inner_html += '</div>';
+                        inner_html += '<div class="card-author">';
+                        inner_html +=   '<div class="media-top-object middle">';
+                        inner_html +=   '<img src="'+pageData[i].avatar+'" alt="" class="media-left avatar small">';
+                        inner_html +=   '<div class="media-body">';
+                        inner_html +=   '<span class="small">Luke Noel at <a href="#!" class="accent-text">Apple</a></span>';
+                        inner_html +=   '</div></div></div></div>';
+
+                      $('#three').append(inner_html);
+                    };
+                  }
+                })
+          };
+          three("1");
         })
     </script>
   </body>
