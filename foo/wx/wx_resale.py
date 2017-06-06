@@ -198,6 +198,8 @@ class WxResaleSupplerListHandler(BaseHandler):
     def get(self, league_id):
         logging.info("GET %r", self.request.uri)
 
+        access_token = self.get_secure_cookie("access_token")
+
         headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
         params = {"filter":"league","franchise_type":"供应商","page":1, "limit":100}
         url = url_concat(API_DOMAIN + "/api/leagues/" + league_id + "/clubs", params)
@@ -209,6 +211,8 @@ class WxResaleSupplerListHandler(BaseHandler):
         suppliers = rs['data']
 
         self.render('resale/supplier-list.html',
+                api_domain= API_DOMAIN,
+                access_token=access_token,
                 league_id=league_id,
                 suppliers=suppliers)
 
@@ -241,65 +245,31 @@ class WxResaleSupplerHandler(BaseHandler):
 
 # 供给分销的单个产品详情
 class WxResaleGoodsDetailHandler(BaseHandler):
-    def get(self, club_id):
+    def get(self,league_id,club_id):
         logging.info("GET %r", self.request.uri)
 
         club = self.get_club_basic_info(club_id)
+        activity_id = self.get_argument("item_id","")
 
-        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
-        params = {"page":1, "limit":20}
-        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
-        http_client = HTTPClient()
-        response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got resale activities response.body=[%r]", response.body)
-        data = json_decode(response.body)
-        rs = data['rs']
-        activities = rs['data']
+        activity = self.get_activity(activity_id)
+        logging.info("got activity %r", activity)
 
         self.render('resale/goods-detail.html',
                 club=club,
-                activities=activities)
+                activity=activity)
 
 
 
 class WxResaleRegisterDistributorHandler(BaseHandler):
-    def get(self, club_id):
+    def get(self):
         logging.info("GET %r", self.request.uri)
 
-        club = self.get_club_basic_info(club_id)
-
-        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
-        params = {"page":1, "limit":20}
-        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
-        http_client = HTTPClient()
-        response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got resale activities response.body=[%r]", response.body)
-        data = json_decode(response.body)
-        rs = data['rs']
-        activities = rs['data']
-
-        self.render('resale/register-distributor.html',
-                club=club,
-                activities=activities)
+        self.render('resale/register-distributor.html')
 
 
 
 class WxResaleDistributorPersonalHandler(BaseHandler):
-    def get(self, club_id):
+    def get(self, resale_id):
         logging.info("GET %r", self.request.uri)
 
-        club = self.get_club_basic_info(club_id)
-
-        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
-        params = {"page":1, "limit":20}
-        url = url_concat(API_DOMAIN + "/api/distributors/" + club['_id'] + "/items", params)
-        http_client = HTTPClient()
-        response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got resale activities response.body=[%r]", response.body)
-        data = json_decode(response.body)
-        rs = data['rs']
-        activities = rs['data']
-
-        self.render('resale/distributor-personal.html',
-                club=club,
-                activities=activities)
+        self.render('resale/distributor-personal.html')

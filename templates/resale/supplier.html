@@ -127,7 +127,7 @@
                   var pageData = data.data;
                   for (var i in pageData) {
                     var inner_html = '<div class="grid-item gallery-item-card">';
-                    inner_html += '<a href="#" class="swipebox no-smoothState" title="This is dummy caption.">';
+                    inner_html += '<a href="/bf/wx/vendors/{{league_id}}/goods-detail/'+id+'?item_id='+pageData[i].item_id+'" class="swipebox no-smoothState" title="This is dummy caption.">';
                     inner_html += '<img src="'+pageData[i].img+'" alt="image">';
                     inner_html += '<div class="gallery-item-header">';
                     inner_html += '<div class="gallery-item-author">';
