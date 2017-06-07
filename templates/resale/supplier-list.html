@@ -38,14 +38,17 @@
     <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
   </head>
   <style>
-    body {overflow-x: hidden}
+    body{
+      -webkit-overflow-scrolling: touch;
+      overflow-scrolling: touch;
+    }
   </style>
   <body>
     <!-- Main Container -->
     <div id="main" class="main">
 
       <!-- Page Contents -->
-      <div class="animated fadeinup">
+      <div class="animated fadeinup" id="c_List">
         <div class="todo" id="ListContent"></div>
       </div>
       <!-- End of Page Contents -->
@@ -53,7 +56,6 @@
     <!-- End of Main Container -->
 
     <!-- Scripts -->
-    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
@@ -64,16 +66,19 @@
     <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
-    <script src="{{ static_url('shuttle-master/list.js') }}"></script>
     <script src="{{ static_url('ydui/js/ydui.js') }}"></script>
     <script>
+    $(function(){
+
             // 根据实际情况自定义获取数据方法
             var limit = 10;
             var pageNum = 1;
 
-            $('#ListContent').infiniteScroll({
+            $('body').infiniteScroll({
+                binder:'body',
                 pageSize: limit,
-                loadingHtml: '<strong>加载中...</strong>',
+                loadingHtml: '<strong><span style="font-size:14px; display:block; margin-top:20px;">数据加载中...</span></strong>',
+                doneTxt: '<span style="font-size:14px; display:block; margin-top:20px;">已全部加载完毕</span>',
                 loadListFn: function(){
                   var def = $.Deferred();
                   $.ajax({
@@ -105,19 +110,14 @@
                     return def.promise();
                 }
             });
-    </script>
-    <script type="text/javascript">
-    // 分销商列表 @2017/05/23
-    $(function(){
-      console.log('to fetch distributor list...');
 
-      $('.todo-element').click(function(e){
-        console.log('todo element clicked!');
+          $(document).on('click','.todo-element',function(e){
+            console.log('todo element clicked!');
 
-        console.log($(this));
-        console.log($(this).data('id'));
-        location.href = '/bf/wx/vendors/{{ league_id }}/supplier?s=' + $(this).data('id');
-      });
+            console.log($(this));
+            console.log($(this).data('id'));
+            location.href = '/bf/wx/vendors/{{ league_id }}/supplier?s=' + $(this).data('id');
+          });
 
     });
 
