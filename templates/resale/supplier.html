@@ -72,10 +72,10 @@
         </ul>
 
         <!-- Gallery One -->
-        <div id="one" class="grid m-t-20"></div>
+        <div id="one" class="grid m-b-20"></div>
 
         <!-- Gallery Two -->
-        <div id="two" class="grid m-t-20"></div>
+        <div id="two" class="grid m-b-20"></div>
 
         <!-- Gallery Three -->
         <div id="three" class="animated fadeinup"></div>
@@ -121,14 +121,14 @@
                 },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
-                      console.log(data);
+                      // console.log(data);
                       data_obj = JSON.parse(data);
                       data = data_obj.rs;
                   var pageData = data.data;
                   for (var i in pageData) {
                     var inner_html = '<div class="grid-item gallery-item-card">';
                     inner_html += '<a href="/bf/wx/vendors/{{league_id}}/goods-detail/'+id+'?item_id='+pageData[i].item_id+'" class="swipebox no-smoothState" title="This is dummy caption.">';
-                    inner_html += '<img src="'+pageData[i].img+'" alt="image">';
+                    inner_html += '<img src="'+pageData[i].img+'" class="one_img" alt="image">';
                     inner_html += '<div class="gallery-item-header">';
                     inner_html += '<div class="gallery-item-author">';
                     inner_html += '<span>'+ pageData[i].item_name +'</span>';
@@ -136,6 +136,16 @@
                     inner_html += '</div></div></a></div>';
                     $('#one').append(inner_html);
                     };
+                    var num = $(".one_img").length;
+                    $(".one_img").load(function() {
+                        num--;
+                        if (num > 0) {
+                          return;
+                        }
+                        $('#one').masonry({
+                          itemSelector: '.gallery-item-card'
+                        });
+                    });
                   }
                 })
           };
@@ -149,22 +159,19 @@
                 },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
-                      console.log(">>>>>>",data);
+                      // console.log(">>>>>>",data);
                       data_obj = JSON.parse(data);
                       data = data_obj.rs;
                   var pageData = data.data;
+                  var inner_html = "";
                   for (var i in pageData) {
-
-                    var inner_html = '<div class="grid-item">';
-                        inner_html += '<a href="'+pageData[i].url+'" class="swipebox no-smoothState" title="精彩瞬间">';
-                        inner_html += '<img src="'+pageData[i].url+'" alt="image">';
+                        inner_html += '<div class="grid-item two">';
+                        inner_html += '<a href="'+pageData[i].url+'"  class="swipebox no-smoothState" title="精彩瞬间">';
+                        inner_html += '<img src="'+pageData[i].url+'" class="two_img" alt="image">';
                         inner_html += '</a>';
                         inner_html += '</div>';
-                    $('#two').append(inner_html).masonry( 'appended', inner_html, true );;
-                  };
-                  // $('.grid').masonry({
-                  //     itemSelector: '.grid-item'
-                  // });
+                    };
+                    $('#two').append(inner_html);
                   }
                 })
           };
@@ -178,7 +185,7 @@
                 },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
-                      console.log(data);
+                      // console.log(data);
                       data_obj = JSON.parse(data);
                       data = data_obj.rs;
                   var pageData = data.data;
