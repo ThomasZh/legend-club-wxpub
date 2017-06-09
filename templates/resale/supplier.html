@@ -150,6 +150,7 @@
                 })
           };
           one("1");
+
           function two(pageNum) {
               $.ajax({
                 type: "GET",
@@ -167,11 +168,12 @@
                   for (var i in pageData) {
                         inner_html += '<div class="grid-item two">';
                         inner_html += '<a href="'+pageData[i].url+'"  class="swipebox no-smoothState" title="精彩瞬间">';
-                        inner_html += '<img src="'+pageData[i].url+'" class="two_img" alt="image">';
+                        inner_html += '<img src="'+pageData[i].url+'!200x200" class="two_img" alt="image">';
                         inner_html += '</a>';
                         inner_html += '</div>';
                     };
                     $('#two').append(inner_html);
+
                   }
                 })
           };
