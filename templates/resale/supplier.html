@@ -116,9 +116,9 @@
               $.ajax({
                 type: "GET",
                 url: "{{api_domain}}/api/suppliers/"+id+"/items?_status=20&private=0&page="+pageNum+"&limit="+limit,
-                headers: {
-                  "Authorization": "Bearer {{ access_token }}"
-                },
+                // headers: {
+                //   "Authorization": "Bearer {{ access_token }}"
+                // },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
                       // console.log(data);
@@ -155,9 +155,9 @@
               $.ajax({
                 type: "GET",
                 url: "{{api_domain}}/api/multimedias-pagination?filter=club&club_id="+id+"&page="+pageNum+"&limit="+limit,
-                headers: {
-                  "Authorization": "Bearer {{ access_token }}"
-                },
+                // headers: {
+                //   "Authorization": "Bearer {{ access_token }}"
+                // },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
                       // console.log(">>>>>>",data);
@@ -182,9 +182,9 @@
               $.ajax({
                 type: "GET",
                 url: "{{api_domain}}/api/articles-pagination?filter=club&club_id="+id+"&status=publish&category=all&page="+pageNum+"&limit="+limit,
-                headers: {
-                  "Authorization": "Bearer {{ access_token }}"
-                },
+                // headers: {
+                //   "Authorization": "Bearer {{ access_token }}"
+                // },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
                       // console.log(data);

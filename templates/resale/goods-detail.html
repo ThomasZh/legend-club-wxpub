@@ -64,11 +64,16 @@
           <!-- End of Slider -->
 
           <!-- Floating Action Button -->
+          <form id="f_form" action="/bf/wx/vendors/{{league_id}}/goods-detail/{{club_id}}" method="POST">
+
+
           <div class="floating-button animated bouncein delay-3">
-            <a href="/bf/wx/vendors/register-distributor" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
+            <a id="f_btn" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
               <i class="ion-ios-cart"></i>
             </a>
           </div>
+
+          </form>
         </div>
 
         <!-- Product Title -->
@@ -180,5 +185,14 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/product.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+      $("#f_btn").on('click',function(){
+        $("#f_form").submit();
+
+      })
+    });
+
+    </script>
   </body>
 </html>

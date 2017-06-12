@@ -244,10 +244,10 @@ class WxResaleSupplerHandler(BaseHandler):
 
 
 # 供给分销的单个产品详情
-class WxResaleGoodsDetailHandler(BaseHandler):
+class WxResaleGoodsDetailHandler(AuthorizationHandler):
     def get(self,league_id,club_id):
         logging.info("GET %r", self.request.uri)
-
+        access_token = self.get_secure_cookie("access_token")
         club = self.get_club_basic_info(club_id)
         activity_id = self.get_argument("item_id","")
 
@@ -256,7 +256,74 @@ class WxResaleGoodsDetailHandler(BaseHandler):
 
         self.render('resale/goods-detail.html',
                 club=club,
+                league_id=league_id,
+                club_id=club_id,
+                activity_id=activity_id,
                 activity=activity)
+
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def post(self, league_id, vendor_id):
+        logging.info("got league_id %r in uri", league_id)
+        logging.info("got vendor_id %r in uri", vendor_id)
+
+        is_login = False
+        access_token = self.get_secure_cookie("access_token")
+        if access_token:
+            is_login = True
+            
+        # is ops
+        try:
+            # 校验是否为分销商管理员
+            params = {"filter":"ops"}
+            url = url_concat(API_DOMAIN+"/api/myinfo", params)
+            http_client = HTTPClient()
+            headers={"Authorization":"Bearer "+session_ticket['access_token']}
+            response = http_client.fetch(url, method="GET", headers=headers)
+            logging.info("got response %r", response.body)
+            # account_id,nickname,avatar,club_id,club_name,league_id,_rank
+            data = json_decode(response.body)
+            ops = data['rs']
+        except:
+            err_title = str( sys.exc_info()[0] );
+            err_detail = str( sys.exc_info()[1] );
+            logging.error("error: %r info: %r", err_title, err_detail)
+            if err_detail == 'HTTP 404: Not Found':
+                err_msg = "您还不是分销商，请先注册!"
+                self.redirect('/bf/wx/vendors/register-distributor', err_msg=err_msg)
+                return
+            else:
+                err_msg = "系统故障, 请稍后尝试!"
+                self.redirect('/bf/wx/vendors/register-distributor', err_msg=err_msg)
+                return
+
+        activity_id = self.get_argument("item_id","")
+        logging.info(" got activity_id %r", activity_id)
+
+        item_type = {"item_type": "activity"}
+        headers = {"Authorization":"Bearer "+access_token}
+
+        url = API_DOMAIN + "/api/distributors/"+ club_id + "/items/"+ activity_id + "/takeon"
+        _json = json_encode(item_type)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        logging.info("update activity response.body=[%r]", response.body)
+        # # 加share属性，区别一个自己是否已经分享了别人开放的这个活动
+        # for activity in activitys:
+        #     # 取俱乐部名称
+        #     club_id = activity['vendor_id']
+        #     club = get_club_info(access_token,club_id)
+        #     if club:
+        #         activity['club'] = club['name']
+        #     else:
+        #         activity['club'] = ""
+        #     activity['share'] = False
+        #
+        #     activity['begin_time'] = timestamp_date(float(activity['begin_time'])) # timestamp -> %m/%d/%Y
+        #
+        #     for activity_share in activitys_share:
+        #         if(activity['_id']==activity_share['activity']):
+        #             activity['share'] = True
+        #             break
 
 
 
