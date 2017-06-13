@@ -270,68 +270,101 @@ class WxResaleGoodsDetailHandler(AuthorizationHandler):
         access_token = self.get_secure_cookie("access_token")
         if access_token:
             is_login = True
-            
-        # is ops
+        # 判断是否注册了分销商
         try:
-            # 校验是否为分销商管理员
             params = {"filter":"ops"}
             url = url_concat(API_DOMAIN+"/api/myinfo", params)
             http_client = HTTPClient()
-            headers={"Authorization":"Bearer "+session_ticket['access_token']}
+            headers={"Authorization":"Bearer "+access_token}
             response = http_client.fetch(url, method="GET", headers=headers)
             logging.info("got response %r", response.body)
             # account_id,nickname,avatar,club_id,club_name,league_id,_rank
             data = json_decode(response.body)
             ops = data['rs']
+
+            activity_id = self.get_argument("item_id","")
+            logging.info(" got activity_id %r", activity_id)
+
+            item_type = {"item_type": "activity"}
+            headers = {"Authorization":"Bearer "+access_token}
+
+            url = API_DOMAIN + "/api/distributors/"+ club_id + "/items/"+ activity_id + "/takeon"
+            _json = json_encode(item_type)
+            http_client = HTTPClient()
+            response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+            logging.info("update activity response.body=[%r]", response.body)
+
+            # 加share属性，区别一个自己是否已经分享了别人开放的这个活动
+            # for activity in activitys:
+            #     # 取俱乐部名称
+            #     club_id = activity['vendor_id']
+            #     club = get_club_info(access_token,club_id)
+            #     if club:
+            #         activity['club'] = club['name']
+            #     else:
+            #         activity['club'] = ""
+            #     activity['share'] = False
+            #
+            #     activity['begin_time'] = timestamp_date(float(activity['begin_time'])) # timestamp -> %m/%d/%Y
+            #
+            #     for activity_share in activitys_share:
+            #         if(activity['_id']==activity_share['activity']):
+            #             activity['share'] = True
+            #             break
+
         except:
             err_title = str( sys.exc_info()[0] );
             err_detail = str( sys.exc_info()[1] );
             logging.error("error: %r info: %r", err_title, err_detail)
             if err_detail == 'HTTP 404: Not Found':
                 err_msg = "您还不是分销商，请先注册!"
-                self.redirect('/bf/wx/vendors/register-distributor', err_msg=err_msg)
-                return
+                self.redirect("/bf/wx/vendors/register-distributor")
             else:
                 err_msg = "系统故障, 请稍后尝试!"
-                self.redirect('/bf/wx/vendors/register-distributor', err_msg=err_msg)
-                return
-
-        activity_id = self.get_argument("item_id","")
-        logging.info(" got activity_id %r", activity_id)
-
-        item_type = {"item_type": "activity"}
-        headers = {"Authorization":"Bearer "+access_token}
-
-        url = API_DOMAIN + "/api/distributors/"+ club_id + "/items/"+ activity_id + "/takeon"
-        _json = json_encode(item_type)
-        http_client = HTTPClient()
-        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-        logging.info("update activity response.body=[%r]", response.body)
-        # # 加share属性，区别一个自己是否已经分享了别人开放的这个活动
-        # for activity in activitys:
-        #     # 取俱乐部名称
-        #     club_id = activity['vendor_id']
-        #     club = get_club_info(access_token,club_id)
-        #     if club:
-        #         activity['club'] = club['name']
-        #     else:
-        #         activity['club'] = ""
-        #     activity['share'] = False
-        #
-        #     activity['begin_time'] = timestamp_date(float(activity['begin_time'])) # timestamp -> %m/%d/%Y
-        #
-        #     for activity_share in activitys_share:
-        #         if(activity['_id']==activity_share['activity']):
-        #             activity['share'] = True
-        #             break
+                self.redirect("/bf/wx/vendors/register-distributor")
 
 
 
 class WxResaleRegisterDistributorHandler(BaseHandler):
     def get(self):
         logging.info("GET %r", self.request.uri)
+        err_msg = ""
+        self.render('resale/register-distributor.html',err_msg=err_msg)
 
-        self.render('resale/register-distributor.html')
+    def post(self):
+        logging.info(self.request)
+        logging.info(self.request.body)
+        phone = self.get_argument("reg_phone", "")
+        pwd = self.get_argument("reg_pwd", "")
+        logging.info("try register as phone:[%r] pwd:[%r]", phone, pwd)
+
+        code = self.get_code()
+
+        # register
+        try:
+            url = API_DOMAIN+"/api/auth/accounts"
+            http_client = HTTPClient()
+            headers={"Authorization":"Bearer "+code}
+            data = {"login_type":"phone",
+                    "phone":phone,
+                    "pwd":pwd}
+            _json = json_encode(data)
+            logging.info("request %r body %r", url, _json)
+            response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+            logging.info("got response %r", response.body)
+            data = json_decode(response.body)
+            session_ticket = data['rs']
+        except:
+            err_title = str( sys.exc_info()[0] );
+            err_detail = str( sys.exc_info()[1] );
+            logging.error("error: %r info: %r", err_title, err_detail)
+            if err_detail == 'HTTP 409: Conflict':
+                err_msg = "此手机号码已经注册!"
+                self.render('resale/register-distributor.html', err_msg=err_msg)
+                return
+
+        err_msg = "注册成功，请登录!"
+        self.render('resale/register-success.html', err_msg=err_msg)
 
 
 

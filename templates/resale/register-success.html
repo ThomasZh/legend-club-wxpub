@@ -44,17 +44,16 @@
       <div class="page animated fadeinup">
 
         <!-- Form Inputs -->
-        <form class="" id="re_form" action="/bf/wx/vendors/register-distributor" method="post">
         <div class="form-inputs p-20">
           <div>
             <div class="input-field animated fadeinright">
-              <input id="reg_phone" name="reg_phone" type="text" class="validate">
-              <label for="reg_phone">手机</label>
+              <input id="name" type="text" class="validate">
+              <label for="first_name">姓名</label>
             </div>
           </div>
           <div class="input-field animated fadeinright delay-3">
-            <input id="reg_pwd" name="reg_pwd" type="password" class="validate">
-            <label for="reg_pwd">密码</label>
+            <input id="telephone" type="text" class="validate">
+            <label for="telephone">电话</label>
           </div>
           <div class="input-field animated fadeinright delay-4">
             <input id="validcode" type="text" class="validate">
@@ -62,16 +61,10 @@
 
             <a class="waves-effect waves-light btn getcode-btn" href="javascript:void(0);" id="J_GetCode">获取</a>
           </div>
-          {% if err_msg %}
+
           <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
-          href="#" id="re_btn">{{ err_msg }}</a>
-          {% else %}
-          <div class="login-form-main-message"></div>
-          {% end %}
-          <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
-          href="#" id="re_btn">注册</a>
+          href="#">注册</a>
         </div>
-        </form>
         <!-- End of Form -->
 
       </div>
@@ -90,73 +83,6 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/register.js') }}"></script>
-
-    <script type="text/javascript">
-      $(function(){
-        $("#re_btn").on('click',function(){
-          var _this = $(this);
-            $("#re_form").submit();
-        });
-        $("#J_GetCode").on('click',function(){
-          SmsVerifyCode();
-        })
-        function SmsVerifyCode() {
-          var wait = 300; // 5分钟
-          function time(t) {
-            if (wait == 0) {
-              t.removeAttribute("disabled");
-              t.value = "获取";
-              wait = 300; // 5分钟
-            } else {
-              t.setAttribute("disabled", true);
-              t.value = "" + wait + "秒";
-              wait--;
-              setTimeout(function() {
-                time(t)
-              }, 1000)
-            }
-          }
-
-            var phone = $("#telephone").val();
-                console.log(phone);
-            var data = {
-              "phone": phone,
-            };
-            var json = JSON.stringify(data);
-
-            $.ajax({
-              type: "POST",
-              url: "/admin/auth/phone/verify-code",
-              data: json,
-              dataType: "json",
-              contentType: 'application/json',
-              success: function(data, status, xhr) {
-                var btn = document.getElementById("J_GetCode");
-                time(btn);
-              },
-              error: function(XMLHttpRequest, textStatus, errorThrown) {
-                console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
-                if (XMLHttpRequest.status == 200) {
-                  var btn = document.getElementById("J_GetCode");
-                  time(btn);
-                } else if (XMLHttpRequest.status == 401) {
-                  $('.login-form-main-message').addClass('show error').html("验证码不正确!");
-                } else if (XMLHttpRequest.status == 404) {
-                  $('.login-form-main-message').addClass('show error').html("此手机号码未注册!");
-                } else if (XMLHttpRequest.status == 408) {
-                  $('.login-form-main-message').addClass('show error').html("短信验证码5分钟内有效, 不必获取新的!");
-                } else {
-                  $('.login-form-main-message').addClass('show error').html(XMLHttpRequest.status + ": 服务器异常,请稍后重试!");
-                }
-              },
-              complete: function(XMLHttpRequest, textStatus) {
-                this; // 调用本次AJAX请求时传递的options参数
-              }
-            });
-
-          }
-      })
-    </script>
 
   </body>
 </html>
