@@ -223,11 +223,12 @@ class WxResaleSupplerHandler(BaseHandler):
         logging.info("GET %r", self.request.uri)
 
         access_token = self.get_secure_cookie("access_token")
-        id = self.get_argument("s","")
+        club_id = self.get_argument("club_id","")
+        logging.info("got club_id %r", club_id)
 
-        url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises/"+id
+        url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises/"+club_id
         http_client = HTTPClient()
-        headers={"Authorization":"Bearer "+access_token}
+        headers={"Authorization":"Bearer "+DEFAULT_USER_ID}
         response = http_client.fetch(url, method="GET", headers=headers)
         logging.info("got response %r", response.body)
         data = json_decode(response.body)
