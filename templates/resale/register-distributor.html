@@ -44,33 +44,33 @@
       <div class="page animated fadeinup">
 
         <!-- Form Inputs -->
-        <form class="" id="re_form" action="/bf/wx/vendors/register-distributor" method="post">
-        <div class="form-inputs p-20">
-          <div>
-            <div class="input-field animated fadeinright">
-              <input id="reg_phone" name="reg_phone" type="text" class="validate">
-              <label for="reg_phone">手机</label>
+        <form class="" id="re_form" action="/bf/wx/vendors/{{ league_id }}/register-distributor" method="post">
+            <div class="form-inputs p-20">
+                <div>
+                  <div class="input-field animated fadeinright">
+                    <input id="reg_name" name="reg_name" type="text" class="validate">
+                    <label for="reg_name">分销商名称</label>
+                  </div>
+                </div>
+                <div class="input-field animated fadeinright delay-2">
+                  <input id="reg_phone" name="reg_phone" type="number" class="validate">
+                  <label for="reg_phone">联系电话</label>
+                </div>
+                <div class="input-field animated fadeinright delay-3">
+                  <input id="reg_email" name="reg_email" type="email" class="validate">
+                  <label for="reg_email">电子邮箱</label>
+                </div>
+                <div class="input-field animated fadeinright delay-4">
+                  <input id="reg_city" name="reg_city" type="text" class="validate">
+                  <label for="reg_city">地址</label>
+                </div>
+                <div class="input-field animated fadeinright delay-5">
+                  <textarea class="materialize-textarea" id="reg_intro" name="reg_intro"></textarea>
+                  <label for="reg_intro">简介</label>
+                </div>
+                <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
+                   href="#" id="re_btn">注册</a>
             </div>
-          </div>
-          <div class="input-field animated fadeinright delay-3">
-            <input id="reg_pwd" name="reg_pwd" type="password" class="validate">
-            <label for="reg_pwd">密码</label>
-          </div>
-          <div class="input-field animated fadeinright delay-4">
-            <input id="validcode" type="text" class="validate">
-            <label for="city">验证码</label>
-
-            <a class="waves-effect waves-light btn getcode-btn" href="javascript:void(0);" id="J_GetCode">获取</a>
-          </div>
-          {% if err_msg %}
-          <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
-          href="#" id="re_btn">{{ err_msg }}</a>
-          {% else %}
-          <div class="login-form-main-message"></div>
-          {% end %}
-          <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
-          href="#" id="re_btn">注册</a>
-        </div>
         </form>
         <!-- End of Form -->
 

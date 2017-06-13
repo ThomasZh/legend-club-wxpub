@@ -111,7 +111,7 @@
           };
 
           var limit = 20;//初始化值
-          var id = GetQueryString("s");
+          var id = GetQueryString("club_id");
           function one(pageNum) {
               $.ajax({
                 type: "GET",
@@ -121,7 +121,7 @@
                 // },
                 contentType: 'application/json',
                 success: function(data, status, xhr) {
-                      // console.log(data);
+                      console.log(data);
                       data_obj = JSON.parse(data);
                       data = data_obj.rs;
                   var pageData = data.data;

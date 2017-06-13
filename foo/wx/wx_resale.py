@@ -218,17 +218,18 @@ class WxResaleSupplerListHandler(BaseHandler):
 
 
 # 单个供应商
-class WxResaleSupplerHandler(BaseHandler):
+class WxResaleSupplerHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self,league_id):
         logging.info("GET %r", self.request.uri)
 
-        access_token = self.get_secure_cookie("access_token")
+        access_token = self.get_access_token()
         club_id = self.get_argument("club_id","")
         logging.info("got club_id %r", club_id)
 
         url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises/"+club_id
         http_client = HTTPClient()
-        headers={"Authorization":"Bearer "+DEFAULT_USER_ID}
+        headers={"Authorization":"Bearer "+access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
         logging.info("got response %r", response.body)
         data = json_decode(response.body)
@@ -246,6 +247,7 @@ class WxResaleSupplerHandler(BaseHandler):
 
 # 供给分销的单个产品详情
 class WxResaleGoodsDetailHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self,league_id,club_id):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_secure_cookie("access_token")
@@ -268,7 +270,7 @@ class WxResaleGoodsDetailHandler(AuthorizationHandler):
         logging.info("got vendor_id %r in uri", vendor_id)
 
         is_login = False
-        access_token = self.get_secure_cookie("access_token")
+        access_token = self.get_access_token()
         if access_token:
             is_login = True
         # 判断是否注册了分销商
@@ -283,17 +285,20 @@ class WxResaleGoodsDetailHandler(AuthorizationHandler):
             data = json_decode(response.body)
             ops = data['rs']
 
+            # 分销商品
             activity_id = self.get_argument("item_id","")
             logging.info(" got activity_id %r", activity_id)
 
             item_type = {"item_type": "activity"}
             headers = {"Authorization":"Bearer "+access_token}
 
-            url = API_DOMAIN + "/api/distributors/"+ club_id + "/items/"+ activity_id + "/takeon"
+            url = API_DOMAIN + "/api/distributors/"+ ops['club_id'] + "/items/"+ activity_id + "/takeon"
             _json = json_encode(item_type)
             http_client = HTTPClient()
             response = http_client.fetch(url, method="POST", headers=headers, body=_json)
             logging.info("update activity response.body=[%r]", response.body)
+
+            self.redirect('/bf/wx/vendors/'+ league_id +'/distributor-personal/'+ops['club_id'])
 
             # 加share属性，区别一个自己是否已经分享了别人开放的这个活动
             # for activity in activitys:
@@ -319,58 +324,97 @@ class WxResaleGoodsDetailHandler(AuthorizationHandler):
             logging.error("error: %r info: %r", err_title, err_detail)
             if err_detail == 'HTTP 404: Not Found':
                 err_msg = "您还不是分销商，请先注册!"
-                self.redirect("/bf/wx/vendors/register-distributor")
+                self.redirect("/bf/wx/vendors/"+ league_id +"/register-distributor")
             else:
                 err_msg = "系统故障, 请稍后尝试!"
-                self.redirect("/bf/wx/vendors/register-distributor")
+                self.redirect("/bf/wx/vendors/"+ league_id +"/register-distributor")
 
 
 
-class WxResaleRegisterDistributorHandler(BaseHandler):
-    def get(self):
-        logging.info("GET %r", self.request.uri)
+class WxResaleRegisterDistributorHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self,league_id):
+        logging.info("GET league_id %r", league_id)
         err_msg = ""
-        self.render('resale/register-distributor.html',err_msg=err_msg)
+        self.render('resale/register-distributor.html',league_id=league_id,err_msg=err_msg)
 
-    def post(self):
-        logging.info(self.request)
-        logging.info(self.request.body)
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def post(self,league_id):
+        logging.info("GET league_id %r", league_id)
+
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        name = self.get_argument("reg_name", "")
         phone = self.get_argument("reg_phone", "")
-        pwd = self.get_argument("reg_pwd", "")
-        logging.info("try register as phone:[%r] pwd:[%r]", phone, pwd)
+        email = self.get_argument("reg_email", "")
+        city = self.get_argument("reg_city", "")
+        intro = self.get_argument("reg_intro", "")
 
-        code = self.get_code()
+        url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises"
+        http_client = HTTPClient()
+        headers={"Authorization":"Bearer "+access_token}
+        data = {"name": name,
+                "phone": phone,
+                "email": email,
+                "franchise_type": "分销商",
+                "province": city,
+                "city": city,
+                "img": "http://tripc2c-club-title.b0.upaiyun.com/default/banner4.png",
+                "introduction": intro
+                }
+        _json = json_encode(data)
+        logging.info("request %r body %r", url, _json)
+        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        logging.info("got response %r", response.body)
 
-        # register
-        try:
-            url = API_DOMAIN+"/api/auth/accounts"
-            http_client = HTTPClient()
-            headers={"Authorization":"Bearer "+code}
-            data = {"login_type":"phone",
-                    "phone":phone,
-                    "pwd":pwd}
-            _json = json_encode(data)
-            logging.info("request %r body %r", url, _json)
-            response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-            logging.info("got response %r", response.body)
-            data = json_decode(response.body)
-            session_ticket = data['rs']
-        except:
-            err_title = str( sys.exc_info()[0] );
-            err_detail = str( sys.exc_info()[1] );
-            logging.error("error: %r info: %r", err_title, err_detail)
-            if err_detail == 'HTTP 409: Conflict':
-                err_msg = "此手机号码已经注册!"
-                self.render('resale/register-distributor.html', err_msg=err_msg)
-                return
+        # 同意申请
+        url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises"+dis_id
+        http_client = HTTPClient()
+        headers={"Authorization":"Bearer "+access_token}
+        data = {"action": "accept"}
+        _json = json_encode(data)
+        logging.info("request %r body %r", url, _json)
+        response = http_client.fetch(url, method="PUT", headers=headers, body=_json)
+        logging.info("got response %r", response.body)
 
-        err_msg = "注册成功，请登录!"
+        err_msg = "注册成功!"
         self.render('resale/register-success.html', err_msg=err_msg)
 
 
 
-class WxResaleDistributorPersonalHandler(BaseHandler):
-    def get(self, resale_id):
+class WxResaleDistributorPersonalHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, league_id, resale_id):
         logging.info("GET %r", self.request.uri)
 
-        self.render('resale/distributor-personal.html')
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        ops = self.get_ops_info()
+        logging.info("GET ops %r", ops)
+
+        # 查询分销商信息
+        url = API_DOMAIN+"/api/leagues/"+league_id+"/franchises/"+resale_id
+        http_client = HTTPClient()
+        headers={"Authorization":"Bearer "+access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response %r", response.body)
+        data = json_decode(response.body)
+        distributor = data['rs']
+        distributor['create_time'] = timestamp_datetime(distributor['create_time'])
+        if not distributor['club'].has_key('img'):
+            distributor['club']['img'] = ''
+
+        # 查询分销商分销的商品列表
+        params = {"_status": 20,"private": 0,"page": 1,"limit": 20}
+
+        url = url_concat(API_DOMAIN+"/api/distributors/"+ resale_id +"/items",params)
+        headers={"Authorization":"Bearer "+access_token}
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response %r", response.body)
+        data = json_decode(response.body)
+        activities = data['rs']['data']
+
+        self.render('resale/distributor-personal.html',ops=ops, distributor=distributor, activities=activities)

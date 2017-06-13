@@ -94,8 +94,8 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/supplier-list", getattr(wx_resale, 'WxResaleSupplerListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/supplier", getattr(wx_resale, 'WxResaleSupplerHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/goods-detail/([a-z0-9]*)", getattr(wx_resale, 'WxResaleGoodsDetailHandler')),
-        (r"/bf/wx/vendors/register-distributor", getattr(wx_resale, 'WxResaleRegisterDistributorHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/distributor-personal", getattr(wx_resale, 'WxResaleDistributorPersonalHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/register-distributor", getattr(wx_resale, 'WxResaleRegisterDistributorHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/distributor-personal/([a-z0-9]*)", getattr(wx_resale, 'WxResaleDistributorPersonalHandler')),
 
 
         # bike-forever wexin activity
