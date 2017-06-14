@@ -300,24 +300,6 @@ class WxResaleGoodsDetailHandler(AuthorizationHandler):
 
             self.redirect('/bf/wx/vendors/'+ league_id +'/distributor-personal/'+ops['club_id'])
 
-            # 加share属性，区别一个自己是否已经分享了别人开放的这个活动
-            # for activity in activitys:
-            #     # 取俱乐部名称
-            #     club_id = activity['vendor_id']
-            #     club = get_club_info(access_token,club_id)
-            #     if club:
-            #         activity['club'] = club['name']
-            #     else:
-            #         activity['club'] = ""
-            #     activity['share'] = False
-            #
-            #     activity['begin_time'] = timestamp_date(float(activity['begin_time'])) # timestamp -> %m/%d/%Y
-            #
-            #     for activity_share in activitys_share:
-            #         if(activity['_id']==activity_share['activity']):
-            #             activity['share'] = True
-            #             break
-
         except:
             err_title = str( sys.exc_info()[0] );
             err_detail = str( sys.exc_info()[1] );

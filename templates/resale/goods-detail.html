@@ -27,6 +27,7 @@
     <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
 
     <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('ydui/css/ydui.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
@@ -64,25 +65,13 @@
           <!-- End of Slider -->
 
           <!-- Floating Action Button -->
-          <form id="f_form" action="/bf/wx/vendors/{{league_id}}/goods-detail/{{club_id}}?item_id={{ activity_id }}" method="POST">
-
-
-          <div class="floating-button animated bouncein delay-3">
-            <a id="f_btn" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
-              <i class="ion-ios-cart"></i>
-            </a>
-          </div>
-
-          </form>
         </div>
 
         <!-- Product Title -->
         <div class="center-align p-20">
           <!-- <span class="small grey-text">科技产品</span> -->
           <h3 class="m-0"><strong>{{ activity['title'] }}</strong></h3>
-          <h4>{%for fee in  activity['base_fee_template'] %}
-                {{ fee['name'] }}:{{ fee['fee'] }}元<br>
-            {% end %}</h4>
+          <h4></h4>
         </div>
 
         <!-- Prduct Description -->
@@ -101,56 +90,28 @@
         </div>
 
         <div class="product-variation">
-          <h5><strong>Choose a color:</strong></h5>
+          <h5><strong>选择规格:</strong></h5>
           <form action="#">
+            {% for i in range(len(activity['base_fee_template'])) %}
             <p>
-              <input name="group1" type="radio" id="test1" />
-              <label for="test1">Red</label>
+              <input name="group1" type="radio" id="test{{i}}" />
+              <label for="test{{i}}">{{ activity['base_fee_template'][i]['name'] }}:{{ activity['base_fee_template'][i]['fee'] }}元</label>
             </p>
-            <p>
-              <input name="group1" type="radio" id="test2" />
-              <label for="test2">Yellow</label>
-            </p>
-            <p>
-              <input name="group1" type="radio" id="test3"  />
-              <label for="test3">Green</label>
-            </p>
-              <p>
-                <input name="group1" type="radio" id="test4" />
-                <label for="test4">Brown</label>
-            </p>
+            {% end %}
+
           </form>
         </div>
 
-        <div class="product-variation">
-          <h5><strong>Choose a size:</strong></h5>
-          <div class="sizes p-b-20">
-            <span class="size">xs</span>
-            <span class="size">s</span>
-            <span class="size">m</span>
-            <span class="size">l</span>
-            <span class="size">xl</span>
+        <form id="f_form" action="/bf/wx/vendors/{{league_id}}/goods-detail/{{club_id}}?item_id={{ activity_id }}" method="POST">
+          <div class="product-variation">
+            <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:void(0)">加入分销</a>
           </div>
-        </div>
-
-        <div class="product-variation">
-          <h5><strong>Choose a shipping method:</strong></h5>
-          <select class="browser-default">
-            <option value="" disabled selected>Choose your option</option>
-            <option value="1">Credit Card</option>
-            <option value="2">Cash on Delivery</option>
-            <option value="3">Online Payment</option>
-          </select>
-        </div>
-
-        <div class="product-variation">
-          <a class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="checkout.html">Add to Cart</a>
-        </div>
+        </form>
 
         <!-- Footer -->
         <footer class="page-footer primary-color">
           <div class="section center">
-            <h2 class="heading white-text">Shuttle</h2>
+            <h2 class="heading white-text">7x24hs</h2>
             <p class="center-align grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
             <div class="footer-icons">
               <i class="ion-social-facebook m-10 white-text"></i>
@@ -161,7 +122,7 @@
           </div>
           <div class="footer-copyright">
             <div class="container center">
-              <span>Made with <i class="ion-ios-heart"></i> by Codnauts</span>
+              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
             </div>
           </div>
         </footer>
@@ -185,11 +146,28 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/product.js') }}"></script>
+    <script src="{{ static_url('ydui/js/ydui.js') }}"></script>
     <script type="text/javascript">
     $(function(){
       $("#f_btn").on('click',function(){
-        $("#f_form").submit();
-
+        var dialog = window.YDUI.dialog;
+        dialog.confirm('提醒', '确定分销该商品吗？', [
+          {
+            txt: '确定',
+            color: true,
+            callback: function () {
+                dialog.toast('分销成功', 'none', 1000);
+                $("#f_form").submit();
+            }
+          },
+          {
+            txt: '取消',
+            color: true,
+            callback: function () {
+                dialog.toast('取消了', 'none', 1000);
+            }
+          }
+        ]);
       })
     });
 

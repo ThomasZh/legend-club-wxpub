@@ -70,9 +70,42 @@
           </div>
         </div>
 
-        <div class="todo">
-
-          <p class="todo-element" data-id="1">
+        <div class="section" style="padding:0;">
+          <ul class="faq collapsible animated fadeinright delay-1" data-collapsible="accordion">
+            <li>
+              <div class="collapsible-header" style="line-height:5rem;"><i class="ion-android-arrow-dropdown right"></i>供应商列表</div>
+              <div class="collapsible-body"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p></div>
+            </li>
+            <li>
+              <div class="collapsible-header" style="line-height:5rem;"><i class="ion-android-arrow-dropdown right"></i>分销的商品列表</div>
+              <div class="collapsible-body news">
+                <!-- 单个列表 -->
+                {% for activity in activities %}
+                <div class="media-top-object animated fadeinright z-depth-1 delay-2">
+                  <a href="event.html" class="media-left"><img src="{{ activity['img'] }}" alt=""></a>
+                  <div class="media-body">
+                    <h4 class="news-title">
+                      <a href="#">{{ activity['title'] }}</a>
+                    </h4>
+                    <p class="small" style="padding:0;">{{ activity['subtitle'] }}</p>
+                    <div class="card-feedback">
+                      <div class="card-users">
+                        <i class="ion-ios-heart accent-text"></i> <span>346</span>
+                        <i class="ion-android-person-add"></i> <span>205</span>
+                      </div>
+                      <div class="card-share">
+                        <i class="ion-android-share-alt"></i> <span>Share</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% end %}
+                <!-- 单个列表end -->
+              </div>
+            </li>
+          </ul>
+        </div>
+          <!-- <p class="todo-element" data-id="1">
             <label for="todo2">供应商列表</label>
             <span class="more"><i class="ion-ios-arrow-right"></i></span>
           </p>
@@ -80,7 +113,8 @@
           <p class="todo-element" data-id="2">
             <label for="todo3">商品列表</label>
             <span class="more"><i class="ion-ios-arrow-right"></i></span>
-          </p>
+
+          </p> -->
 
         </div>
 
