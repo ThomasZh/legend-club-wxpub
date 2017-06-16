@@ -36,6 +36,11 @@
     <link rel="stylesheet" href="{{ static_url('shuttle-master/register.css') }}">
     <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
   </head>
+  <style media="screen">
+    .re_error{
+      color:red !important;
+    }
+  </style>
   <body>
     <!-- Main Container -->
     <div id="main" class="main">
@@ -44,32 +49,32 @@
       <div class="page animated fadeinup">
 
         <!-- Form Inputs -->
-        <form class="" id="re_form" action="/bf/wx/vendors/{{ league_id }}/register-distributor" method="post">
+        <form id="re_form" action="/bf/wx/vendors/{{ league_id }}/register-distributor" method="post">
             <div class="form-inputs p-20">
                 <div>
                   <div class="input-field animated fadeinright">
-                    <input id="reg_name" name="reg_name" type="text" class="validate">
                     <label for="reg_name">分销商名称</label>
+                    <input id="reg_name" name="reg_name" type="text">
                   </div>
                 </div>
                 <div class="input-field animated fadeinright delay-2">
-                  <input id="reg_phone" name="reg_phone" type="number" class="validate">
                   <label for="reg_phone">联系电话</label>
+                  <input id="reg_phone" name="reg_phone" type="number">
                 </div>
                 <div class="input-field animated fadeinright delay-3">
-                  <input id="reg_email" name="reg_email" type="email" class="validate">
                   <label for="reg_email">电子邮箱</label>
+                  <input id="reg_email" name="reg_email" type="email">
                 </div>
                 <div class="input-field animated fadeinright delay-4">
-                  <input id="reg_city" name="reg_city" type="text" class="validate">
                   <label for="reg_city">地址</label>
+                  <input id="reg_city" name="reg_city" type="text">
                 </div>
                 <div class="input-field animated fadeinright delay-5">
-                  <textarea class="materialize-textarea" id="reg_intro" name="reg_intro"></textarea>
                   <label for="reg_intro">简介</label>
+                  <textarea class="materialize-textarea" id="reg_intro" name="reg_intro"></textarea>
                 </div>
                 <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
-                   href="#" id="re_btn">注册</a>
+                   href="javascript:void(0);" id="re_btn">注册</a>
                 <span style="margin-top:1rem;display:block;">您还不是分销商, <a class="primary-text" href="javascript:void(0);">请先注册!</a></span>
             </div>
         </form>
@@ -93,50 +98,40 @@
     <script src="{{ static_url('shuttle-master/register.js') }}"></script>
     <script src="{{ static_url('js/jquery.validate.min.js') }}"></script>
     <script type="text/javascript">
-      $(function(){
-        $("#re_form").validate({
+    $(function(){
+        function jqvalidate(){
+
+          return $("#re_form").validate({  //return 不能换行 因为换行后 会变成return;
               rules:{
-                  reg_name:{
-                      required:true
-                  },
-                  reg_phone:{
-                      required:true,
-                  },
+                  reg_name:"required",
+                  reg_phone:"required",
                   reg_email:{
                     required:true,
                     email:true
                   },
-                  reg_city:{
-                      required:true,
-                  },
-                  reg_intro:{
-                      required:true,
-                  }
+                  reg_city:"required",
+                  reg_intro:"required",
               },
               messages:{
-                  reg_name:{
-                      required:"分销商名称不能为空"
-                  },
-                  reg_phone:{
-                      required:"联系方式不能为空"
-                  },
+                  reg_name:"分销商名称不能为空",
+                  reg_phone:"联系方式不能为空",
                   reg_email:{
                     required:"email不能为空",
                     email:"E-Mail格式不正确"
                   },
-                  reg_city:{
-                    required:"地址不能为空"
-                  },
-                  reg_intro:{
-                    required:"请填写简单介绍"
-                  }
+                  reg_city:"地址不能为空",
+                  reg_intro:"请填写简单介绍"
               },
-                //errorClass: "label.error", //默认为错误的样式类为：error
-              submitHandler: function(form){   //表单提交句柄,为一回调函数，带一个参数：form
-                  form.submit();   //提交表单
-              }
+              errorElement: "span",
+              errorClass: "re_error", //默认为错误的样式类为：error
             });
-      })
+        };
+          $("#re_btn").on('click',function(){
+            if(jqvalidate()){
+              $("#re_form").submit();
+            }
+          })
+    })
     </script>
 
   </body>

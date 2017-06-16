@@ -351,14 +351,14 @@ class WxResaleRegisterDistributorHandler(AuthorizationHandler):
         logging.info("got response %r", response.body)
 
         # 同意申请
-        url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises"+dis_id
-        http_client = HTTPClient()
-        headers={"Authorization":"Bearer "+access_token}
-        data = {"action": "accept"}
-        _json = json_encode(data)
-        logging.info("request %r body %r", url, _json)
-        response = http_client.fetch(url, method="PUT", headers=headers, body=_json)
-        logging.info("got response %r", response.body)
+        # url = API_DOMAIN+"/api/leagues/"+ league_id +"/franchises"+dis_id
+        # http_client = HTTPClient()
+        # headers={"Authorization":"Bearer "+access_token}
+        # data = {"action": "accept"}
+        # _json = json_encode(data)
+        # logging.info("request %r body %r", url, _json)
+        # response = http_client.fetch(url, method="PUT", headers=headers, body=_json)
+        # logging.info("got response %r", response.body)
 
         err_msg = "注册成功!"
         self.render('resale/register-success.html', err_msg=err_msg)
