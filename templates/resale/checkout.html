@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>商品详情页</title>
+    <title>结算页</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -25,7 +25,6 @@
 
     <!-- Icons -->
     <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
-
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
     <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
@@ -40,74 +39,84 @@
   <body>
     <!-- Main Container -->
     <div id="main" class="main">
-      <!-- End of Toolbar -->
 
       <!-- Page Contents -->
       <div class="animated fadeinup">
 
-        <!-- Hero Header -->
-        <div class="hero-header animated fadein">
-          <!-- Slider -->
-          <div class="swiper-container swiper-slider">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
-              </div>
-              <div class="swiper-slide">
-                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
-              </div>
-              <div class="swiper-slide">
-                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
-              </div>
+        <!-- Order Recap -->
+        <ul class="collapsible checkout-header animated fadeindown delay-2" data-collapsible="accordion">
+          <li>
+            <div class="collapsible-header">
+               查看订单详情
+              <i class="ion-android-arrow-dropdown"></i>
+              <span class="checkout-price right">¥240.00</span>
             </div>
-            <!-- Add Pagination -->
-            <div class="swiper-pagination"></div>
+            <div class="collapsible-body z-depth-1">
+
+              <!-- Products in cart -->
+              <div class="checkout-details">
+                <img class="checkout-image" src="http://www.chong4.com.cn/img01/linshi/2017-04-29/b0e66c3d59cfc5f321642751d2407184.jpg" alt="">
+                <div class="checkout-product-title">
+                  <h6>夏季新款凉鞋 <span class="right">¥220.00</span></h6>
+                  <span>43 - 44</span>
+                </div>
+              </div>
+
+              <!-- Discount -->
+              <form class="discount">
+                <div class="input-field">
+                  <input id="code" type="text" class="validate">
+                  <label for="code">折扣码</label>
+                  <div class="btn primary-color">
+                    <i class="ion-ios-arrow-thin-right"></i>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Subtotal -->
+              <div class="subtotal">
+                <h6>价格 <span class="right">¥220.00</span></h6>
+                <span>运费 <span class="right">¥20.00</span></span>
+              </div>
+
+              <!-- Total -->
+              <div class="total">
+                <h4>总计 <span class="right">¥240.00</span></h4>
+              </div>
+
+            </div>
+          </li>
+        </ul>
+
+        <!-- Form Inputs -->
+        <div class="form-inputs p-20">
+          <span>还没有登录? <a class="primary-text" href="login.html">登录</a></span>
+
+          <h4 class="shipping-address">联系人信息</h4>
+          <div>
+            <div class="input-field">
+              <input id="first_name" type="text" class="validate">
+              <label for="first_name">姓名</label>
+            </div>
           </div>
-          <!-- End of Slider -->
-
-          <!-- Floating Action Button -->
-        </div>
-
-        <!-- Product Title -->
-        <div class="center-align p-20">
-          <!-- <span class="small grey-text">科技产品</span> -->
-          <h3 class="m-0"><strong>{{ activity['title'] }}</strong></h3>
-          <h4></h4>
-        </div>
-
-        <!-- Prduct Description -->
-        <div class="product-description">
-          <ul class="tabs">
-            <li class="tab col s3"><a class="active" href="#product1">商品介绍</a></li>
-            <li class="tab col s3"><a href="#product2">商品评价</a></li>
-          </ul>
-
-          <div id="product1" class="p-20">
-            <p class="text-flow">{{ activity['subtitle'] }}</p>
+          <div class="input-field">
+            <input id="address" type="text" class="validate">
+            <label for="address">住址</label>
           </div>
-          <div id="product2" class="p-20">
-            <p class="text-flow">这里应该有评价列表。。。。</p>
+          <div class="input-field">
+            <input id="phone" type="number" class="validate">
+            <label for="phone">手机号</label>
           </div>
+          <label>支付方式:</label>
+          <select class="browser-default">
+            <option value="" disabled selected>--</option>
+            <option value="1">微信</option>
+            <option value="2">支付宝</option>
+            <option value="3">网银</option>
+          </select>
+
+          <a class="waves-effect waves-light btn-large primary-color block" href="index.html">支付</a>
         </div>
-
-        <div class="product-variation">
-          <h5><strong>选择规格:</strong></h5>
-          <form action="#">
-            {% for i in range(len(activity['base_fee_template'])) %}
-            <p>
-              <input name="group1" type="radio" id="test{{i}}" />
-              <label for="test{{i}}">{{ activity['base_fee_template'][i]['name'] }}:{{ activity['base_fee_template'][i]['fee'] }}元</label>
-            </p>
-            {% end %}
-
-          </form>
-        </div>
-
-        <form id="f_form" action="/bf/wx/vendors/{{league_id}}/goods-detail/{{club_id}}?item_id={{ activity_id }}" method="POST">
-          <div class="product-variation">
-            <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:void(0)">添加到分销列表</a>
-          </div>
-        </form>
 
         <!-- Footer -->
         <footer class="page-footer primary-color">
@@ -127,7 +136,6 @@
             </div>
           </div>
         </footer>
-
 
       </div>
       <!-- End of Page Contents -->
@@ -150,14 +158,6 @@
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script type="text/javascript">
     $(function(){
-      $("#f_btn").on('click',function(){
-        $.confirm("确定分销该商品吗?", function() {
-          $("#f_form").submit();
-          }, function() {
-          //点击取消后的回调函数
-          });
-
-      })
     });
 
     </script>

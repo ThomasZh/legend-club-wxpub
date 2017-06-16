@@ -70,6 +70,7 @@
                 </div>
                 <a class="waves-effect waves-light btn-large primary-color block animated bouncein delay-6"
                    href="#" id="re_btn">注册</a>
+                <span style="margin-top:1rem;display:block;">您还不是分销商, <a class="primary-text" href="javascript:void(0);">请先注册!</a></span>
             </div>
         </form>
         <!-- End of Form -->
@@ -90,71 +91,51 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/register.js') }}"></script>
-
+    <script src="{{ static_url('js/jquery.validate.min.js') }}"></script>
     <script type="text/javascript">
       $(function(){
-        $("#re_btn").on('click',function(){
-          var _this = $(this);
-            $("#re_form").submit();
-        });
-        $("#J_GetCode").on('click',function(){
-          SmsVerifyCode();
-        })
-        function SmsVerifyCode() {
-          var wait = 300; // 5分钟
-          function time(t) {
-            if (wait == 0) {
-              t.removeAttribute("disabled");
-              t.value = "获取";
-              wait = 300; // 5分钟
-            } else {
-              t.setAttribute("disabled", true);
-              t.value = "" + wait + "秒";
-              wait--;
-              setTimeout(function() {
-                time(t)
-              }, 1000)
-            }
-          }
-
-            var phone = $("#telephone").val();
-                console.log(phone);
-            var data = {
-              "phone": phone,
-            };
-            var json = JSON.stringify(data);
-
-            $.ajax({
-              type: "POST",
-              url: "/admin/auth/phone/verify-code",
-              data: json,
-              dataType: "json",
-              contentType: 'application/json',
-              success: function(data, status, xhr) {
-                var btn = document.getElementById("J_GetCode");
-                time(btn);
+        $("#re_form").validate({
+              rules:{
+                  reg_name:{
+                      required:true
+                  },
+                  reg_phone:{
+                      required:true,
+                  },
+                  reg_email:{
+                    required:true,
+                    email:true
+                  },
+                  reg_city:{
+                      required:true,
+                  },
+                  reg_intro:{
+                      required:true,
+                  }
               },
-              error: function(XMLHttpRequest, textStatus, errorThrown) {
-                console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
-                if (XMLHttpRequest.status == 200) {
-                  var btn = document.getElementById("J_GetCode");
-                  time(btn);
-                } else if (XMLHttpRequest.status == 401) {
-                  $('.login-form-main-message').addClass('show error').html("验证码不正确!");
-                } else if (XMLHttpRequest.status == 404) {
-                  $('.login-form-main-message').addClass('show error').html("此手机号码未注册!");
-                } else if (XMLHttpRequest.status == 408) {
-                  $('.login-form-main-message').addClass('show error').html("短信验证码5分钟内有效, 不必获取新的!");
-                } else {
-                  $('.login-form-main-message').addClass('show error').html(XMLHttpRequest.status + ": 服务器异常,请稍后重试!");
-                }
+              messages:{
+                  reg_name:{
+                      required:"分销商名称不能为空"
+                  },
+                  reg_phone:{
+                      required:"联系方式不能为空"
+                  },
+                  reg_email:{
+                    required:"email不能为空",
+                    email:"E-Mail格式不正确"
+                  },
+                  reg_city:{
+                    required:"地址不能为空"
+                  },
+                  reg_intro:{
+                    required:"请填写简单介绍"
+                  }
               },
-              complete: function(XMLHttpRequest, textStatus) {
-                this; // 调用本次AJAX请求时传递的options参数
+                //errorClass: "label.error", //默认为错误的样式类为：error
+              submitHandler: function(form){   //表单提交句柄,为一回调函数，带一个参数：form
+                  form.submit();   //提交表单
               }
             });
-
-          }
       })
     </script>
 

@@ -367,7 +367,7 @@ class WxResaleRegisterDistributorHandler(AuthorizationHandler):
 
 class WxResaleDistributorPersonalHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
-    def get(self, league_id, resale_id):
+    def get(self, league_id, distributor_id):
         logging.info("GET %r", self.request.uri)
 
         access_token = self.get_access_token()
@@ -377,7 +377,7 @@ class WxResaleDistributorPersonalHandler(AuthorizationHandler):
         logging.info("GET ops %r", ops)
 
         # 查询分销商信息
-        url = API_DOMAIN+"/api/leagues/"+league_id+"/franchises/"+resale_id
+        url = API_DOMAIN+"/api/leagues/"+league_id+"/franchises/"+distributor_id
         http_client = HTTPClient()
         headers={"Authorization":"Bearer "+access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
@@ -391,7 +391,7 @@ class WxResaleDistributorPersonalHandler(AuthorizationHandler):
         # 查询分销商分销的商品列表
         params = {"_status": 20,"private": 0,"page": 1,"limit": 20}
 
-        url = url_concat(API_DOMAIN+"/api/distributors/"+ resale_id +"/items",params)
+        url = url_concat(API_DOMAIN+"/api/distributors/"+ distributor_id +"/items",params)
         headers={"Authorization":"Bearer "+access_token}
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET", headers=headers)
@@ -399,4 +399,48 @@ class WxResaleDistributorPersonalHandler(AuthorizationHandler):
         data = json_decode(response.body)
         activities = data['rs']['data']
 
-        self.render('resale/distributor-personal.html',ops=ops, distributor=distributor, activities=activities)
+        self.render('resale/distributor-personal.html',
+                    ops=ops,
+                    league_id = league_id,
+                    distributor_id = distributor_id,
+                    distributor=distributor,
+                    activities=activities,
+                    )
+
+
+class WxResaleGoodsShareHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self,league_id, club_id, dis_id):
+        logging.info("GET %r", self.request.uri)
+        access_token = self.get_secure_cookie("access_token")
+        club = self.get_club_basic_info(club_id)
+
+        activity_id = self.get_argument("item_id","")
+        logging.info("GET activity_id %r", activity_id)
+
+        activity = self.get_activity(activity_id)
+        logging.info("got activity %r", activity)
+
+        self.render('resale/goods-share.html',
+                club=club,
+                league_id=league_id,
+                resale_id=club_id,
+                distributor_id=dis_id,
+                activity_id=activity_id,
+                activity=activity)
+
+
+class WxResaleGoodsCheckoutHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self,league_id, club_id, dis_id):
+        logging.info("GET %r", self.request.uri)
+        access_token = self.get_secure_cookie("access_token")
+        club = self.get_club_basic_info(club_id)
+
+        activity_id = self.get_argument("item_id","")
+        logging.info("GET activity_id %r", activity_id)
+
+        activity = self.get_activity(activity_id)
+        logging.info("got activity %r", activity)
+
+        self.render('resale/checkout.html')

@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>商品详情页</title>
+    <title>分享的商品详情页</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -103,11 +103,10 @@
           </form>
         </div>
 
-        <form id="f_form" action="/bf/wx/vendors/{{league_id}}/goods-detail/{{club_id}}?item_id={{ activity_id }}" method="POST">
-          <div class="product-variation">
-            <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:void(0)">添加到分销列表</a>
-          </div>
-        </form>
+        <div class="product-variation">
+          <a id="f_btn" href="/bf/wx/vendors/{{ league_id }}/distributor/{{ distributor_id }}/checkout/{{ resale_id }}"
+          class="waves-effect waves-light btn-large modal-trigger accent-color block m-20">购买</a>
+        </div>
 
         <!-- Footer -->
         <footer class="page-footer primary-color">
@@ -150,14 +149,6 @@
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script type="text/javascript">
     $(function(){
-      $("#f_btn").on('click',function(){
-        $.confirm("确定分销该商品吗?", function() {
-          $("#f_form").submit();
-          }, function() {
-          //点击取消后的回调函数
-          });
-
-      })
     });
 
     </script>
