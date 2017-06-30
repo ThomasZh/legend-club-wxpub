@@ -12,6 +12,7 @@ from foo.auth import auth_email
 from foo.auth import auth_phone
 from foo.auth import auth_wx
 from wx import wx_activity
+from wx import wx_items
 from wx import wx_resale
 from wx import wx_voucher
 from wx import wx_triprouter
@@ -111,6 +112,10 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)/apply/step3", getattr(wx_activity, 'WxActivityApplyStep3Handler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/hha", getattr(wx_activity, 'WxHhaHandler')),
 
+
+        # items wexin
+        (r"/bf/wx/vendors/([a-z0-9]*)/items", getattr(wx_items, 'WxItemsListHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
 
         # 开放线路市场
         (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_triprouter, 'WxTriprouterMarketHandler')),

@@ -1,0 +1,197 @@
+<!-- 供应商所卖商品 @2017/05/25 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>分类列表</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="../img/touch/apple-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#222222">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <style media="screen">
+      .tabs{
+          height: auto;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content:space-between;
+          align-items:center;
+      }
+      .tab{
+        height: auto!important;
+        line-height: normal!important;
+        padding: 10px!important;
+      }
+      .tabs img{
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+        overflow: hidden;
+        margin: 10px auto;
+      }
+      .tabs .indicator{
+        background-color: #fff!important;
+      }
+      .news .news-title{
+        font-weight: 400;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        height: 3.3rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <!-- End of Toolbar -->
+
+      <!-- Page Contents -->
+      <div class="animated fadeinup">
+
+        <!-- Hero Header -->
+        <div class="hero-header animated fadein">
+          <!-- Slider -->
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+          </div>
+          <!-- End of Slider -->
+
+          <!-- Floating Action Button -->
+        </div>
+
+        <section>
+          <ul class="tabs" style="width: 100%;">
+            <!-- 分类 -->
+          </ul>
+        </section>
+
+        <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
+            <div id="item0" class="grid m-t-20 news">
+              {% for activity in activities %}
+                <div class="media-top-object animated fadeinright z-depth-1 delay-2" style="padding:15px 18px;">
+                  <a href="/bf/wx/vendors/{{ club['_id'] }}/activitys/{{ activity['_id'] }}" class="media-left"><img src="{{ activity['img'] }}!200x200" alt=""></a>
+                  <div class="media-body" style="padding:2rem; height:8rem;">
+                      <h4 class="news-title">
+                        <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ activity['_id'] }}">{{ activity['title'] }}</a>
+                      </h4>
+                      <p class="small" style="margin:12px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ activity['amount'] }}</span></p>
+                  </div>
+                </div>
+              {% end %}
+            </div>
+
+            <div id="item1" class="grid m-t-20 news">
+              {% for activity in activities %}
+                <div class="media-top-object animated fadeinright z-depth-1 delay-2" style="padding:15px 18px;">
+                  <a href="event.html" class="media-left"><img src="{{ activity['img'] }}!200x200" alt=""></a>
+                  <div class="media-body" style="padding:20px;">
+                    <h4 class="news-title">
+                      <a href="#">{{ activity['title'] }}</a>
+                    </h4>
+                    <p class="small" style="margin:12px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ activity['amount'] }}</span></p>
+                  </div>
+                </div>
+              {% end %}
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="page-footer primary-color">
+          <div class="footer-copyright">
+            <div class="container center">
+              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
+            </div>
+          </div>
+        </footer>
+
+
+      </div>
+      <!-- End of Page Contents -->
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/chart.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/product.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+        // 先要获取热门活动
+        $.getJSON('/bf/api/vendors/{{ club['_id'] }}/activitys/popular', function(result){
+          console.log(result);
+            var slides = '';
+          for(var i in result){
+                slides += '<div class="swiper-slide">';
+                slides += '<a href="#"><img src="'+result[i]['img']+'!370x278" alt=""></a>';
+                slides +='</div>';
+          }
+          $(".swiper-wrapper").append(slides);
+          var swiper = new Swiper('.swiper-container', { // Default
+              pagination: '.swiper-pagination',
+              paginationClickable: true,
+              nextButton: '.swiper-button-next',
+              prevButton: '.swiper-button-prev',
+              autoplay: false,
+              loop: true,
+              paginationType: 'progress',
+          });
+
+        });
+
+        // 获取分类
+        $.getJSON('/bf/api/vendors/{{ club['_id'] }}/categorys', function(result){
+          console.log(result);
+          for(var i in result){
+            var li = '<li class="tab">';
+                li +='<a class="active" href="#item'+i+'">';
+                li +='<img src="'+result[i]['bk_img_url']+'!200x200">';
+                li +='<span class="recommend-info">'+result[i]['title']+'</span>';
+                li +='</a></li>';
+            $('.tabs').append(li);
+
+          }
+          $('ul.tabs').tabs();
+
+        });
+    })
+
+    </script>
+  </body>
+</html>

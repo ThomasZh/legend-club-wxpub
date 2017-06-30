@@ -1,0 +1,220 @@
+<!-- 供应商所卖商品 @2017/05/25 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>产品详情</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <style media="screen">
+    .m-spinner{
+      border: 1px solid #EAE8E8;
+      border-radius: 1px;
+      display: block;
+      float: left;
+      overflow: hidden;
+    }
+    .m-spinner > a{
+      float: left;
+      width: 2rem;
+      height: 2rem;
+      line-height: .62rem;
+      text-align: center;
+      font-weight: bold;
+      color: #666;
+      letter-spacing: 0;
+      background-color: #F8F8F8;
+      padding: 0.7rem;
+    }
+    .m-spinner > a:first-child:after{
+      content: '-';
+    }
+    .m-spinner > a:last-child:after{
+      content: '+';
+    }
+    .m-spinner > input{
+      letter-spacing: 0;
+      float: left;
+      width: 2rem;
+      height: 2rem;
+      text-align: center;
+      color: #666;
+      border: none;
+      font-size: 1.26rem;
+      margin: 0;
+      padding-left:0;
+    }
+
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <!-- End of Toolbar -->
+
+      <!-- Page Contents -->
+      <div class="animated fadeinup">
+
+        <!-- Hero Header -->
+        <div class="hero-header animated fadein">
+          <!-- Slider -->
+          <div class="swiper-container swiper-slider">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
+              </div>
+              <div class="swiper-slide">
+                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
+              </div>
+              <div class="swiper-slide">
+                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
+              </div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+          </div>
+          <!-- End of Slider -->
+
+          <!-- Floating Action Button -->
+        </div>
+
+      <form id="f_form" action="/bf/wx/vendors/{{ club['_id'] }}/activitys/{{ activity['_id'] }}" method="POST">
+        <!-- Product Title -->
+        <div class="center-align p-20">
+          <!-- <span class="small grey-text">科技产品</span> -->
+          <h3 class="m-0"><strong>{{ activity['title'] }}</strong></h3>
+          <h4></h4>
+        </div>
+
+        <!-- Prduct Description -->
+        <div class="product-description">
+          <ul class="tabs">
+            <li class="tab col s3"><a class="active" href="#product1">商品介绍</a></li>
+            <li class="tab col s3"><a href="#product2">商品评价</a></li>
+          </ul>
+
+          <div id="product1" class="p-20">
+            <p class="text-flow">{{ activity['subtitle'] }}</p>
+          </div>
+          <div id="product2" class="p-20">
+            <p class="text-flow">这里是评价列表。。。。</p>
+          </div>
+        </div>
+
+        <div class="product-variation">
+          <h5><strong>选择规格:</strong></h5>
+            {% for i in range(len(activity['base_fee_template'])) %}
+            <div style="margin-bottom:10px;">
+              <p>
+                <input name="fee_template_id" type="radio" id="test{{i}}" value="{{ activity['base_fee_template'][i]['_id'] }}" />
+                <label id="ff" for="test{{i}}">{{ activity['base_fee_template'][i]['name'] }}:{{ activity['base_fee_template'][i]['fee'] }}元</label>
+              </p>
+              <p style="padding-left:3rem; overflow:hidden;">
+                <label for="数量" style="font-size:1.4rem;display:block;float:left; margin-top:.2rem;">数量:&nbsp&nbsp&nbsp</label>
+                <span class="m-spinner" id="J_spinner">
+                  <a href="javascript:;" class="J_Del"></a>
+                  <input type="number" id="J_input" name="product_num" class="J_input" min="1" value="1">
+                  <a href="javascript:;" class="J_Add"></a>
+                </span>
+              </p>
+            </div>
+            {% end %}
+            <input type="hidden" name="fee_template_id" id="tem_id">
+            <div style="margin-bottom:10px;">
+              <p>
+                <input name="fee_template_id" type="radio" id="test1" value="234dsfds32rwer" />
+                <label for="test1">规格2x3cm管子:0.02元</label>
+              </p>
+              <p style="padding-left:3rem; overflow:hidden;">
+                <label for="数量" style="font-size:1.4rem;display:block;float:left; margin-top:.2rem;">数量:&nbsp&nbsp&nbsp</label>
+                <span class="m-spinner" id="J_spinner">
+                  <a href="javascript:;" class="J_Del"></a>
+                  <input type="number" id="J_input" name="product_num" class="J_input" min="1" value="1">
+                  <a href="javascript:;" class="J_Add"></a>
+                </span>
+              </p>
+            </div>
+        </div>
+
+
+          <div class="product-variation">
+            <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:void(0)">添加到购物车</a>
+          </div>
+      </form>
+
+        <!-- Footer -->
+        <footer class="page-footer primary-color">
+          <div class="footer-copyright">
+            <div class="container center">
+              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
+            </div>
+          </div>
+        </footer>
+
+
+      </div>
+      <!-- End of Page Contents -->
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/chart.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/product.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+
+      $(".J_Del").on("click",function(){
+        var num = $("#J_input").val();
+          if(num < 2){
+            num = 1;
+            $("#J_input").val(num);
+          }else{
+            num--;
+            $("#J_input").val(num);
+          }
+      });
+      $(".J_Add").on("click",function(){
+        var num = $("#J_input").val();
+          num++;
+          $("#J_input").val(num);
+      });
+
+      $("#f_btn").on('click',function(){
+        var tem_id = $("input[name='fee_template_id']:checked").val();
+        $("#tem_id").val(tem_id);
+        $("#f_form").submit();
+      })
+    });
+    </script>
+  </body>
+</html>
