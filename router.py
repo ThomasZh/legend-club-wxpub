@@ -23,6 +23,7 @@ from wx import wx_order
 from wx import xml_parser
 from api import api_category
 from api import api_activity
+from api import api_items
 from api import api_blog
 from api import api_setup
 from api import api_customer_profile
@@ -48,6 +49,8 @@ def map():
         (r"/bf/api/vendors/([a-z0-9]*)/activitys/([a-z0-9]*)/share", getattr(api_activity, 'ApiActivityShareXHR')),
         (r"/bf/api/vendors/([a-z0-9]*)/articles/([a-z0-9]*)/paragraphs", getattr(api_blog, 'ApiBlogParagraphListXHR')),
 
+        # 受欢迎的商品列表
+        (r"/bf/api/vendors/([a-z0-9]*)/items/popular", getattr(api_items, 'ApiItemsPopularListXHR')),
 
         (r"/bf/api/vendors/([a-z0-9]*)/orders", getattr(api_order, 'ApiOrdersXHR')),
         (r"/bf/api/vendors/([a-z0-9]*)/orders/activitys/([a-z0-9]*)", getattr(api_order, 'ApiActivityOrdersXHR')),
@@ -116,6 +119,7 @@ def map():
         # items wexin
         (r"/bf/wx/vendors/([a-z0-9]*)/items", getattr(wx_items, 'WxItemsListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/checkout", getattr(wx_items, 'WxItemsCheckoutHandler')),
 
         # 开放线路市场
         (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_triprouter, 'WxTriprouterMarketHandler')),

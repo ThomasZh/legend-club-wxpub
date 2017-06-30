@@ -63,7 +63,12 @@
       margin: 0;
       padding-left:0;
     }
-
+    .floating-button{
+      position: fixed;
+      right:2rem;
+      bottom: 5rem;
+      z-index: 999;
+    }
     </style>
   </head>
   <body>
@@ -80,28 +85,26 @@
           <div class="swiper-container swiper-slider">
             <div class="swiper-wrapper">
               <div class="swiper-slide">
-                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
+                <a href="#"><img src="{{ item['img'] }}" alt=""></a>
               </div>
               <div class="swiper-slide">
-                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
+                <a href="#"><img src="{{ item['img'] }}" alt=""></a>
               </div>
               <div class="swiper-slide">
-                <a href="#"><img src="{{ activity['img'] }}" alt=""></a>
+                <a href="#"><img src="{{ item['img'] }}" alt=""></a>
               </div>
             </div>
             <!-- Add Pagination -->
             <div class="swiper-pagination"></div>
           </div>
           <!-- End of Slider -->
-
-          <!-- Floating Action Button -->
         </div>
 
-      <form id="f_form" action="/bf/wx/vendors/{{ club['_id'] }}/activitys/{{ activity['_id'] }}" method="POST">
+      <form id="f_form" action="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}" method="POST">
         <!-- Product Title -->
         <div class="center-align p-20">
           <!-- <span class="small grey-text">科技产品</span> -->
-          <h3 class="m-0"><strong>{{ activity['title'] }}</strong></h3>
+          <h3 class="m-0"><strong>{{ item['title'] }}</strong></h3>
           <h4></h4>
         </div>
 
@@ -113,7 +116,7 @@
           </ul>
 
           <div id="product1" class="p-20">
-            <p class="text-flow">{{ activity['subtitle'] }}</p>
+            <p class="text-flow" id="J_show">{{ article['paragraphs'] }}</p>
           </div>
           <div id="product2" class="p-20">
             <p class="text-flow">这里是评价列表。。。。</p>
@@ -122,30 +125,21 @@
 
         <div class="product-variation">
           <h5><strong>选择规格:</strong></h5>
-            {% for i in range(len(activity['base_fee_template'])) %}
+            {% for i in range(len(item['base_fee_template'])) %}
             <div style="margin-bottom:10px;">
               <p>
-                <input name="fee_template_id" type="radio" id="test{{i}}" value="{{ activity['base_fee_template'][i]['_id'] }}" />
-                <label id="ff" for="test{{i}}">{{ activity['base_fee_template'][i]['name'] }}:{{ activity['base_fee_template'][i]['fee'] }}元</label>
-              </p>
-              <p style="padding-left:3rem; overflow:hidden;">
-                <label for="数量" style="font-size:1.4rem;display:block;float:left; margin-top:.2rem;">数量:&nbsp&nbsp&nbsp</label>
-                <span class="m-spinner" id="J_spinner">
-                  <a href="javascript:;" class="J_Del"></a>
-                  <input type="number" id="J_input" name="product_num" class="J_input" min="1" value="1">
-                  <a href="javascript:;" class="J_Add"></a>
-                </span>
+                <input name="fee_template" type="radio" id="test{{i}}" value="{{ item['base_fee_template'][i]['_id'] }}" />
+                <label for="test{{i}}">{{ item['base_fee_template'][i]['name'] }}:{{ item['base_fee_template'][i]['fee'] }}元</label>
               </p>
             </div>
             {% end %}
-            <input type="hidden" name="fee_template_id" id="tem_id">
+            <input type="hidden" name="fee_template_id" id="tem_input">
+        </div>
+
+        <div class="product-variation">
+          <h5><strong>数量:</strong></h5>
             <div style="margin-bottom:10px;">
-              <p>
-                <input name="fee_template_id" type="radio" id="test1" value="234dsfds32rwer" />
-                <label for="test1">规格2x3cm管子:0.02元</label>
-              </p>
               <p style="padding-left:3rem; overflow:hidden;">
-                <label for="数量" style="font-size:1.4rem;display:block;float:left; margin-top:.2rem;">数量:&nbsp&nbsp&nbsp</label>
                 <span class="m-spinner" id="J_spinner">
                   <a href="javascript:;" class="J_Del"></a>
                   <input type="number" id="J_input" name="product_num" class="J_input" min="1" value="1">
@@ -160,7 +154,12 @@
             <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:void(0)">添加到购物车</a>
           </div>
       </form>
-
+      <!-- 购物车 -->
+        <div class="floating-button animated bouncein delay-3">
+          <a href="/bf/wx/vendors/{{ club_id }}/items/checkout" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
+            <i class="ion-ios-cart"></i>
+          </a>
+        </div>
         <!-- Footer -->
         <footer class="page-footer primary-color">
           <div class="footer-copyright">
@@ -192,6 +191,13 @@
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script type="text/javascript">
     $(function(){
+      function removeHtmlTab(tab) {
+       return tab.replace(/<\/?[^>]*>/g,'');//删除所有HTML标签
+     };
+
+     var paragraphs = $("#J_show").text();
+         paragraphs = removeHtmlTab(paragraphs)
+      $("#J_show").text(paragraphs);
 
       $(".J_Del").on("click",function(){
         var num = $("#J_input").val();
@@ -210,8 +216,9 @@
       });
 
       $("#f_btn").on('click',function(){
-        var tem_id = $("input[name='fee_template_id']:checked").val();
-        $("#tem_id").val(tem_id);
+        var tem_id = $("input[name='fee_template']:checked").val();
+        console.log(tem_id);
+        $("#tem_input").val(tem_id);
         $("#f_form").submit();
       })
     });

@@ -1,0 +1,154 @@
+<!-- 供应商所卖商品 @2017/05/25 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>商品结算</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+
+      <!-- Page Contents -->
+      <div class="animated fadeinup">
+
+        <!-- Order Recap -->
+        <ul class="collapsible checkout-header animated fadeindown delay-2" data-collapsible="accordion">
+          <li>
+            <div class="collapsible-header">
+               查看订单详情
+              <i class="ion-android-arrow-dropdown"></i>
+              <span class="checkout-price right">¥240.00</span>
+            </div>
+            <div class="collapsible-body z-depth-1">
+
+              <!-- Products in cart -->
+              <div class="checkout-details">
+                <img class="checkout-image" src="http://www.chong4.com.cn/img01/linshi/2017-04-29/b0e66c3d59cfc5f321642751d2407184.jpg" alt="">
+                <div class="checkout-product-title">
+                  <h6>夏季新款凉鞋 <span class="right">¥220.00</span></h6>
+                  <span>43 - 44</span>
+                </div>
+              </div>
+
+              <!-- Discount -->
+              <form class="discount">
+                <div class="input-field">
+                  <input id="code" type="text" class="validate">
+                  <label for="code">折扣码</label>
+                  <div class="btn primary-color">
+                    <i class="ion-ios-arrow-thin-right"></i>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Subtotal -->
+              <div class="subtotal">
+                <h6>价格 <span class="right">¥220.00</span></h6>
+                <span>运费 <span class="right">¥20.00</span></span>
+              </div>
+
+              <!-- Total -->
+              <div class="total">
+                <h4>总计 <span class="right">¥240.00</span></h4>
+              </div>
+
+            </div>
+          </li>
+        </ul>
+
+        <!-- Form Inputs -->
+        <div class="form-inputs p-20">
+          <span>还没有登录? <a class="primary-text" href="#">登录</a></span>
+
+          <h4 class="shipping-address">联系人信息</h4>
+          <div>
+            <div class="input-field">
+              <input id="first_name" type="text" class="validate">
+              <label for="first_name">姓名</label>
+            </div>
+          </div>
+          <div class="input-field">
+            <input id="address" type="text" class="validate">
+            <label for="address">住址</label>
+          </div>
+          <div class="input-field">
+            <input id="phone" type="number" class="validate">
+            <label for="phone">手机号</label>
+          </div>
+          <label>支付方式:</label>
+          <select class="browser-default">
+            <option value="" disabled selected>--</option>
+            <option value="1">微信</option>
+            <option value="2">支付宝</option>
+            <option value="3">网银</option>
+          </select>
+
+          <a class="waves-effect waves-light btn-large primary-color block" href="#">支付</a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="page-footer primary-color">
+          <div class="section center">
+            <h2 class="heading white-text">7x24hs</h2>
+            <p class="center-align grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+            <div class="footer-icons">
+              <i class="ion-social-facebook m-10 white-text"></i>
+              <i class="ion-social-twitter m-10 white-text"></i>
+              <i class="ion-social-pinterest m-10 white-text"></i>
+              <i class="ion-social-instagram m-10 white-text"></i>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container center">
+              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
+            </div>
+          </div>
+        </footer>
+
+      </div>
+      <!-- End of Page Contents -->
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/chart.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/product.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+    });
+
+    </script>
+  </body>
+</html>

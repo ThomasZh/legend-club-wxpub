@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>分类列表</title>
+    <title>商品列表</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -59,7 +59,13 @@
         text-overflow: ellipsis;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
-        height: 3.3rem;
+        height: 3.5rem;
+      }
+      .floating-button{
+        position: fixed;
+        right:2rem;
+        bottom: 5rem;
+        z-index: 999;
       }
     </style>
   </head>
@@ -93,35 +99,40 @@
 
         <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
             <div id="item0" class="grid m-t-20 news">
-              {% for activity in activities %}
+              {% for item in items %}
                 <div class="media-top-object animated fadeinright z-depth-1 delay-2" style="padding:15px 18px;">
-                  <a href="/bf/wx/vendors/{{ club['_id'] }}/activitys/{{ activity['_id'] }}" class="media-left"><img src="{{ activity['img'] }}!200x200" alt=""></a>
+                  <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}" class="media-left"><img src="{{ item['img'] }}!200x200" alt=""></a>
                   <div class="media-body" style="padding:2rem; height:8rem;">
                       <h4 class="news-title">
-                        <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ activity['_id'] }}">{{ activity['title'] }}</a>
+                        <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}">{{ item['title'] }}</a>
                       </h4>
-                      <p class="small" style="margin:12px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ activity['amount'] }}</span></p>
+                      <p class="small" style="margin:5px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ item['amount'] }}</span></p>
                   </div>
                 </div>
               {% end %}
             </div>
 
             <div id="item1" class="grid m-t-20 news">
-              {% for activity in activities %}
+              {% for item in items %}
                 <div class="media-top-object animated fadeinright z-depth-1 delay-2" style="padding:15px 18px;">
-                  <a href="event.html" class="media-left"><img src="{{ activity['img'] }}!200x200" alt=""></a>
-                  <div class="media-body" style="padding:20px;">
-                    <h4 class="news-title">
-                      <a href="#">{{ activity['title'] }}</a>
-                    </h4>
-                    <p class="small" style="margin:12px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ activity['amount'] }}</span></p>
+                  <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}" class="media-left"><img src="{{ item['img'] }}!200x200" alt=""></a>
+                  <div class="media-body" style="padding:2rem; height:8rem;">
+                      <h4 class="news-title">
+                        <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}">{{ item['title'] }}</a>
+                      </h4>
+                      <p class="small" style="margin:5px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ item['amount'] }}</span></p>
                   </div>
                 </div>
               {% end %}
             </div>
 
         </div>
-
+        <!-- 购物车 -->
+          <div class="floating-button animated bouncein delay-3">
+            <a href="/bf/wx/vendors/{{ club['_id'] }}/items/checkout" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
+              <i class="ion-ios-cart"></i>
+            </a>
+          </div>
         <!-- Footer -->
         <footer class="page-footer primary-color">
           <div class="footer-copyright">
@@ -154,7 +165,7 @@
     <script type="text/javascript">
     $(function(){
         // 先要获取热门活动
-        $.getJSON('/bf/api/vendors/{{ club['_id'] }}/activitys/popular', function(result){
+        $.getJSON('/bf/api/vendors/{{ club['_id'] }}/items/popular', function(result){
           console.log(result);
             var slides = '';
           for(var i in result){

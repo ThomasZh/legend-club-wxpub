@@ -248,7 +248,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_activities(self, club_id, _status, private):
         headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
 
-        params = {"filter":"club", "club_id":club_id, "_status":_status, "private":private, "page":1, "limit":50}
+        params = {"filter":"club", "club_id":club_id, "_status":_status, "private":private, "page":1, "limit":20}
         url = url_concat(API_DOMAIN + "/api/activities", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET", headers=headers)
@@ -265,6 +265,30 @@ class BaseHandler(tornado.web.RequestHandler):
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET", headers=headers)
         logging.info("got get_activity response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        return data['rs']
+
+
+    def get_items(self, club_id, _status, private):
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+
+        params = {"filter":"club", "club_id":club_id, "_status":_status, "private":private, "page":1, "limit":20}
+        url = url_concat(API_DOMAIN + "/api/items", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got get_items response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        return rs['data']
+
+
+    def get_item(self, item_id):
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+
+        url = API_DOMAIN + "/api/items/"+item_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got get_item response.body=[%r]", response.body)
         data = json_decode(response.body)
         return data['rs']
 

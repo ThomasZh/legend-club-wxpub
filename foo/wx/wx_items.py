@@ -70,60 +70,74 @@ class WxItemsListHandler(AuthorizationHandler):
 
         club = self.get_club_basic_info(club_id)
         private = 0
-        activities = self.get_activities(club_id, ACTIVITY_STATUS_RECRUIT, private)
-        logging.info("GET activities %r", activities)
+        items = self.get_items(club_id, ACTIVITY_STATUS_RECRUIT, private)
+        logging.info("GET items %r", items)
 
-        for activity in activities:
-            # 格式化显示时间
-            activity['begin_time'] = timestamp_friendly_date(activity['begin_time']) # timestamp -> %m月%d 星期%w
-            activity['end_time'] = timestamp_friendly_date(activity['end_time']) # timestamp -> %m月%d 星期%w
-
+        for item in items:
             # 格式化价格
-            activity['amount'] = float(activity['amount']) / 100
+            item['amount'] = float(item['amount']) / 100
 
         self.render('items/main.html',
                 club=club,
-                activities=activities)
+                items=items)
 
 
 # 产品详情
 class WxItemsDetailHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
-    def get(self,club_id,activity_id):
+    def get(self,club_id,item_id):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_secure_cookie("access_token")
         club = self.get_club_basic_info(club_id)
 
-        activity = self.get_activity(activity_id)
-        logging.info("got activity %r", activity)
+        item = self.get_item(item_id)
+        logging.info("got item %r", item)
+
         # 格式化价格
-        for activity['base_fee'] in activity['base_fee_template']:
-            activity['base_fee']['fee'] = float(activity['base_fee']['fee'])/100
+        for item['base_fee'] in item['base_fee_template']:
+            item['base_fee']['fee'] = float(item['base_fee']['fee'])/100
+
+        # 获取产品说明
+        article = self.get_article(item_id)
+        if not article:
+            article = {'_id':activity_id, 'title':activity['title'], 'subtitle':[], 'img':activity['img'],'paragraphs':''}
+            self.create_article(article)
+        logging.info("got article %r", article)
 
         self.render('items/product-details.html',
                 club=club,
                 club_id=club_id,
-                activity_id=activity_id,
-                activity=activity)
+                item_id=item_id,
+                item=item,
+                article=article)
 
     # 添加商品到购物车
     @tornado.web.authenticated  # if no session, redirect to login page
-    def post(self, club_id, activity_id):
-        logging.info("got vendor_id %r in uri", vendor_id)
+    def post(self, club_id, item_id):
+        logging.info("got club_id %r in uri", club_id)
         access_token = self.get_secure_cookie("access_token")
-        
+
         fee_template_id = self.get_argument('fee_template_id',"")
         logging.info("got fee_template_id %r in uri", fee_template_id)
         product_num = self.get_argument('product_num',"")
         logging.info("got product_num %r in uri", product_num)
 
-        item_type =  [{item_id:activity_id, fee_template_id:fee_template_id, quantity:product_num}]
+        item_type =  [{"item_id":item_id, "fee_template_id":fee_template_id, "quantity":product_num}]
         headers = {"Authorization":"Bearer "+access_token}
 
         url = API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items"
         _json = json_encode(item_type)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-        logging.info("update activity response.body=[%r]", response.body)
+        logging.info("update item response.body=[%r]", response.body)
 
-        self.redirect('/bf/wx/vendors/'+ club_id +'/activitys/'+activity_id)
+        self.redirect('/bf/wx/vendors/'+ club_id +'/items/'+item_id)
+
+
+# 结算
+class WxItemsCheckoutHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+
+        self.render('items/checkout.html')
