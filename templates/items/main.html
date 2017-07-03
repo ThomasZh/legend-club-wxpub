@@ -98,7 +98,8 @@
         </section>
 
         <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
-            <div id="item0" class="grid m-t-20 news">
+          {% for i in range(int(category_num)) %}
+            <div id="item{{i}}" class="grid m-t-20 news">
               {% for item in items %}
                 <div class="media-top-object animated fadeinright z-depth-1 delay-2" style="padding:15px 18px;">
                   <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}" class="media-left"><img src="{{ item['img'] }}!200x200" alt=""></a>
@@ -111,25 +112,12 @@
                 </div>
               {% end %}
             </div>
-
-            <div id="item1" class="grid m-t-20 news">
-              {% for item in items %}
-                <div class="media-top-object animated fadeinright z-depth-1 delay-2" style="padding:15px 18px;">
-                  <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}" class="media-left"><img src="{{ item['img'] }}!200x200" alt=""></a>
-                  <div class="media-body" style="padding:2rem; height:8rem;">
-                      <h4 class="news-title">
-                        <a href="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item['_id'] }}">{{ item['title'] }}</a>
-                      </h4>
-                      <p class="small" style="margin:5px 0;">价格: <span style="display:inline-block;margin-left:2.5rem;">¥{{ item['amount'] }}</span></p>
-                  </div>
-                </div>
-              {% end %}
-            </div>
+          {% end %}
 
         </div>
         <!-- 购物车 -->
           <div class="floating-button animated bouncein delay-3">
-            <a href="/bf/wx/vendors/{{ club['_id'] }}/items/checkout" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
+            <a href="/bf/wx/vendors/{{ club['_id'] }}/items/checkout/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
               <i class="ion-ios-cart"></i>
             </a>
           </div>

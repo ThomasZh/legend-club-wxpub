@@ -1,0 +1,44 @@
+/*zc 2017*/
+.Z_form{
+  margin: 0;
+}
+.Z_form .input-field{
+  margin-bottom:0;
+}
+.m-spinner{
+  border: 1px solid #EAE8E8;
+  border-radius: 1px;
+  display: block;
+  float: left;
+  overflow: hidden;
+}
+.m-spinner > a{
+  float: left;
+  width: 2rem;
+  height: 2rem;
+  line-height: .62rem;
+  text-align: center;
+  font-weight: bold;
+  color: #666;
+  letter-spacing: 0;
+  background-color: #F8F8F8;
+  padding: 0.7rem;
+}
+.m-spinner > a:first-child:after{
+  content: '-';
+}
+.m-spinner > a:last-child:after{
+  content: '+';
+}
+.m-spinner > input{
+  letter-spacing: 0;
+  float: left;
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  color: #666;
+  border: none;
+  font-size: 1.26rem;
+  margin: 0;
+  padding-left:0;
+}

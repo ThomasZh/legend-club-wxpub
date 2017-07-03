@@ -67,6 +67,11 @@ class WxItemsListHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
         logging.info("GET %r", self.request.uri)
+        # 查询分类
+        _array = category_dao.category_dao().query_by_vendor(club_id)
+        logging.info("got categories=[%r]", _array)
+        category_num = len(_array)
+        logging.info("got category_num", category_num)
 
         club = self.get_club_basic_info(club_id)
         private = 0
@@ -79,7 +84,8 @@ class WxItemsListHandler(AuthorizationHandler):
 
         self.render('items/main.html',
                 club=club,
-                items=items)
+                items=items,
+                category_num=category_num)
 
 
 # 产品详情
@@ -139,5 +145,19 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
         logging.info("GET %r", self.request.uri)
+        access_token = self.get_secure_cookie("access_token")
 
-        self.render('items/checkout.html')
+        params = {"page":1, "limit":20,}
+        url = url_concat(API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        items = rs['data']
+
+        for item in items:
+            item['fee'] = float(item['fee'])/100
+
+        self.render('items/checkout.html',api_domain=API_DOMAIN,club_id=club_id,items=items,access_token=access_token)
