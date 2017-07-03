@@ -29,90 +29,93 @@
   <body>
     <!-- Main Container -->
     <div id="main" class="main">
+        <!-- Page Contents -->
+      <form class="order-form" action="/bf/wx/vendors/{{ club_id }}/items/checkout/cart" method="post">
+        <div class="animated fadeinup">
 
-      <!-- Page Contents -->
-      <div class="animated fadeinup">
+          <!-- Order Recap -->
+          <ul class="collapsible checkout-header animated fadeindown delay-2" data-collapsible="accordion">
+            <li>
+              <div class="collapsible-header">
+                设置收获信息
+                 <!-- <p>周<span>15901156656</span></p>
+                 <p>北京市朝阳区望京东金辉大厦</p> -->
+              </div>
 
-        <!-- Order Recap -->
-        <ul class="collapsible checkout-header animated fadeindown delay-2" data-collapsible="accordion">
-          <li>
-            <div class="collapsible-header">
-              设置收获信息
-               <!-- <p>周<span>15901156656</span></p>
-               <p>北京市朝阳区望京东金辉大厦</p> -->
-            </div>
-
-            <div class="collapsible-body z-depth-1">
-              <!-- <h4 class="shipping-address">地址一</h4> -->
-              <form action="" action="post" class="Z_form">
-                <div class="input-field">
-                  <input id="first_name" type="text" class="validate">
-                  <label for="first_name">姓名</label>
-                </div>
-                <div class="input-field">
-                  <input id="phone" type="number" class="validate">
-                  <label for="phone">手机号</label>
-                </div>
-                <div class="input-field">
-                  <input id="address" type="text" class="validate">
-                  <label for="address">地址</label>
-                </div>
-                <a class="waves-effect waves-light btn" style="margin-left:50%;">添加</a>
-              </form>
-            </div>
-          </li>
-        </ul>
-
-        <!-- 购物车商品列表 -->
-        {% for item in items %}
-          <div class="product_list">
-            <ul class="collection">
-              <li class="list-item">
-                  <div class="list-item-inner">
-                      <a href="#" class="list-item-pic">
-                          <img src="{{ item['img'] }}">
-                      </a>
-                      <div class="list-item-info">
-                          <a href="#" class="meta">
-                              <h4 class="title">{{ item['title'] }}</h4>
-                              <p class="single-line">
-                                  <span>{{ item['fee_template_name'] }}</span>
-                              </p>
-                          </a>
-                          <div class="list-item-spinner">
-                            <span class="m-spinner" id="J_spinner">
-                              <a href="javascript:;" class="J_Del" data_dele_id="{{ item['_id'] }}"></a>
-                              <input type="number" id="J_input" name="product_num" class="J_input" min="1" value="{{ item['quantity'] }}">
-                              <a href="javascript:;" class="J_Add" data_dele_id="{{ item['_id'] }}"></a>
-                            </span>
-                            <a href="javascript:;" class="close cart-info-delete" data_dele_id="{{ item['_id'] }}">
-                              <i class="iconfont icon-close ion-ios-trash-outline"></i>
-                            </a>
-                          </div>
-                          <a href="#" class="price">
-                              ￥<span class="original-price">{{ item['fee'] }}</span>
-                              <!-- <del>￥299</del> -->
-                          </a>
-                      </div>
+              <div class="collapsible-body z-depth-1">
+                <!-- <h4 class="shipping-address">地址一</h4> -->
+                <form action="" action="post" class="Z_form">
+                  <div class="input-field">
+                    <input id="first_name" type="text" class="validate">
+                    <label for="first_name">姓名</label>
                   </div>
-              </li>
-            </ul>
-          </div>
-        {% end %}
-        <!-- Form Inputs -->
-        <!-- 占位 -->
-        <div class="z-position"></div>
-        <!-- Footer -->
-        <footer class="page-footer">
-          <div class="footer-total-price">
-            合计：￥<span>0.00</span>
-          </div>
-          <div class="footer-pay">
-            <button class="footer-pay-btn">下单</button>
-          </div>
-        </footer>
+                  <div class="input-field">
+                    <input id="phone" type="number" class="validate">
+                    <label for="phone">手机号</label>
+                  </div>
+                  <div class="input-field">
+                    <input id="address" type="text" class="validate">
+                    <label for="address">地址</label>
+                  </div>
+                  <a class="waves-effect waves-light btn" style="margin-left:50%;">添加</a>
+                </form>
+              </div>
+            </li>
+          </ul>
 
-      </div>
+          <!-- 购物车商品列表 -->
+          {% for item in items %}
+            <div class="product_list">
+              <ul class="collection">
+                <li class="list-item">
+                    <div class="list-item-inner">
+                        <a href="#" class="list-item-pic">
+                            <img src="{{ item['img'] }}">
+                        </a>
+                        <div class="list-item-info">
+                            <a href="#" class="meta">
+                                <h4 class="title">{{ item['title'] }}</h4>
+                                <p class="single-line">
+                                    <span>{{ item['fee_template_name'] }}</span>
+                                </p>
+                            </a>
+                            <input type="hidden" value="{{ item['fee_template_id'] }}" class="fee_template">
+                            <div class="list-item-spinner">
+                              <span class="m-spinner" id="J_spinner">
+                                <a href="javascript:;" class="J_Del" data_dele_id="{{ item['_id'] }}"></a>
+                                <input type="number" id="J_input" name="product_num" class="J_input" min="1" value="{{ item['quantity'] }}">
+                                <a href="javascript:;" class="J_Add" data_dele_id="{{ item['_id'] }}"></a>
+                              </span>
+                              <a href="javascript:;" class="close cart-info-delete" data_dele_id="{{ item['_id'] }}">
+                                <i class="iconfont icon-close ion-ios-trash-outline"></i>
+                              </a>
+                            </div>
+                            <a href="#" class="price">
+                                ￥<span class="original-price">{{ item['fee'] }}</span>
+                                <!-- <del>￥299</del> -->
+                            </a>
+                        </div>
+                    </div>
+                </li>
+              </ul>
+            </div>
+          {% end %}
+          <!-- Form Inputs -->
+          <!-- 占位 -->
+          <div class="z-position"></div>
+          <!-- Footer -->
+          <footer class="page-footer">
+            <div class="footer-total-price">
+              合计：￥<span>0.00</span>
+            </div>
+            <input type="hidden" id="total_amount" name="total_amount">
+            <div class="footer-pay">
+              <button class="footer-pay-btn" id="en-order">下单</button>
+            </div>
+          </footer>
+
+        </div>
+      </form>
       <!-- End of Page Contents -->
     </div>
     <!-- End of Main Container -->
@@ -133,6 +136,7 @@
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script type="text/javascript">
     $(function(){
+      // 减产品数量
       $(document).on("click",".J_Del",function(){
         var num = $(this).next().val();
           if(num < 2){
@@ -142,8 +146,8 @@
             num--;
             var _id = $(this).attr("data_dele_id");
             // console.log(_id);
-            data = {"quantity":num}
-            _json = JSON.stringify(data);
+            var data = {"quantity":num}
+            var  _json = JSON.stringify(data);
             var _this = $(this);
             $.ajax({
               type: "POST",
@@ -162,14 +166,14 @@
             });
           }
       });
-
+      // add product_num
       $(document).on("click",".J_Add",function(){
         var num = $(this).prev().val();
             num++;
         var _id = $(this).attr("data_dele_id");
 
-          data = {"quantity":num}
-          _json = JSON.stringify(data);
+        var  data = {"quantity":num}
+        var  _json = JSON.stringify(data);
           // console.log(_json);
           var _this = $(this);
           $.ajax({
@@ -190,6 +194,34 @@
           });
 
       });
+      // blur input save
+      $(document).on("blur",".J_input",function(){
+          var _id = $(this).next().attr("data_dele_id");
+          var _this = $(this);
+          var num = $(this).val();
+          var data = {"quantity":num}
+          var _json = JSON.stringify(data);
+          $.ajax({
+            type: "POST",
+            url: "{{api_domain}}/api/clubs/{{club_id}}/cart/items/"+_id,
+            data:_json,
+            headers: {
+              "Authorization": "Bearer {{ access_token }}"
+            },
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+              // console.log(data);
+              var data = JSON.parse(data);
+              var quantity = data.data.quantity;
+              _this.prev().val(quantity);
+              getTotal();
+            }
+          });
+      });
+      // watch input change
+      $(document).on("input",".J_input",function(){
+          getTotal();
+      });
       // 计算总金额
       function getTotal(){
         var num = $(".list-item-info").length;
@@ -201,9 +233,11 @@
               total_price += parseFloat(one_total);
         }
           $(".footer-total-price").children().html(total_price.toFixed(2));
+          $("#total_amount").val(total_price.toFixed(2));
       };
       getTotal();
 
+      // 删除购物车一项
       $(document).on('click','.cart-info-delete',function(){
         var _id = $(this).attr('data_dele_id');
         $.confirm("确定删除该商品吗?", function() {
@@ -223,6 +257,24 @@
           });
       });
 
+      // 组织json数据
+      var items = [];
+      $('.list-item-info').each(function(index) {
+        var item_id = $(".J_Add",$(this)).attr("data_dele_id");
+        console.log(item_id);
+        var fee_template_id =  $(".fee_template",$(this)).val();
+        console.log(fee_template_id);
+        var quantity = $(".J_input",$(this)).val();
+        console.log(quantity);
+        obj =  {"item_id":item_id,"fee_template_id":fee_template_id,"quantity":quantity}
+         items.push(obj);
+       });
+       $("<input>").attr("type", "hidden").attr("name", "items").val(JSON.stringify(items));
+
+      // 下单操作
+      $("#en-order").on('click',function(){
+          $(".order-form").submit();
+      });
     });
     </script>
   </body>
