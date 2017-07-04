@@ -162,279 +162,234 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
 
         self.render('items/checkout.html',api_domain=API_DOMAIN,club_id=club_id,items=items,access_token=access_token)
 
-    # @tornado.web.authenticated  # if no session, redirect to login page
-    # def post(self, club_id):
-    #     logging.info("got club_id %r", club_id)
-    #     _account_id = self.get_secure_cookie("account_id")
-    #
-    #     access_token = self.get_access_token()
-    #
-    #     # 取得自己的最后一笔订单
-    #     params = {"filter":"account", "account_id":_account_id, "page":1, "limit":1,}
-    #     url = url_concat(API_DOMAIN + "/api/orders", params)
-    #     http_client = HTTPClient()
-    #     headers = {"Authorization":"Bearer " + access_token}
-    #     response = http_client.fetch(url, method="GET", headers=headers)
-    #     logging.info("got response.body %r", response.body)
-    #     data = json_decode(response.body)
-    #     rs = data['rs']
-    #     orders = rs['data']
-    #
-    #     _timestamp = time.time()
-    #     # 一分钟内不能创建第二个订单,
-    #     # 防止用户点击回退按钮，产生第二个订单
-    #     if len(orders) > 0:
-    #         for order in orders:
-    #             if (_timestamp - order['create_time']) < 60:
-    #                 self.redirect('/bf/wx/orders/wait')
-    #                 return
-    #
-    #     # 订单总金额
-    #     _total_amount = self.get_argument("total_amount", 0)
-    #     logging.info("got _total_amount %r", _total_amount)
-    #     # 价格转换成分
-    #     _total_amount = int(float(_total_amount) * 100)
-    #     logging.info("got _total_amount %r", _total_amount)
-    #     # 订单申报数目
-    #     # _applicant_num = self.get_argument("applicant_num", 1)
-    #     # 活动金额，即已选的基本服务项金额
-    #     amount = 0
-    #     actual_payment = 0
-    #     quantity = int(_applicant_num)
-    #     logging.info("got quantity %r", quantity)
-    #
-    #     _activity = self.get_activity(activity_id)
-    #     logging.info("got _activity %r", _activity)
-    #     # _activity = activity_dao.activity_dao().query(activity_id)
-    #     _bonus_template = bonus_template_dao.bonus_template_dao().query(activity_id)
-    #     bonus_points = int(_bonus_template['activity_shared'])
-    #
-    #     #基本服务
-    #     _base_fee_ids = self.get_body_argument("base_fees", [])
-    #     logging.info("got _base_fee_ids %r", _base_fee_ids)
-    #     # 转为列表
-    #     _base_fee_ids = JSON.loads(_base_fee_ids)
-    #     _base_fees = []
-    #     base_fee_template = _activity['base_fee_template']
-    #     for _base_fee_id in _base_fee_ids:
-    #         for template in base_fee_template:
-    #             if _base_fee_id == template['_id']:
-    #                 _base_fee = {"_id":_base_fee_id, "name":template['name'], "fee":template['fee']}
-    #                 _base_fees.append(_base_fee)
-    #                 activity_amount = template['fee']
-    #                 amount = amount + int(template['fee']) * quantity
-    #                 actual_payment = actual_payment + int(template['fee']) * quantity
-    #                 break;
-    #     logging.info("got actual_payment %r", actual_payment)
-    #
-    #     # 附加服务项编号数组
-    #     # *** 接受json数组用这个 ***
-    #     _ext_fee_ids = self.get_body_argument("ext_fees", [])
-    #     logging.info("got _ext_fee_ids %r", _ext_fee_ids)
-    #     # 转为列表
-    #     _ext_fee_ids = JSON.loads(_ext_fee_ids)
-    #     _ext_fees = []
-    #     ext_fee_template = _activity['ext_fee_template']
-    #     for _ext_fee_id in _ext_fee_ids:
-    #         for template in ext_fee_template:
-    #             if _ext_fee_id == template['_id']:
-    #                 _ext_fee = {"_id":_ext_fee_id, "name":template['name'], "fee":template['fee']}
-    #                 _ext_fees.append(_ext_fee)
-    #                 amount = amount + int(template['fee']) * quantity
-    #                 actual_payment = actual_payment + int(template['fee']) * quantity
-    #                 break;
-    #     logging.info("got actual_payment %r", actual_payment)
-    #
-    #     # 保险选项,数组
-    #     _insurance_ids = self.get_body_argument("insurances", [])
-    #     _insurance_ids = JSON.loads(_insurance_ids)
-    #     _insurances = []
-    #     _insurance_templates = insurance_template_dao.insurance_template_dao().query_by_vendor(vendor_id)
-    #     for _insurance_id in _insurance_ids:
-    #         for _insurance_template in _insurance_templates:
-    #             if _insurance_id == _insurance_template['_id']:
-    #                 _insurance = {"_id":_insurance_id, "name":_insurance_template['title'], "fee":_insurance_template['amount']}
-    #                 _insurances.append(_insurance)
-    #                 amount = amount + int(_insurance['fee']) * quantity
-    #                 actual_payment = actual_payment + int(_insurance['fee']) * quantity
-    #                 break;
-    #     logging.info("got actual_payment %r", actual_payment)
-    #
-    #     #代金券选项,数组
-    #     _vouchers_ids = self.get_body_argument("vouchers", [])
-    #     _vouchers_ids = JSON.loads(_vouchers_ids)
-    #     _vouchers = []
-    #     for _vouchers_id in _vouchers_ids:
-    #         logging.info("got _vouchers_id %r", _vouchers_id)
-    #         _voucher = voucher_dao.voucher_dao().query_not_safe(_vouchers_id)
-    #         _json = {'_id':_vouchers_id, 'fee':_voucher['amount']}
-    #         _vouchers.append(_json)
-    #         actual_payment = actual_payment - int(_json['fee']) * quantity
-    #     logging.info("got actual_payment %r", actual_payment)
-    #
-    #     # 积分选项,数组
-    #     _bonus = 0
-    #     _bonus_array = self.get_body_argument("bonus", [])
-    #     if _bonus_array:
-    #         _bonus_array = JSON.loads(_bonus_array)
-    #         if len(_bonus_array) > 0:
-    #             _bonus = _bonus_array[0]
-    #             # 价格转换成分
-    #             _bonus = - int(float(_bonus) * 100)
-    #     logging.info("got _bonus %r", _bonus)
-    #     points = _bonus
-    #     actual_payment = actual_payment + points
-    #     logging.info("got actual_payment %r", actual_payment)
-    #
-    #     _order_id = str(uuid.uuid1()).replace('-', '')
-    #     _status = ORDER_STATUS_BF_INIT
-    #     if actual_payment == 0:
-    #         _status = ORDER_STATUS_WECHAT_PAY_SUCCESS
-    #
-    #     # 创建订单索引
-    #     order_index = {
-    #         "_id": _order_id,
-    #         "order_type": "buy_item",
-    #         "club_id": club_id,
-    #         "item_type": "activity",
-    #         "item_id": "00000000000000000000000000000000",
-    #         "item_name": "cart000",
-    #         "distributor_type": "item",
-    #         "items":items,
-    #         "distributor_id": "00000000000000000000000000000000",,
-    #         "create_time": _timestamp,
-    #         "pay_type": "wxpay",
-    #         "pay_status": _status,
-    #         "quantity": quantity,
-    #         "amount": amount, #已经转换为分，注意转为数值
-    #         "actual_payment": actual_payment, #已经转换为分，注意转为数值
-    #         "base_fees": _base_fees,
-    #         "ext_fees": _ext_fees,
-    #         "insurances": _insurances,
-    #         "vouchers": _vouchers,
-    #         "points_used": points,
-    #         "bonus_points": bonus_points, # 活动奖励积分
-    #         "booking_time": _activity['begin_time'],
-    #     }
-    #     self.create_order(order_index)
-    #
-    #     # budge_num increase
-    #     self.counter_increase(vendor_id, "activity_order")
-    #     self.counter_increase(activity_id, "order")
-    #     # TODO notify this message to vendor's administrator by SMS
-    #
-    #     wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
-    #     wx_app_id = wx_app_info['wx_app_id']
-    #     logging.info("got wx_app_id %r in uri", wx_app_id)
-    #     wx_app_secret = wx_app_info['wx_app_secret']
-    #     wx_mch_key = wx_app_info['wx_mch_key']
-    #     wx_mch_id = wx_app_info['wx_mch_id']
-    #     wx_notify_domain = wx_app_info['wx_notify_domain']
-    #
-    #     _timestamp = (int)(time.time())
-    #     if actual_payment != 0:
-    #         # wechat 统一下单
-    #         myinfo = self.get_myinfo_login()
-    #         _openid = myinfo['login']
-    #         _store_id = 'Aplan'
-    #         logging.info("got _store_id %r", _store_id)
-    #         _product_description = _activity['title']
-    #         logging.info("got _product_description %r", _product_description)
-    #         #_ip = self.request.remote_ip
-    #         _remote_ip = self.request.headers['X-Real-Ip']
-    #         _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, _order_id, actual_payment, _timestamp)
-    #
-    #         # wx统一下单记录保存
-    #         _order_return['_id'] = _order_return['prepay_id']
-    #         self.create_symbol_object(_order_return)
-    #
-    #         # 微信统一下单返回成功
-    #         order_unified = None
-    #         if(_order_return['return_msg'] == 'OK'):
-    #             order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
-    #         else:
-    #             order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
-    #         # 微信统一下单返回成功
-    #         # TODO: 更新订单索引中，订单状态pay_status,prepay_id
-    #         self.update_order_unified(order_unified)
-    #
-    #         # FIXME, 将服务模板转为字符串，客户端要用
-    #         _servTmpls = _activity['ext_fee_template']
-    #         _activity['json_serv_tmpls'] = json_encode(_servTmpls);
-    #         _activity['begin_time'] = timestamp_friendly_date(float(_activity['begin_time'])) # timestamp -> %m月%d 星期%w
-    #         _activity['end_time'] = timestamp_friendly_date(float(_activity['end_time'])) # timestamp -> %m月%d 星期%w
-    #         # 金额转换成元
-    #         # _activity['amount'] = float(activity_amount) / 100
-    #         for base_fee in order_index['base_fees']:
-    #             # 价格转换成元
-    #             order_index['activity_amount'] = float(base_fee['fee']) / 100
-    #
-    #         self.render('wx/order-confirm.html',
-    #                 vendor_id=vendor_id,
-    #                 return_msg=response.body, order_return=_order_return,
-    #                 activity=_activity, order_index=order_index)
-    #     else: #actual_payment == 0:
-    #         # FIXME, 将服务模板转为字符串，客户端要用
-    #         _servTmpls = _activity['ext_fee_template']
-    #         _activity['json_serv_tmpls'] = tornado.escape.json_encode(_servTmpls);
-    #         _activity['begin_time'] = timestamp_friendly_date(float(_activity['begin_time'])) # timestamp -> %m月%d 星期%w
-    #         _activity['end_time'] = timestamp_friendly_date(float(_activity['end_time'])) # timestamp -> %m月%d 星期%w
-    #         # 金额转换成元
-    #         # _activity['amount'] = float(activity_amount) / 100
-    #         for base_fee in order_index['base_fees']:
-    #             # 价格转换成元
-    #             order_index['activity_amount'] = float(base_fee['fee']) / 100
-    #
-    #         # 如使用积分抵扣，则将积分减去
-    #         if order_index['points_used'] < 0:
-    #             # 修改个人积分信息
-    #             bonus_points = {
-    #                 'org_id':vendor_id,
-    #                 'org_type':'club',
-    #                 'account_id':_account_id,
-    #                 'account_type':'user',
-    #                 'action': 'buy_activity',
-    #                 'item_type': 'activity',
-    #                 'item_id': activity_id,
-    #                 'item_name': _activity['title'],
-    #                 'bonus_type':'bonus',
-    #                 'points': points,
-    #                 'order_id': order_index['_id']
-    #             }
-    #             self.create_points(bonus_points)
-    #             # self.points_decrease(vendor_id, order_index['account_id'], order_index['points_used'])
-    #
-    #         # 如使用代金券抵扣，则将代金券减去
-    #         for _voucher in _vouchers:
-    #             # status=2, 已使用
-    #             voucher_dao.voucher_dao().update({'_id':_voucher['_id'], 'status':2, 'last_update_time':_timestamp})
-    #             _customer_profile = vendor_member_dao.vendor_member_dao().query_not_safe(vendor_id, order_index['account_id'])
-    #             # 修改个人代金券信息
-    #             _voucher_amount = int(_customer_profile['vouchers']) - int(_voucher['fee'])
-    #             if _voucher_amount < 0:
-    #                 _voucher_amount = 0
-    #             _json = {'vendor_id':vendor_id, 'account_id':order_index['account_id'], 'last_update_time':_timestamp,
-    #                     'vouchers':_voucher_amount}
-    #             vendor_member_dao.vendor_member_dao().update(_json)
-    #
-    #         # send message to wx 公众号客户 by template
-    #         wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
-    #         logging.info("got wx_access_token %r", wx_access_token)
-    #         # 通过wxpub，给俱乐部操作员发送通知
-    #         ops = self.get_club_ops_wx(vendor_id)
-    #         for op in ops:
-    #             wx_openid = op['binding_id']
-    #             logging.info("got wx_openid %r", wx_openid)
-    #             wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
-    #
-    #         self.render('items/order-confirm.html',
-    #                 vendor_id=vendor_id,
-    #                 return_msg='OK',
-    #                 order_return={'timestamp':_timestamp,
-    #                     'nonce_str':'',
-    #                     'pay_sign':'',
-    #                     'prepay_id':'',
-    #                     'app_id': wx_app_id,
-    #                     'return_msg':'OK'},
-    #                 activity=_activity,
-    #                 order_index=order_index)
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def post(self, club_id):
+        logging.info("got club_id %r", club_id)
+        _account_id = self.get_secure_cookie("account_id")
+
+        access_token = self.get_access_token()
+        item_id = "00000000000000000000000000000000"
+
+        # 取得自己的最后一笔订单
+        params = {"filter":"account", "account_id":_account_id, "page":1, "limit":1,}
+        url = url_concat(API_DOMAIN + "/api/orders", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        orders = rs['data']
+
+        _timestamp = time.time()
+        # 一分钟内不能创建第二个订单,
+        # 防止用户点击回退按钮，产生第二个订单
+        if len(orders) > 0:
+            for order in orders:
+                if (_timestamp - order['create_time']) < 60:
+                    self.redirect('/bf/wx/orders/wait')
+                    return
+
+        # 订单总金额
+        _total_amount = self.get_argument("total_amount", 0)
+        logging.info("got _total_amount %r", _total_amount)
+        # 价格转换成分
+        _total_amount = int(float(_total_amount) * 100)
+        # logging.info("got _total_amount %r", _total_amount)
+        # 订单申报数目
+        quantity = 0
+
+        bonus_points = 0
+        #购物车商品json
+        items = self.get_body_argument("items", [])
+        logging.info("got items %r", items)
+        items = JSON.loads(items)
+        logging.info("got items %r", items)
+        #收获地址
+        addr = self.get_argument("addr", {})
+        logging.info("got addr %r", addr)
+        addr = JSON.loads(addr)
+        logging.info("got addr %r", addr)
+        #基本服务
+        _base_fees = []
+
+        # 附加服务项编号数组
+        _ext_fees = []
+
+        # 保险选项,数组
+        _insurances = []
+
+        #代金券选项,数组
+        _vouchers = []
+
+        # 积分选项,数组
+        points = 0
+        actual_payment = _total_amount + points
+        logging.info("got actual_payment %r", actual_payment)
+
+        _order_id = str(uuid.uuid1()).replace('-', '')
+        _status = ORDER_STATUS_BF_INIT
+        if actual_payment == 0:
+            _status = ORDER_STATUS_WECHAT_PAY_SUCCESS
+
+        # 创建订单索引
+        order_index = {
+            "_id": _order_id,
+            "order_type": "buy_item",
+            "club_id": club_id,
+            "item_type": "items",
+            "item_id": item_id,
+            "item_name": "cart000",
+            "distributor_type": "item",
+            "items":items,
+            "shipping_addr":addr,
+            "distributor_id": "00000000000000000000000000000000",
+            "create_time": _timestamp,
+            "pay_type": "wxpay",
+            "pay_status": _status,
+            "quantity": quantity,
+            "amount": _total_amount, #已经转换为分，注意转为数值
+            "actual_payment": actual_payment, #已经转换为分，注意转为数值
+            "base_fees": _base_fees,
+            "ext_fees": _ext_fees,
+            "insurances": _insurances,
+            "vouchers": _vouchers,
+            "points_used": points,
+            "bonus_points": bonus_points, # 活动奖励积分
+            "booking_time": _timestamp,
+        }
+        order_id = self.create_order(order_index)
+
+        # 清空购物车
+        headers = {"Authorization":"Bearer "+access_token}
+
+        url = API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items"
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="DELETE", headers=headers)
+        logging.info("update item response.body=[%r]", response.body)
+
+        # budge_num increase
+        self.counter_increase(club_id, "item_order")
+        # self.counter_increase(order_id, "order")
+        # TODO notify this message to vendor's administrator by SMS
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        logging.info("got wx_app_id %r in uri", wx_app_id)
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_mch_key = wx_app_info['wx_mch_key']
+        wx_mch_id = wx_app_info['wx_mch_id']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+
+        _timestamp = (int)(time.time())
+        if actual_payment != 0:
+            # wechat 统一下单
+            myinfo = self.get_myinfo_login()
+            _openid = myinfo['login']
+            _store_id = 'Aplan'
+            logging.info("got _store_id %r", _store_id)
+            _product_description = "order_title"
+            # logging.info("got _product_description %r", _product_description)
+            #_ip = self.request.remote_ip
+            _remote_ip = self.request.headers['X-Real-Ip']
+            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, _order_id, actual_payment, _timestamp)
+
+            # wx统一下单记录保存
+            _order_return['_id'] = _order_return['prepay_id']
+            self.create_symbol_object(_order_return)
+
+            # 微信统一下单返回成功
+            order_unified = None
+            if(_order_return['return_msg'] == 'OK'):
+                order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
+            else:
+                order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
+            # 微信统一下单返回成功
+            # TODO: 更新订单索引中，订单状态pay_status,prepay_id
+            self.update_order_unified(order_unified)
+
+            # FIXME, 将服务模板转为字符串，客户端要用
+            # 金额转换成元
+            # _activity['amount'] = float(activity_amount) / 100
+            for base_fee in order_index['base_fees']:
+                # 价格转换成元
+                order_index['activity_amount'] = float(base_fee['fee']) / 100
+
+            self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
+
+        else: #actual_payment == 0:
+            # FIXME, 将服务模板转为字符串，客户端要用
+            # 金额转换成元
+            # _activity['amount'] = float(activity_amount) / 100
+            for base_fee in order_index['base_fees']:
+                # 价格转换成元
+                order_index['activity_amount'] = float(base_fee['fee']) / 100
+
+            # 如使用积分抵扣，则将积分减去
+            if order_index['points_used'] < 0:
+                # 修改个人积分信息
+                bonus_points = {
+                    'org_id':club_id,
+                    'org_type':'club',
+                    'account_id':_account_id,
+                    'account_type':'user',
+                    'action': 'buy_activity',
+                    'item_type': 'activity',
+                    'item_id': "00000000000000000000000000000000",
+                    'item_name': 'order_title',
+                    'bonus_type':'bonus',
+                    'points': points,
+                    'order_id': order_index['_id']
+                }
+                self.create_points(bonus_points)
+                # self.points_decrease(club_id, order_index['account_id'], order_index['points_used'])
+
+            # 如使用代金券抵扣，则将代金券减去
+            for _voucher in _vouchers:
+                # status=2, 已使用
+                voucher_dao.voucher_dao().update({'_id':_voucher['_id'], 'status':2, 'last_update_time':_timestamp})
+                _customer_profile = vendor_member_dao.vendor_member_dao().query_not_safe(club_id, order_index['account_id'])
+                # 修改个人代金券信息
+                _voucher_amount = int(_customer_profile['vouchers']) - int(_voucher['fee'])
+                if _voucher_amount < 0:
+                    _voucher_amount = 0
+                _json = {'vendor_id':club_id, 'account_id':order_index['account_id'], 'last_update_time':_timestamp,
+                        'vouchers':_voucher_amount}
+                vendor_member_dao.vendor_member_dao().update(_json)
+
+            # send message to wx 公众号客户 by template
+            wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
+            logging.info("got wx_access_token %r", wx_access_token)
+            # 通过wxpub，给俱乐部操作员发送通知
+            ops = self.get_club_ops_wx(club_id)
+            for op in ops:
+                wx_openid = op['binding_id']
+                logging.info("got wx_openid %r", wx_openid)
+                wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+
+            self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
+
+
+# 支付订单
+class WxItemsCheckoutOrderHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id, order_id):
+        logging.info("GET %r", self.request.uri)
+        access_token = self.get_secure_cookie("access_token")
+        order = self.get_symbol_object(order_id)
+        logging.info("GET order %r", order)
+        pay_status = order['pay_status']
+        order['create_time'] = timestamp_datetime(float(order['create_time']))
+        items = order['items']
+        logging.info("GET items %r", items)
+
+        for item in items:
+            item['fee'] = float(item['fee'])/100
+
+        self.render('items/order-confirm.html',
+                        api_domain=API_DOMAIN,
+                        club_id=club_id,
+                        items=items,
+                        access_token=access_token,
+                        order_id=order_id,
+                        order=order)

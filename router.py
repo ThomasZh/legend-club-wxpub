@@ -120,6 +120,7 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/items", getattr(wx_items, 'WxItemsListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/checkout/cart", getattr(wx_items, 'WxItemsCheckoutHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/checkout/orders/([a-z0-9]*)", getattr(wx_items, 'WxItemsCheckoutOrderHandler')),
 
         # 开放线路市场
         (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_triprouter, 'WxTriprouterMarketHandler')),
