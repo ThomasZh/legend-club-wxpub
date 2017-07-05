@@ -614,7 +614,7 @@ class AuthorizationHandler(BaseHandler):
         response = http_client.fetch(url, method="GET", headers=headers)
         logging.info("got response.body %r", response.body)
         data = json_decode(response.body)
-        return data['rs']
+        return data['rs']['data']
 
 
     def check_apply(self, apply_id):

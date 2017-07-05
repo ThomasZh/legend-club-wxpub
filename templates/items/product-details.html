@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
-    <link rel="stylesheet" href="{{ static_url('css/z-self.css') }}">
+    <!-- <link rel="stylesheet" href="{{ static_url('css/z-self.css') }}"> -->
     <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
     <style media="screen">
     .m-spinner{
@@ -168,8 +168,8 @@
           </div>
       <!-- 购物车 -->
         <div class="floating-button animated bouncein delay-3">
-          <a href="/bf/wx/vendors/{{ club_id }}/items/checkout/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
-            <span class="mark">6</span><i class="ion-ios-cart"></i>
+          <a id="shop-car" href="/bf/wx/vendors/{{ club_id }}/items/checkout/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
+            <span class=""></span><i class="ion-ios-cart"></i>
           </a>
         </div>
         <!-- Footer -->
@@ -228,7 +228,16 @@
           $("#J_input").val(num);
       });
 
-      // 添加购物车
+      // 添加购物车数量
+        var num = {{ cart_goods_num }};
+        // console.log(num);
+        if(num>0){
+            $("#shop-car span:first-child").addClass('mark');
+            $("#shop-car span:first-child").html(num);
+        }else{
+          $("#shop-car span:first-child").removeClass('mark');
+        }
+
       $("#f_btn").on('click',function(event){
         var tem_id = $("input[name='fee_template']:checked").val();
         var item_id = "{{ item_id }}";
@@ -239,7 +248,7 @@
         }else{
           var data = [{"item_id":item_id, "fee_template_id":tem_id, "quantity":product_num}];
           var json = JSON.stringify(data);
-          console.log(json);
+          // console.log(json);
           $.ajax({
             type: "POST",
             url: "{{ api_domain }}/api/clubs/{{club_id}}/cart/items",
@@ -248,6 +257,16 @@
             headers: {"Authorization":"Bearer {{access_token}}"},
             contentType: 'application/json',
             success: function(data, status, xhr) {
+
+              var cart_goods_num = $("#shop-car span:first-child").html();
+              if(cart_goods_num == ''){
+                $("#shop-car span:first-child").addClass('mark');
+                cart_goods_num = 0;
+              }else{
+
+              }
+                var cart_num = parseInt(cart_goods_num) + parseInt(product_num);
+                  $("#shop-car span:first-child").html(cart_num);
                   // console.log("ok");
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {

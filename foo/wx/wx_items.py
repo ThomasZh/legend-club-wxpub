@@ -73,6 +73,14 @@ class WxItemsListHandler(AuthorizationHandler):
         category_num = len(_array)
         logging.info("got category_num", category_num)
 
+        cart_goods = self.get_cart(club_id)
+        logging.info("got cart_goods %r", cart_goods)
+        # 获取商品数量
+        cart_goods_num = 0
+        for cart_good in cart_goods:
+            cart_goods_num += cart_good['quantity']
+        logging.info("got cart_goods_num %r", cart_goods_num)
+
         club = self.get_club_basic_info(club_id)
         private = 0
         items = self.get_items(club_id, ACTIVITY_STATUS_RECRUIT, private)
@@ -85,6 +93,7 @@ class WxItemsListHandler(AuthorizationHandler):
         self.render('items/main.html',
                 club=club,
                 items=items,
+                cart_goods_num=cart_goods_num,
                 category_num=category_num)
 
 
@@ -99,8 +108,15 @@ class WxItemsDetailHandler(AuthorizationHandler):
         item = self.get_item(item_id)
         logging.info("got item %r", item)
 
+        # 获取购物车商品详情
         cart_goods = self.get_cart(club_id)
         logging.info("got cart_goods %r", cart_goods)
+
+        # 获取商品数量
+        cart_goods_num = 0
+        for cart_good in cart_goods:
+            cart_goods_num += cart_good['quantity']
+        logging.info("got cart_goods_num %r", cart_goods_num)
 
         # 格式化价格
         for item['base_fee'] in item['base_fee_template']:
@@ -116,6 +132,7 @@ class WxItemsDetailHandler(AuthorizationHandler):
         self.render('items/product-details.html',
                 api_domain= API_DOMAIN,
                 access_token=access_token,
+                cart_goods_num=cart_goods_num,
                 club=club,
                 club_id=club_id,
                 item_id=item_id,

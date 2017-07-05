@@ -67,6 +67,19 @@
         bottom: 5rem;
         z-index: 999;
       }
+      .mark{
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: block;
+        border-radius: 50%;
+        background-color: #ef4018;
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
     </style>
   </head>
   <body>
@@ -117,8 +130,8 @@
         </div>
         <!-- 购物车 -->
           <div class="floating-button animated bouncein delay-3">
-            <a href="/bf/wx/vendors/{{ club['_id'] }}/items/checkout/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
-              <i class="ion-ios-cart"></i>
+            <a id="shop-car" href="/bf/wx/vendors/{{ club['_id'] }}/items/checkout/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
+              <span></span><i class="ion-ios-cart"></i>
             </a>
           </div>
         <!-- Footer -->
@@ -189,6 +202,16 @@
           $('ul.tabs').tabs();
 
         });
+        // 购物车数量
+        // 添加购物车
+          var num = {{ cart_goods_num }};
+          // console.log(num);
+          if(num>0){
+              $("#shop-car span:first-child").addClass('mark');
+              $("#shop-car span:first-child").html(num);
+          }else{
+            $("#shop-car span:first-child").removeClass('mark');
+          }
     })
 
     </script>
