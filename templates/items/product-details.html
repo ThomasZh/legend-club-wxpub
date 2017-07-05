@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
     <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/z-self.css') }}">
     <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
     <style media="screen">
     .m-spinner{
@@ -69,6 +70,19 @@
       bottom: 5rem;
       z-index: 999;
     }
+    .mark{
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: block;
+      border-radius: 50%;
+      background-color: #ef4018;
+      width: 1.5rem;
+      height: 1.5rem;
+      line-height: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
     </style>
   </head>
   <body>
@@ -100,7 +114,6 @@
           <!-- End of Slider -->
         </div>
 
-      <form id="f_form" action="/bf/wx/vendors/{{ club['_id'] }}/items/{{ item_id }}" method="POST">
         <!-- Product Title -->
         <div class="center-align p-20">
           <!-- <span class="small grey-text">科技产品</span> -->
@@ -124,7 +137,7 @@
         </div>
 
         <div class="product-variation">
-          <h5><strong>选择规格:</strong></h5>
+          <h5><strong>规格:</strong></h5>
             {% for i in range(len(item['base_fee_template'])) %}
             <div style="margin-bottom:10px;">
               <p>
@@ -153,11 +166,10 @@
           <div class="product-variation">
             <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:void(0)">添加到购物车</a>
           </div>
-      </form>
       <!-- 购物车 -->
         <div class="floating-button animated bouncein delay-3">
           <a href="/bf/wx/vendors/{{ club_id }}/items/checkout/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
-            <i class="ion-ios-cart"></i>
+            <span class="mark">6</span><i class="ion-ios-cart"></i>
           </a>
         </div>
         <!-- Footer -->
@@ -191,6 +203,7 @@
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script type="text/javascript">
     $(function(){
+
       function removeHtmlTab(tab) {
        return tab.replace(/<\/?[^>]*>/g,'');//删除所有HTML标签
      };
@@ -215,11 +228,36 @@
           $("#J_input").val(num);
       });
 
-      $("#f_btn").on('click',function(){
+      // 添加购物车
+      $("#f_btn").on('click',function(event){
         var tem_id = $("input[name='fee_template']:checked").val();
-        console.log(tem_id);
-        $("#tem_input").val(tem_id);
-        $("#f_form").submit();
+        var item_id = "{{ item_id }}";
+        var product_num = $("#J_input").val();
+        if(typeof(tem_id) == 'undefined'){
+           event.preventDefault();
+           $.alert('','请选择商品规格！')
+        }else{
+          var data = [{"item_id":item_id, "fee_template_id":tem_id, "quantity":product_num}];
+          var json = JSON.stringify(data);
+          console.log(json);
+          $.ajax({
+            type: "POST",
+            url: "{{ api_domain }}/api/clubs/{{club_id}}/cart/items",
+            data: json,
+            dataType: "json",
+            headers: {"Authorization":"Bearer {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+                  // console.log("ok");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log("error");
+            },
+            complete: function(XMLHttpRequest, textStatus) {
+              this; // 调用本次AJAX请求时传递的options参数
+            }
+          });
+        }
       })
     });
     </script>

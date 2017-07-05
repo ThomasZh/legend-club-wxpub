@@ -99,6 +99,9 @@ class WxItemsDetailHandler(AuthorizationHandler):
         item = self.get_item(item_id)
         logging.info("got item %r", item)
 
+        cart_goods = self.get_cart(club_id)
+        logging.info("got cart_goods %r", cart_goods)
+
         # 格式化价格
         for item['base_fee'] in item['base_fee_template']:
             item['base_fee']['fee'] = float(item['base_fee']['fee'])/100
@@ -111,6 +114,8 @@ class WxItemsDetailHandler(AuthorizationHandler):
         logging.info("got article %r", article)
 
         self.render('items/product-details.html',
+                api_domain= API_DOMAIN,
+                access_token=access_token,
                 club=club,
                 club_id=club_id,
                 item_id=item_id,
@@ -118,26 +123,26 @@ class WxItemsDetailHandler(AuthorizationHandler):
                 article=article)
 
     # 添加商品到购物车
-    @tornado.web.authenticated  # if no session, redirect to login page
-    def post(self, club_id, item_id):
-        logging.info("got club_id %r in uri", club_id)
-        access_token = self.get_secure_cookie("access_token")
-
-        fee_template_id = self.get_argument('fee_template_id',"")
-        logging.info("got fee_template_id %r in uri", fee_template_id)
-        product_num = self.get_argument('product_num',"")
-        logging.info("got product_num %r in uri", product_num)
-
-        item_type =  [{"item_id":item_id, "fee_template_id":fee_template_id, "quantity":product_num}]
-        headers = {"Authorization":"Bearer "+access_token}
-
-        url = API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items"
-        _json = json_encode(item_type)
-        http_client = HTTPClient()
-        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-        logging.info("update item response.body=[%r]", response.body)
-
-        self.redirect('/bf/wx/vendors/'+ club_id +'/items/'+item_id)
+    # @tornado.web.authenticated  # if no session, redirect to login page
+    # def post(self, club_id, item_id):
+    #     logging.info("got club_id %r in uri", club_id)
+    #     access_token = self.get_secure_cookie("access_token")
+    #
+    #     fee_template_id = self.get_argument('fee_template_id',"")
+    #     logging.info("got fee_template_id %r in uri", fee_template_id)
+    #     product_num = self.get_argument('product_num',"")
+    #     logging.info("got product_num %r in uri", product_num)
+    #
+    #     item_type =  [{"item_id":item_id, "fee_template_id":fee_template_id, "quantity":product_num}]
+    #     headers = {"Authorization":"Bearer "+access_token}
+    #
+    #     url = API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items"
+    #     _json = json_encode(item_type)
+    #     http_client = HTTPClient()
+    #     response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+    #     logging.info("update item response.body=[%r]", response.body)
+    #
+    #     self.redirect('/bf/wx/vendors/'+ club_id +'/items/'+item_id)
 
 
 # 结算

@@ -1,4 +1,10 @@
 /*zc 2017*/
+body, html{
+  background-color: #f3f4f5;
+}
+.main{
+  height: 100%;
+}
 .Z_form{
   margin: 0;
 }
@@ -14,9 +20,9 @@
 }
 .m-spinner > a{
   float: left;
-  width: 2rem;
-  height: 2rem;
-  line-height: .62rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 1rem;
   text-align: center;
   font-weight: bold;
   color: #666;
@@ -33,12 +39,98 @@
 .m-spinner > input{
   letter-spacing: 0;
   float: left;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   text-align: center;
   color: #666;
   border: none;
   font-size: 1.26rem;
   margin: 0;
   padding-left:0;
+}
+
+.product_list{
+  background-color: #fff;
+  margin-top: 1rem;
+}
+.list-item{
+  padding: 1rem;
+  overflow: hidden;
+}
+.list-item-inner{
+  overflow: hidden;
+}
+.list-item .list-item-inner .list-item-pic{
+  display: block;
+  float: left;
+  width: 25%;
+  border: 1px solid #f0f0f0;
+  margin-top: 2rem;
+}
+.list-item-pic img{
+  width: 100%;
+}
+.list-item .list-item-info{
+    width: 75%;
+    float: left;
+    padding: 1rem;
+    position: relative;
+}
+.list-item .list-item-info .list-item-spinner{
+  overflow: hidden;
+  float: left;
+  width: 100%;
+}
+.list-item .list-item-info .title{
+  margin: 0.5rem;
+  font-size: 1.4rem;
+  padding-right: 4.5rem;
+}
+.list-item .list-item-info .single-line{
+  margin: 0.8rem;
+  font-size: 1.2rem;
+}
+.list-item-spinner .cart-info-delete{
+  display: block;
+  float: right;
+}
+.list-item .list-item-info .price{
+  position: absolute;
+  right: 0;
+  top: 1.6rem;
+}
+.z-position{
+  height: 6rem;
+}
+/*footer*/
+ .page-footer{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 6rem;
+  background-color: #fff!important;
+  border-top: 1px solid #e0e0e0;
+}
+.page-footer .footer-total-price, .page-footer .footer-pay{
+  float: left;
+  width: 50%;
+  text-align: center;
+  line-height: 6rem;
+}
+.page-footer .footer-total-price span{
+  font-size: 14px;
+  font-weight: 400;
+  color: red;
+}
+.page-footer .footer-pay{
+  float: right;
+}
+.page-footer .footer-pay .footer-pay-btn{
+  display: block;
+  width: 100%;
+  background-color: #01acc6;
+  color: white;
+  font-size: 2rem;
+  border: 1px solid #f0f0f0;
 }

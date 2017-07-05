@@ -604,6 +604,19 @@ class AuthorizationHandler(BaseHandler):
         return rs['_id']
 
 
+    def get_cart(self, club_id):
+        access_token = self.get_access_token()
+        headers = {"Authorization":"Bearer "+access_token}
+
+        params = {"page":1, "limit":20,}
+        url = url_concat(API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        return data['rs']
+
+
     def check_apply(self, apply_id):
         access_token = self.get_access_token()
         headers = {"Authorization":"Bearer "+access_token}
