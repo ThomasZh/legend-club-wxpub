@@ -1,0 +1,57 @@
+
+.hilight {
+  margin-top: 10px;
+  color: #01acc6;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+.sell_prompt li {
+  padding-left: 1.8rem;
+
+  position: relative;
+  margin: 0;
+}
+
+/* 从好材公众号里抄的，做了适当参数调整 */
+.sell_prompt li:before {
+  content: '';
+  width: 1.4rem;
+  height: 1.4rem;
+  background-position: -15rem -12rem;
+  position: absolute;
+  top: 4px;
+  left:0;
+
+  background-image: url("../i/sprite.png");
+  background-size: 30rem auto;
+  background-repeat: no-repeat;
+}
+
+.flex {
+  display: flex;
+}
+
+.block {
+  display: block;
+}
+
+.right-side {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+
+i {
+  font-size: 2rem;
+  margin-left: 4px;
+  margin-right: 4px;
+  color: #01acc6;
+}
+
+.btn, .btn-large, .btn-floating, .btn-large, .btn-flat {
+  font-size: 2rem;
+}

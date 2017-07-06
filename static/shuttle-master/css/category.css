@@ -1,0 +1,131 @@
+.tabs .indicator {
+  width: auto;
+  height: 1px;
+  border-radius: 0;
+  margin: 0 4px 0 4px;
+}
+
+.tabs .tab {
+  min-width: 40px;
+}
+
+.tabs .tab a {
+  font-size: 16px;
+}
+
+#toolbar .tabs {
+  margin-bottom: 0;
+}
+
+.page.with-tab.with-filters {
+  padding-top: 112px;
+}
+
+.fixed {
+  position: fixed;
+  z-index: 100;
+}
+
+.filters {
+  /*margin-top: 10px;*/
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.row.filters {
+  margin-bottom: 0px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  background-color: #FFFFFF;
+}
+
+.row .col.center {
+  text-align: center;
+
+  display:flex;
+  justify-content: center;
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.row .col.left-border {
+  border-left: 1px solid #CCCCCC;
+}
+
+.drop-condition i {
+  font-size: 1.4rem;
+  color: #888888;
+  margin-left: 10px;
+}
+
+.checkbox {
+  border: 1px solid #CCCCCC;
+  padding: 4px 10px 4px 10px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.checkbox.all {
+  border: 1px solid #01acc6;
+  color: #01acc6;
+}
+
+.row .col.sub-category {
+  padding-left: 0;
+  padding-right: 0;
+  background-color: #F3F3F3;
+}
+
+ .collection {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.sub-category .collection .collection-item {
+  background-color: #F3F3F3;
+  padding: 14px 10px;
+  color: #555;
+}
+
+.fixed {
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+}
+
+.product {
+  margin-top: 50px;
+}
+
+.collection .collection-item.avatar {
+  padding-right: 0;
+}
+
+/* fix avatar in collection @2017/07/01 */
+/* collide with main.css */
+.collection .avatar {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+
+.collection .collection-item.avatar p {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.collection .collection-item.avatar .title {
+  color: #333333;
+}
+
+.right-side {
+  float: right;
+}
+
+.hilight {
+  margin-top: 10px;
+  color: #01acc6;
+}
+
+/*.................*/

@@ -162,27 +162,27 @@ class WxItemsDetailHandler(AuthorizationHandler):
     #     self.redirect('/bf/wx/vendors/'+ club_id +'/items/'+item_id)
 
 
-# 结算
+# 购物车
 class WxItemsCheckoutHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_secure_cookie("access_token")
 
-        params = {"page":1, "limit":20,}
-        url = url_concat(API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items", params)
-        http_client = HTTPClient()
-        headers = {"Authorization":"Bearer " + access_token}
-        response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got response.body %r", response.body)
-        data = json_decode(response.body)
-        rs = data['rs']
-        items = rs['data']
+        # params = {"page":1, "limit":20,}
+        # url = url_concat(API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items", params)
+        # http_client = HTTPClient()
+        # headers = {"Authorization":"Bearer " + access_token}
+        # response = http_client.fetch(url, method="GET", headers=headers)
+        # logging.info("got response.body %r", response.body)
+        # data = json_decode(response.body)
+        # rs = data['rs']
+        # items = rs['data']
+        #
+        # for item in items:
+        #     item['fee'] = float(item['fee'])/100
 
-        for item in items:
-            item['fee'] = float(item['fee'])/100
-
-        self.render('items/checkout.html',api_domain=API_DOMAIN,club_id=club_id,items=items,access_token=access_token)
+        self.render('items/checkout.html',api_domain=API_DOMAIN,club_id=club_id,access_token=access_token)
 
     @tornado.web.authenticated  # if no session, redirect to login page
     def post(self, club_id):
@@ -228,10 +228,11 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
         items = JSON.loads(items)
         logging.info("got items %r", items)
         #收获地址
-        addr = self.get_argument("addr", {})
-        logging.info("got addr %r", addr)
-        addr = JSON.loads(addr)
-        logging.info("got addr %r", addr)
+        addr = {}
+        # addr = self.get_argument("addr", {})
+        # logging.info("got addr %r", addr)
+        # addr = JSON.loads(addr)
+        # logging.info("got addr %r", addr)
         #基本服务
         _base_fees = []
 

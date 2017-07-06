@@ -1,0 +1,75 @@
+#footer-bar {
+  width: 100%;
+  height: 56px;
+  position: fixed;
+  z-index: 99;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  transition: all .25s ease-in-out;
+
+  align-items: center;
+}
+
+#footer-bar .title {
+  color: #FFFFFF;
+  margin: 0 40px 0 40px;
+}
+
+#footer-bar .open-right {
+  flex: 1 0 56px;
+  font-size: 2.4rem;
+}
+
+.collection .collection-item.avatar {
+  padding-right: 0;
+}
+
+/* fix avatar in collection @2017/07/01 */
+/* collide with main.css */
+.collection .avatar {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+
+.collection .collection-item.avatar p {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.collection .collection-item.avatar .title {
+  color: #333333;
+}
+
+.right-side {
+  float: right;
+}
+
+.hilight {
+  margin-top: 10px;
+  color: #01acc6;
+}
+
+
+.flex-separate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qunatity {
+  display: flex;
+  align-items: center;
+
+  margin-right: 20px;
+}
+
+.counter {
+  margin: 0 10px 0 10px;
+}
+
+.open-right i {
+  margin-left: 10px;
+}
