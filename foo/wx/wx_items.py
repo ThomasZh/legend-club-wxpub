@@ -283,6 +283,15 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
         }
         order_id = self.create_order(order_index)
 
+        order = self.get_symbol_object(order_id)
+        logging.info("GET order %r", order)
+        order['create_time'] = timestamp_datetime(float(order['create_time']))
+        items = order['items']
+        logging.info("GET items %r", items)
+
+        for item in items:
+            item['fee'] = float(item['fee'])/100
+
         # 清空购物车
         headers = {"Authorization":"Bearer "+access_token}
 
@@ -337,8 +346,11 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
             for base_fee in order_index['base_fees']:
                 # 价格转换成元
                 order_index['activity_amount'] = float(base_fee['fee']) / 100
-
-            self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
+            self.render('items/order-confirm.html',
+                    club_id=club_id,
+                    return_msg=response.body, order_return=_order_return,
+                    order=order, items=items, order_index=order_index)
+            # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
         else: #actual_payment == 0:
             # FIXME, 将服务模板转为字符串，客户端要用
@@ -389,8 +401,12 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
                 wx_openid = op['binding_id']
                 logging.info("got wx_openid %r", wx_openid)
                 wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+            self.render('items/order-confirm.html',
+                    club_id=club_id,
+                    return_msg=response.body, order_return=_order_return,
+                    order=order, items=items, order_index=order_index)
 
-            self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
+            # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
 
 # 支付订单
@@ -416,3 +432,28 @@ class WxItemsCheckoutOrderHandler(AuthorizationHandler):
                         access_token=access_token,
                         order_id=order_id,
                         order=order)
+
+
+# 下单成功后的订单详情
+# class WxItemsOrderDetailHandler(AuthorizationHandler):
+#     @tornado.web.authenticated  # if no session, redirect to login page
+#     def get(self, club_id, order_id):
+#         logging.info("GET %r", self.request.uri)
+#         access_token = self.get_secure_cookie("access_token")
+#         order = self.get_symbol_object(order_id)
+#         logging.info("GET order %r", order)
+#         pay_status = order['pay_status']
+#         order['create_time'] = timestamp_datetime(float(order['create_time']))
+#         items = order['items']
+#         logging.info("GET items %r", items)
+#
+#         for item in items:
+#             item['fee'] = float(item['fee'])/100
+#
+#         self.render('items/order-confirm.html',
+#                         api_domain=API_DOMAIN,
+#                         club_id=club_id,
+#                         items=items,
+#                         access_token=access_token,
+#                         order_id=order_id,
+#                         order=order)
