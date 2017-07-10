@@ -1,0 +1,122 @@
+<!-- 供应商所卖商品 @2017/05/25 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>提交订单</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle-master/css/order.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <style media="screen">
+      #add-btn{
+        display: block;
+        width: 5rem;
+        height: 3rem;
+        border: 1px solid #f0f0f0;
+        margin-left: 56%;
+        line-height: 3rem;
+        text-align: center;
+        background-color: #01acc6;
+        color: white;
+      }
+      .input-field{
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <input type="hidden" id="access_token" value="{{ access_token }}">
+      <input type="hidden" id="api_domain" value="{{ api_domain }}">
+      <input type="hidden" id="club_id" value="{{ club_id }}">
+      <!-- Page Contents -->
+      <form class="order-form" action="/bf/wxpay/items?club_id={{ club_id }}&guest_club_id='00000000000000000000000000000000'" method="post">
+          <div class="animated fadeinup">
+
+            <ul class="collapsible checkout-header animated fadeindown delay-2" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-header order-card-title">
+                  收货信息:
+                  <div class="row white_bg">
+                    <div id="t_name" class="col s3"></div>
+                    <div class="col s9" id="t_phone"></div>
+                  </div>
+                  <div class="col s12" id="t_address" style="padding-left: .8rem;"></div>
+                </div>
+
+                <div class="collapsible-body z-depth-1">
+                  <!-- <h4 class="shipping-address">地址一</h4> -->
+                  <div class="input-field">
+                    <input id="name" type="text" class="validate">
+                    <label for="first_name">姓名</label>
+                  </div>
+                  <div class="input-field">
+                    <input id="phone" type="number" class="validate">
+                    <label for="phone">手机号</label>
+                  </div>
+                  <div class="input-field">
+                    <input id="address" type="text" class="validate">
+                    <label for="address">地址</label>
+                  </div>
+                  <a href="javascript:" id="add-btn">确定</a>
+                </div>
+              </li>
+            </ul>
+
+            <div class="order-card-title">
+              商品详情
+            </div>
+            <ul class="collection" id="list-item">
+            </ul>
+          </div>
+
+        <!-- End of Page Contents -->
+        <div id="footer-bar" class="primary-color ">
+          <h3 class="title">
+            总计 <span>0.00</span>元
+          </h3>
+          <input type="hidden" name="total_amount" id="total_amount">
+          <input type="hidden" name="items" id="item_input">
+          <input type="hidden" name="addr" id="addr_input">
+          <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" id="sub-order">
+            下单
+          </a>
+        </div>
+      </form>
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/js/suborder.js') }}"></script>
+  </body>
+
+  </body>
+</html>

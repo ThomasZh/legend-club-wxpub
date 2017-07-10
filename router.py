@@ -118,10 +118,14 @@ def map():
 
         # items wexin
         (r"/bf/wx/vendors/([a-z0-9]*)/items", getattr(wx_items, 'WxItemsListHandler')),
+        # cart
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/cart", getattr(wx_items, 'WxItemsCartHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/submit/order", getattr(wx_items, 'WxItemsSubmitOrderHandler')),
+
         (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/items/checkout/cart", getattr(wx_items, 'WxItemsCheckoutHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/items/checkout/orders/([a-z0-9]*)", getattr(wx_items, 'WxItemsCheckoutOrderHandler')),
-        # (r"/bf/wx/vendors/([a-z0-9]*)/items/orders-detail/([a-z0-9]*)", getattr(wx_items, 'WxItemsOrderDetailHandler')),
+        # 点击结算按钮
+        (r"/bf/wxpay/items", getattr(wx_items, 'WxItemsOrderCheckoutHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/order/([a-z0-9]*)/result", getattr(wx_items, 'WxItemsOrderResultHandler')),
 
         # 开放线路市场
         (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_triprouter, 'WxTriprouterMarketHandler')),

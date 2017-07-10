@@ -92,6 +92,7 @@ class WxItemsListHandler(AuthorizationHandler):
 
         self.render('items/main.html',
                 club=club,
+                club_id=club_id,
                 items=items,
                 cart_goods_num=cart_goods_num,
                 category_num=category_num)
@@ -163,31 +164,34 @@ class WxItemsDetailHandler(AuthorizationHandler):
 
 
 # 购物车
-class WxItemsCheckoutHandler(AuthorizationHandler):
+class WxItemsCartHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_secure_cookie("access_token")
 
-        # params = {"page":1, "limit":20,}
-        # url = url_concat(API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items", params)
-        # http_client = HTTPClient()
-        # headers = {"Authorization":"Bearer " + access_token}
-        # response = http_client.fetch(url, method="GET", headers=headers)
-        # logging.info("got response.body %r", response.body)
-        # data = json_decode(response.body)
-        # rs = data['rs']
-        # items = rs['data']
-        #
-        # for item in items:
-        #     item['fee'] = float(item['fee'])/100
+        self.render('items/cart.html',api_domain=API_DOMAIN,club_id=club_id,access_token=access_token)
 
-        self.render('items/checkout.html',api_domain=API_DOMAIN,club_id=club_id,access_token=access_token)
 
+# 提交订单页
+class WxItemsSubmitOrderHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
-    def post(self, club_id):
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+        access_token = self.get_secure_cookie("access_token")
+
+        self.render('items/submit-order.html',api_domain=API_DOMAIN,club_id=club_id,access_token=access_token)
+
+
+# 调用wechat pay
+class WxItemsOrderCheckoutHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def post(self):
+        club_id = self.get_argument("club_id", "")
         logging.info("got club_id %r", club_id)
         _account_id = self.get_secure_cookie("account_id")
+        guest_club_id = self.get_argument("guest_club_id")
+        logging.info("got guest_club_id %r", guest_club_id)
 
         access_token = self.get_access_token()
         item_id = "00000000000000000000000000000000"
@@ -228,11 +232,10 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
         items = JSON.loads(items)
         logging.info("got items %r", items)
         #收获地址
-        addr = {}
-        # addr = self.get_argument("addr", {})
-        # logging.info("got addr %r", addr)
-        # addr = JSON.loads(addr)
-        # logging.info("got addr %r", addr)
+        addr = self.get_argument("addr", {})
+        logging.info("got addr %r", addr)
+        addr = JSON.loads(addr)
+        logging.info("got addr %r", addr)
         #基本服务
         _base_fees = []
 
@@ -288,6 +291,8 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
         order['create_time'] = timestamp_datetime(float(order['create_time']))
         items = order['items']
         logging.info("GET items %r", items)
+        address = order['shipping_addr']
+        logging.info("GET address %r", address)
 
         for item in items:
             item['fee'] = float(item['fee'])/100
@@ -347,6 +352,9 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
                 # 价格转换成元
                 order_index['activity_amount'] = float(base_fee['fee']) / 100
             self.render('items/order-confirm.html',
+                    access_token = access_token,
+                    api_domain = API_DOMAIN,
+                    address=address,
                     club_id=club_id,
                     return_msg=response.body, order_return=_order_return,
                     order=order, items=items, order_index=order_index)
@@ -402,15 +410,16 @@ class WxItemsCheckoutHandler(AuthorizationHandler):
                 logging.info("got wx_openid %r", wx_openid)
                 wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
             self.render('items/order-confirm.html',
+                    access_token = access_token,
+                    api_domain = API_DOMAIN,
                     club_id=club_id,
+                    address=address,
                     return_msg=response.body, order_return=_order_return,
                     order=order, items=items, order_index=order_index)
 
-            # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
-
-# 支付订单
-class WxItemsCheckoutOrderHandler(AuthorizationHandler):
+# 下单成功后的订单详情
+class WxItemsOrderResultHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id, order_id):
         logging.info("GET %r", self.request.uri)
@@ -421,39 +430,16 @@ class WxItemsCheckoutOrderHandler(AuthorizationHandler):
         order['create_time'] = timestamp_datetime(float(order['create_time']))
         items = order['items']
         logging.info("GET items %r", items)
+        address= order['shipping_addr']
 
         for item in items:
             item['fee'] = float(item['fee'])/100
 
-        self.render('items/order-confirm.html',
+        self.render('items/order-result.html',
                         api_domain=API_DOMAIN,
                         club_id=club_id,
                         items=items,
+                        address=address,
                         access_token=access_token,
                         order_id=order_id,
                         order=order)
-
-
-# 下单成功后的订单详情
-# class WxItemsOrderDetailHandler(AuthorizationHandler):
-#     @tornado.web.authenticated  # if no session, redirect to login page
-#     def get(self, club_id, order_id):
-#         logging.info("GET %r", self.request.uri)
-#         access_token = self.get_secure_cookie("access_token")
-#         order = self.get_symbol_object(order_id)
-#         logging.info("GET order %r", order)
-#         pay_status = order['pay_status']
-#         order['create_time'] = timestamp_datetime(float(order['create_time']))
-#         items = order['items']
-#         logging.info("GET items %r", items)
-#
-#         for item in items:
-#             item['fee'] = float(item['fee'])/100
-#
-#         self.render('items/order-confirm.html',
-#                         api_domain=API_DOMAIN,
-#                         club_id=club_id,
-#                         items=items,
-#                         access_token=access_token,
-#                         order_id=order_id,
-#                         order=order)

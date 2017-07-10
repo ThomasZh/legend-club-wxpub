@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>确认支付订单</title>
+    <title>订单结果</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -28,8 +28,20 @@
   <body>
     <!-- Main Container -->
     <div id="main" class="main">
+      <!-- Toolbar -->
+      <div id="toolbar" class="primary-color z-depth-1">
+        <!-- <div class="open-left" id="open-left" data-activates="slide-out-left">
+          <i class="ion-android-menu"></i>
+        </div> -->
+        <h1 class="title">订单详情</h1>
+        <!-- <div class="open-right" id="open-right" data-activates="slide-out">
+          <i class="ion-android-person"></i>
+        </div> -->
+      </div>
+      <!-- End of Toolbar -->
+
       <!-- Page Contents -->
-      <div class="animated fadeinup">
+      <div class="page animated fadeinup">
 
         <div class="order-card-title btm-border">
           订单号：{{ order['_id'] }}
@@ -39,13 +51,9 @@
             订单状态：
           </div>
           <div class="col s9 accent-text">
-            {% if order['pay_status'] == 10 %}
-              <span class="flt-right-30">待付款</span>
-            {% elif order['pay_status'] == 20 %}
-              <span class="flt-right-30 red">待付款</span>
-            {% elif order['pay_status'] == 21 %}
-              <span class="flt-right-30 red">下单失败</span>
-            {% elif order['pay_status'] == 31 %}
+            {% if order['pay_status'] == 30 %}
+              <span class="flt-right-30">支付成功</span>
+            {% else %}
               <span class="flt-right-30">支付失败</span>
             {% end %}
           </div>
@@ -70,6 +78,7 @@
         <div class="order-card-title ">
           商品详情
         </div>
+        <ul class="collection">
           <ul class="collection list-item-info" id="list-item" >
             {% for item in items %}
             <li class="collection-item avatar">
@@ -88,6 +97,7 @@
             </li>
             {% end %}
           </ul>
+        </ul>
 
         <div class="order-card-title ">
           收货信息
@@ -119,19 +129,16 @@
 
       </div>
       <!-- End of Page Contents -->
-      <div id="footer-bar" class="primary-color ">
+      <div id="footer-bar" class="primary-color" style="text-align:center;">
         <h3 class="title">
           总计 <span>0.00</span>元
         </h3>
-        <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" id="en-order">
-          立即支付
-        </a>
       </div>
     </div>
     <!-- End of Main Container -->
 
     <!-- Scripts -->
-    <script src="{{ static_url('frozenui-1.3.0/lib/zepto.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
@@ -142,62 +149,9 @@
     <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
-    <script src="{{ static_url('shuttle-master/js/orderconfirm.js') }}"></script>
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
-    <script type="text/javascript">
-    $(function(){
+    <script src="order.js"></script>
+  </body>
 
-      //调用微信JS api 支付
-    	function jsApiCall() {
-    		WeixinJSBridge.invoke(
-    			'getBrandWCPayRequest',
-    			{
-    				"appId":"{{ order_return['app_id'] }}",     //公众号名称，由商户传入
-    			  "timeStamp":"{{ order_return['timestamp'] }}",         //时间戳，自1970年以来的秒数
-    			  "nonceStr":"{{ order_return['nonce_str'] }}", //随机串
-    			  "package":"prepay_id={{ order_return['prepay_id'] }}",
-    			  "signType":"MD5",         //微信签名方式：
-    			  "paySign":"{{ order_return['pay_sign'] }}" //微信签名
-    			},
-    			function(res){
-    				WeixinJSBridge.log(res.err_msg);
-    				if (res.err_msg == "get_brand_wcpay_request:ok") {
-    					// 使用以上方式判断前端返回,微信团队郑重提示：
-    				  // res.err_msg将在用户支付成功后返回 ok，
-    				  // 但并不保证它绝对可靠。
-    				 	//	alert("支付成功!");
-    				 	//WeixinJSBridge.call('closeWindow');
-              location.href = "/bf/wx/vendors/{{ club_id }}/items/order/{{ order_index['_id'] }}/result";
-    				} else if (res.err_msg == "get_brand_wcpay_request:cancel") {
-    				 	//	alert("用户取消支付!");
-    				} else {
-    				 	//	alert("支付失败!");
-    				 	WeixinJSBridge.call('closeWindow');
-    				}
-    			}
-    		);
-    	};
-      $("#en-order").on('click',function(){
-        callpay();
-      })
-    	function callpay() {
-        if ({{ order_index['actual_payment'] }} == 0) {
-          location.href = "/bf/wx/vendors/{{ club_id }}/items/order/{{ order_index['_id'] }}/result";
-        } else {
-    		  if (typeof WeixinJSBridge == "undefined"){
-    	   		if( document.addEventListener ) {
-    	       	document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-    	   		} else if (document.attachEvent) {
-    	       	document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-    	       	document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-    	   		}
-    		  } else {
-    			  jsApiCall();
-    		  }
-        }
-    	};
-
-    });
-    </script>
   </body>
 </html>
