@@ -1,0 +1,184 @@
+<!-- 供应商所卖商品 @2017/05/25 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>订单中心</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="../img/touch/apple-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#222222">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <style media="screen">
+      .tabs{
+          height: auto;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content:space-between;
+          align-items:center;
+      }
+      .tab{
+        height: 3rem;
+        line-height: 3rem;
+      }
+      .tabs .indicator {
+          background-color: #01acc6;
+          width: auto;
+          height: 2px;
+          border-radius: 0;
+          margin: 0 auto;
+      }
+      .o_wrap{
+        width: 100%;
+        padding: 0 1.5rem;
+        background-color: white;
+        height: auto;;
+        overflow:hidden;
+        border: 1px solid #ddd;
+        margin-top:1rem;
+      }
+      .o_wrap .menu-id{
+        height: 4rem;
+        line-height: 4rem;
+        border-bottom: 1px solid #c5c3c3;
+      }
+      .o_wrap .order-cont{
+        margin-top: 1rem;
+      }
+      .o_wrap .order-cont h5{
+        height: auto;
+        margin-bottom: 0.4rem;
+      }
+      .o_wrap .order-cont p{
+        height: 3rem;
+        line-height: 3rem;
+        margin-bottom: 0;
+      }
+      .o-l{
+        margin-left: .8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <!-- Page Contents -->
+      <div class="animated fadeinup">
+        <section>
+          <ul class="tabs">
+            <li class="tab col s3"><a class="active" href="#item0">全部订单</a></li>
+            <li class="tab col s3"><a href="#item1">已支付</a></li>
+            <li class="tab col s3"><a href="#item2">未支付</a></li>
+          </ul>
+        </section>
+
+        <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
+            <div id="item0" class="grid m-t-20">
+              {% for order in orders %}
+                <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
+                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['_id'] }}</span></div>
+                  <div class="order-cont">
+                    <h5>{{ order['item_name'] }}</h5>
+                    <p><span>状态:</span>
+                      <span class="o-l">
+                        {% if order['pay_status'] == 30 %}
+                          已支付
+                        {% else %}
+                          未支付
+                        {% end %}
+                      </span>
+                    </p>
+                    <p><span>申请时间:</span><span class="o-l">{{ order['create_time'] }}</span></p>
+                    <p><span>金额:</span><span class="o-l">{{ order['amount'] }}</span></p>
+                  </div>
+                </div>
+              {% end %}
+            </div>
+
+            <div id="item1" class="grid m-t-20">
+              {% for order in payed_orders %}
+                <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
+                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['_id'] }}</span></div>
+                  <div class="order-cont">
+                    <h5>{{ order['item_name'] }}</h5>
+                    <p><span>状态:</span>
+                      <span class="o-l">
+                          已支付
+                      </span>
+                    </p>
+                    <p><span>申请时间:</span><span class="o-l">{{ order['create_time'] }}</span></p>
+                    <p><span>金额:</span><span class="o-l">{{ order['amount'] }}</span></p>
+                  </div>
+                </div>
+              {% end %}
+            </div>
+
+            <div id="item2" class="grid m-t-20">
+              {% for order in nopay_orders %}
+                <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
+                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['_id'] }}</span></div>
+                  <div class="order-cont">
+                    <h5>{{ order['item_name'] }}</h5>
+                    <p><span>状态:</span>
+                      <span class="o-l">
+                          未支付
+                      </span>
+                    </p>
+                    <p><span>申请时间:</span><span class="o-l">{{ order['create_time'] }}</span></p>
+                    <p><span>金额:</span><span class="o-l">{{ order['amount'] }}</span></p>
+                  </div>
+                </div>
+              {% end %}
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="page-footer primary-color">
+          <div class="footer-copyright">
+            <div class="container center">
+              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
+            </div>
+          </div>
+        </footer>
+
+
+      </div>
+      <!-- End of Page Contents -->
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/chart.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/js/myorders.js') }}"></script>
+  </body>
+</html>

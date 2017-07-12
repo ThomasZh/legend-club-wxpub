@@ -68,7 +68,7 @@ class ApiOrdersXHR(AuthorizationHandler):
 
         access_token = self.get_access_token()
 
-        params = {"club_id":vendor_id, "distributor_id":distributor_id, "page":page, "limit":limit, "product_type": product_type}
+        params = {"club_id":vendor_id, "distributor_id":distributor_id, "page":page, "limit":limit, "product_type": product_type, "order_type":"buy_item"}
         url = url_concat(API_DOMAIN + "/api/orders", params)
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}

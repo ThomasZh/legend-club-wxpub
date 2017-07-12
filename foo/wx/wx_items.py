@@ -431,7 +431,7 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
         items = order['items']
         logging.info("GET items %r", items)
         address= order['shipping_addr']
-
+        order['amount'] = float(order['amount'])/100
         for item in items:
             item['fee'] = float(item['fee'])/100
 
@@ -443,3 +443,63 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
                         access_token=access_token,
                         order_id=order_id,
                         order=order)
+
+
+# 订单中心
+class WxItemsMyordersHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        params = {"club_id":club_id, "filter":"mine", "page":1, "limit":20, "order_type":"buy_item", "pay_status":"all"}
+        url = url_concat(API_DOMAIN + "/api/orders", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        orders = rs['data']
+
+        params = {"club_id":club_id, "filter":"mine", "page":1, "limit":20, "order_type":"buy_item", "pay_status":30}
+        url = url_concat(API_DOMAIN + "/api/orders", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        payed_orders = rs['data']
+
+        params = {"club_id":club_id, "filter":"mine", "page":1, "limit":20, "order_type":"buy_item", "pay_status":20}
+        url = url_concat(API_DOMAIN + "/api/orders", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        nopay_orders = rs['data']
+
+        for order in orders:
+            order['create_time'] = timestamp_datetime(float(order['create_time']))
+            order['amount'] = float(order['amount'])/100
+            order['actual_payment'] = float(order['actual_payment'])/100
+
+        for order in payed_orders:
+            order['create_time'] = timestamp_datetime(float(order['create_time']))
+            order['amount'] = float(order['amount'])/100
+            order['actual_payment'] = float(order['actual_payment'])/100
+
+        for order in nopay_orders:
+            order['create_time'] = timestamp_datetime(float(order['create_time']))
+            order['amount'] = float(order['amount'])/100
+            order['actual_payment'] = float(order['actual_payment'])/100
+
+        self.render('items/myorders.html',
+                club_id=club_id,
+                orders=orders,
+                payed_orders=payed_orders,
+                nopay_orders=nopay_orders)
