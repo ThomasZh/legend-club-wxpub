@@ -116,8 +116,10 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/hha", getattr(wx_activity, 'WxHhaHandler')),
 
 
-        # items wexin
+        # old items wexin
         (r"/bf/wx/vendors/([a-z0-9]*)/items", getattr(wx_items, 'WxItemsListHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/category/items", getattr(wx_items, 'WxItemsCategoryListHandler')),
+
         # cart
         (r"/bf/wx/vendors/([a-z0-9]*)/items/cart", getattr(wx_items, 'WxItemsCartHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/submit/order", getattr(wx_items, 'WxItemsSubmitOrderHandler')),

@@ -1,0 +1,228 @@
+<!-- blank page @2017/05/23 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>商品列表</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle-master/css/category.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <style media="screen">
+      #content ul{display:none;}
+      #c-tab li.current{background-color: white;}
+      .modal-content {
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content:space-between;
+        align-items:center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <!-- Toolbar -->
+      <div id="toolbar" class="primary-color z-depth-1" style="height:48px;transform: translate3d(0, 0, 0);">
+        <!-- Tabs -->
+        <ul class="tabs">
+          {% for category in categorys %}
+            {% if category['_id'] == category_id %}
+            <li class="tab col s2"><a onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
+            {% else %}
+            <li class="tab col s2"><a onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
+            {% end %}
+          {% end %}
+        </ul>
+      </div>
+      <!-- End of Toolbar -->
+
+      <!-- Page Contents -->
+      <div class="with-tab animated fadeinup with-filters">
+        <!-- 规格条件 -->
+        <div class="fixed" style="width:75%">
+          <div class="row filters">
+            <div class="col s6 center ">
+              <a href="#modal2" class="drop-condition ">
+                规格<i class="ion-chevron-down"></i>
+              </a>
+            </div>
+            <div class="col s6 center left-border">
+              <a href="#modal1" class="drop-condition">
+                品牌<i class="ion-chevron-down"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <!-- 商品分类 -->
+        <div id="product1" class="row product">
+          <div class="col s3 sub-category" style="position: fixed;z-index:99;height:100%;">
+            <ul class="collection" id="c-tab">
+              {% for second_category in second_categorys %}
+                {% if second_category['_id'] == second_category_id %}
+                <li class="collection-item current" ><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                {% else %}
+                <li class="collection-item" ><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                {% end %}
+              {% end %}
+            </ul>
+          </div>
+          <div id="content" class="col s12" style="margin-top: 4.6rem;padding-left:25%;"></div>
+        </div>
+      </div>
+      <!-- End of Page Contents -->
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal bottom-sheet">
+      <div class="modal-content">
+        <!-- <h4>Modal Header</h4> -->
+        {% for second_brand in second_brands %}
+          <span class="checkbox brand" data_id="{{ second_brand['_id'] }}">{{ second_brand['title'] }}</span>
+        {% end %}
+      </div>
+    </div>
+
+    <div id="modal2" class="modal bottom-sheet">
+      <div class="modal-content">
+        <!-- <h4>Modal Header</h4> -->
+        {% for second_spec in second_specs %}
+          <span class="checkbox spec" data_id="{{ second_spec['_id'] }}">{{ second_spec['title'] }}</span>
+        {% end %}
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/js/category.js') }}"></script>
+    <script type="text/javascript">
+      $(function(){
+        // 二级菜单切换
+          var $li = $('#c-tab li');
+    			var $ul = $('#content ul');
+          $li.on('click',function(){
+            var $this = $(this);
+    				var $t = $this.index();
+            $li.removeClass('current');
+    				$this.addClass('current');
+    				$ul.css('display','none');
+    				$ul.eq($t).css('display','block');
+          });
+      // 二级菜单内容查询
+        window.onload=function(){
+          var _id = "{{ second_category_id }}";
+          $.ajax({
+            type: "GET",
+            url: "{{ API_DOMAIN }}/api/def/categories/"+ _id +"/items",
+            dataType: "json",
+            headers: {"Authorization":"Bearer {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+              console.log(data);
+              var dataObj = data.rs.data;
+              $("#content").empty();
+              var html = '';
+              for (var i=0;i<dataObj.length;i++){
+                  html += '<ul class="collection" style="display:block;">';
+                  html += '<li class="collection-item avatar">';
+                  html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
+                  html += '<span class="title">'+dataObj[i]['title']+'</span>';
+                  html += '<p>'+dataObj[i]['spec_title']+'</p>';
+                  html += '<div class="hilight">';
+                  html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
+                  html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
+                  html += '</div></li></ul>';
+              }
+              $("#content").append(html);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
+              $('.lostpwd-form-main-message').addClass('error').html(XMLHttpRequest.status + ": 服务器异常,请稍后重试!");
+            },
+            complete: function(XMLHttpRequest, textStatus) {
+              this; // 调用本次AJAX请求时传递的options参数
+            }
+          });
+        };
+
+        // 品牌 规格查询
+        function getJson(tag,id){
+          $.ajax({
+            type: "GET",
+            url: "{{ API_DOMAIN }}/api/def/"+ tag +"/"+ id +"/items",
+            dataType: "json",
+            headers: {"Authorization":"Bearer {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+              console.log(data);
+              var dataObj = data.rs.data;
+              $("#content").empty();
+              var html = '';
+              for (var i=0;i<dataObj.length;i++){
+                  html += '<ul class="collection" style="display:block;">';
+                  html += '<li class="collection-item avatar">';
+                  html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
+                  html += '<span class="title">'+dataObj[i]['title']+'</span>';
+                  html += '<p>'+dataObj[i]['spec_title']+'</p>';
+                  html += '<div class="hilight">';
+                  html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
+                  html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
+                  html += '</div></li></ul>';
+              }
+              $("#content").append(html);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
+              $('.lostpwd-form-main-message').addClass('error').html(XMLHttpRequest.status + ": 服务器异常,请稍后重试!");
+            },
+            complete: function(XMLHttpRequest, textStatus) {
+              this; // 调用本次AJAX请求时传递的options参数
+            }
+          });
+        };
+        $(document).on('click','.brand',function(){
+            var tag = 'brands';
+            var id = $(this).attr('data_id');
+            console.log(id);
+            getJson(tag,id);
+        });
+
+        $(document).on('click','.spec',function(){
+          var tag = 'specs';
+          var id = $(this).attr('data_id');
+          console.log(id);
+          getJson(tag,id);
+        });
+
+    })
+    </script>
+  </body>
+</html>
