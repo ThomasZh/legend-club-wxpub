@@ -176,6 +176,25 @@ class WxItemsDetailHandler(AuthorizationHandler):
         item = self.get_item(item_id)
         logging.info("got item %r", item)
 
+        # url = API_DOMAIN + "/api/def/categories/"+ activity['level2_category_id'] +"/specs"
+        # http_client = HTTPClient()
+        # headers = {"Authorization":"Bearer " + access_token}
+        # response = http_client.fetch(url, method="GET", headers=headers)
+        # logging.info("got response.body %r", response.body)
+        # data = json_decode(response.body)
+        # specs = data['rs']
+
+        url = API_DOMAIN + "/api/items/"+ item_id +"/specs"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        item_specs = data['rs']
+
+        for item_spec in item_specs:
+            item_spec['amount'] = float(item_spec['amount']) / 100
+
         # 获取购物车商品详情
         cart_goods = self.get_cart(club_id)
         logging.info("got cart_goods %r", cart_goods)
@@ -197,7 +216,7 @@ class WxItemsDetailHandler(AuthorizationHandler):
             self.create_article(article)
         logging.info("got article %r", article)
 
-        self.render('items/product-details.html',
+        self.render('items/prodetail.html',
                 api_domain= API_DOMAIN,
                 access_token=access_token,
                 cart_goods_num=cart_goods_num,
@@ -205,6 +224,7 @@ class WxItemsDetailHandler(AuthorizationHandler):
                 club_id=club_id,
                 item_id=item_id,
                 item=item,
+                item_specs=item_specs,
                 article=article)
 
     # 添加商品到购物车

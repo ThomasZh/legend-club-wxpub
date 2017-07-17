@@ -97,7 +97,7 @@
       <div class="modal-content">
         <!-- <h4>Modal Header</h4> -->
         {% for second_brand in second_brands %}
-          <span class="checkbox brand" data_id="{{ second_brand['_id'] }}">{{ second_brand['title'] }}</span>
+          <span class="checkbox brand" data_id="{{ second_brand['_id'] }}" style="curser:pointer;">{{ second_brand['title'] }}</span>
         {% end %}
       </div>
     </div>
@@ -106,7 +106,7 @@
       <div class="modal-content">
         <!-- <h4>Modal Header</h4> -->
         {% for second_spec in second_specs %}
-          <span class="checkbox spec" data_id="{{ second_spec['_id'] }}">{{ second_spec['title'] }}</span>
+          <span class="checkbox spec" data_id="{{ second_spec['_id'] }}" style="curser:pointer;">{{ second_spec['title'] }}</span>
         {% end %}
       </div>
     </div>
@@ -153,13 +153,14 @@
               for (var i=0;i<dataObj.length;i++){
                   html += '<ul class="collection" style="display:block;">';
                   html += '<li class="collection-item avatar">';
+                  html += '<a href="/bf/wx/vendors/'+ dataObj[i]['club_id'] +'/items/'+ dataObj[i]['_id'] +'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
                   html += '<span class="title">'+dataObj[i]['title']+'</span>';
                   html += '<p>'+dataObj[i]['spec_title']+'</p>';
                   html += '<div class="hilight">';
                   html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
                   html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
-                  html += '</div></li></ul>';
+                  html += '</div></a></li></ul>';
               }
               $("#content").append(html);
             },
@@ -189,13 +190,14 @@
               for (var i=0;i<dataObj.length;i++){
                   html += '<ul class="collection" style="display:block;">';
                   html += '<li class="collection-item avatar">';
+                  html += '<a href="/bf/wx/vendors/'+ dataObj[i]['club_id'] +'/items/'+ dataObj[i]['_id'] +'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
                   html += '<span class="title">'+dataObj[i]['title']+'</span>';
                   html += '<p>'+dataObj[i]['spec_title']+'</p>';
                   html += '<div class="hilight">';
                   html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
                   html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
-                  html += '</div></li></ul>';
+                  html += '</div></a></li></ul>';
               }
               $("#content").append(html);
             },
@@ -208,18 +210,20 @@
             }
           });
         };
-        $(document).on('click','.brand',function(){
+        $(".modal-content").on('click','.brand',function(){
             var tag = 'brands';
             var id = $(this).attr('data_id');
             console.log(id);
             getJson(tag,id);
+            $('#modal1').modal('close');
         });
 
-        $(document).on('click','.spec',function(){
+        $(".modal-content").on('click','.spec',function(){
           var tag = 'specs';
           var id = $(this).attr('data_id');
           console.log(id);
           getJson(tag,id);
+          $('#modal2').modal('close');
         });
 
     })
