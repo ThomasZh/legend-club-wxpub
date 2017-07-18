@@ -27,7 +27,7 @@
   </head>
   <body>
     <!-- Main Container -->
-    <div id="main" class="main">
+    <div id="main" class="main" style="margin-bottom: 6rem;">
       <!-- End of Toolbar -->
 
       <!-- Page Contents -->
@@ -66,30 +66,6 @@
         </div>
 
         <div class="order-card-title ">
-          商品详情
-        </div>
-        <ul class="collection">
-          <ul class="collection list-item-info" id="list-item" >
-            {% for item in items %}
-            <li class="collection-item avatar">
-              <img src="{{ item['img'] }}" alt="" class="circle">
-              <span class="title">{{ item['title'] }}</span>
-              <p>
-                {{ item['fee_template_name'] }}
-              </p>
-              <div class="hilight flex-separate">
-                <span class="one-price">{{ item['fee'] }}元/桶</span>
-                <div class="quantity">
-                  数量：
-                  <span class="one-quantity">{{ item['quantity'] }}</span>
-                </div>
-              </div>
-            </li>
-            {% end %}
-          </ul>
-        </ul>
-
-        <div class="order-card-title ">
           收货信息
         </div>
         <div class="row white-bg">
@@ -116,6 +92,30 @@
             {{ address['phone'] }}
           </div>
         </div>
+
+        <div class="order-card-title ">
+          商品详情
+        </div>
+        <ul class="collection">
+          <ul class="collection list-item-info" id="list-item" >
+            {% for item in items %}
+            <li class="collection-item avatar">
+              <img src="{{ item['img'] }}" alt="" class="circle">
+              <span class="title">{{ item['title'] }}</span>
+              <p>
+                规格: {{ item['spec_title'] }}
+              </p>
+              <div class="hilight flex-separate">
+                <span class="one-price">{{ item['amount'] }}元/桶</span>
+                <div class="quantity">
+                  数量：
+                  <span class="one-quantity">{{ item['quantity'] }}</span>
+                </div>
+              </div>
+            </li>
+            {% end %}
+          </ul>
+        </ul>
 
       </div>
       <!-- End of Page Contents -->

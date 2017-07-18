@@ -27,7 +27,7 @@
   </head>
   <body>
     <!-- Main Container -->
-    <div id="main" class="main">
+    <div id="main" class="main" style="margin-bottom: 6rem;">
       <!-- Page Contents -->
       <div class="animated fadeinup">
 
@@ -68,28 +68,6 @@
         </div>
 
         <div class="order-card-title ">
-          商品详情
-        </div>
-          <ul class="collection list-item-info" id="list-item" >
-            {% for item in items %}
-            <li class="collection-item avatar">
-              <img src="{{ item['img'] }}" alt="" class="circle">
-              <span class="title">{{ item['title'] }}</span>
-              <p>
-                {{ item['fee_template_name'] }}
-              </p>
-              <div class="hilight flex-separate">
-                <span class="one-price">{{ item['fee'] }}元/桶</span>
-                <div class="quantity">
-                  数量：
-                  <span class="one-quantity">{{ item['quantity'] }}</span>
-                </div>
-              </div>
-            </li>
-            {% end %}
-          </ul>
-
-        <div class="order-card-title ">
           收货信息
         </div>
         <div class="row white-bg">
@@ -117,11 +95,33 @@
           </div>
         </div>
 
+        <div class="order-card-title ">
+          商品详情
+        </div>
+          <ul class="collection list-item-info" id="list-item" >
+            {% for item in items %}
+            <li class="collection-item avatar">
+              <img src="{{ item['img'] }}" alt="" class="circle">
+              <span class="title">{{ item['title'] }}</span>
+              <p>
+                规格: {{ item['spec_title'] }}
+              </p>
+              <div class="hilight flex-separate">
+                <span class="one-price">{{ item['amount'] }}元/桶</span>
+                <div class="quantity">
+                  数量：
+                  <span class="one-quantity">{{ item['quantity'] }}</span>
+                </div>
+              </div>
+            </li>
+            {% end %}
+          </ul>
+
       </div>
       <!-- End of Page Contents -->
       <div id="footer-bar" class="primary-color ">
         <h3 class="title">
-          总计 <span>0.00</span>元
+          总计 <span>{{ float(order['amount'])/100 }}</span>元
         </h3>
         <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" id="en-order">
           立即支付
@@ -142,7 +142,7 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
-    <script src="{{ static_url('shuttle-master/js/orderconfirm.js') }}"></script>
+    <!-- <script src="{{ static_url('shuttle-master/js/orderconfirm.js') }}"></script> -->
     <script type="text/javascript">
     $(function(){
 

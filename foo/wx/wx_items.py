@@ -205,10 +205,6 @@ class WxItemsDetailHandler(AuthorizationHandler):
             cart_goods_num += cart_good['quantity']
         logging.info("got cart_goods_num %r", cart_goods_num)
 
-        # 格式化价格
-        for item['base_fee'] in item['base_fee_template']:
-            item['base_fee']['fee'] = float(item['base_fee']['fee'])/100
-
         # 获取产品说明
         article = self.get_article(item_id)
         if not article:
@@ -382,7 +378,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         logging.info("GET address %r", address)
 
         for item in items:
-            item['fee'] = float(item['fee'])/100
+            item['amount'] = float(item['amount'])/100
 
         # 清空购物车
         headers = {"Authorization":"Bearer "+access_token}
@@ -432,12 +428,6 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             # TODO: 更新订单索引中，订单状态pay_status,prepay_id
             self.update_order_unified(order_unified)
 
-            # FIXME, 将服务模板转为字符串，客户端要用
-            # 金额转换成元
-            # _activity['amount'] = float(activity_amount) / 100
-            for base_fee in order_index['base_fees']:
-                # 价格转换成元
-                order_index['activity_amount'] = float(base_fee['fee']) / 100
             self.render('items/order-confirm.html',
                     access_token = access_token,
                     api_domain = API_DOMAIN,
@@ -448,13 +438,6 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
         else: #actual_payment == 0:
-            # FIXME, 将服务模板转为字符串，客户端要用
-            # 金额转换成元
-            # _activity['amount'] = float(activity_amount) / 100
-            for base_fee in order_index['base_fees']:
-                # 价格转换成元
-                order_index['activity_amount'] = float(base_fee['fee']) / 100
-
             # 如使用积分抵扣，则将积分减去
             if order_index['points_used'] < 0:
                 # 修改个人积分信息
@@ -520,7 +503,7 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
         address= order['shipping_addr']
         order['amount'] = float(order['amount'])/100
         for item in items:
-            item['fee'] = float(item['fee'])/100
+            item['amount'] = float(item['amount'])/100
 
         self.render('items/order-result.html',
                         api_domain=API_DOMAIN,
