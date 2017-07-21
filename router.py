@@ -131,7 +131,7 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/items/order/([a-z0-9]*)/result", getattr(wx_items, 'WxItemsOrderResultHandler')),
         # 预估begin
         (r"/bf/wx/vendors/([a-z0-9]*)/recommend", getattr(wx_items, 'WxItemsRecommendListHandler')),
-        (r"/bf/wx/vendors/([a-z0-9]*)/recommend/products/([a-z0-9]*)", getattr(wx_items, 'WxItemsRecommendProductsHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/recommend/([a-z0-9]*)/products", getattr(wx_items, 'WxItemsRecommendProductsHandler')),
 
 
         # 开放线路市场
