@@ -35,6 +35,26 @@
         justify-content:space-between;
         align-items:center;
       }
+      .cart{
+        position: fixed;
+        bottom: 3rem;
+        left: 1.5rem;
+      }
+      .mark{
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: block;
+        border-radius: 50%;
+        background-color: #ef4018;
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1.5rem;
+        font-size: 1.2rem;
+        text-align: center;
+        color:white;
+        font-weight: 600;
+      }
     </style>
   </head>
   <body>
@@ -91,7 +111,12 @@
       <!-- End of Page Contents -->
     </div>
     <!-- End of Main Container -->
-
+    <!-- 购物车图标 -->
+    <div class="floating-button animated bouncein delay-3 cart">
+      <a id="shop-car" href="/bf/wx/vendors/{{ club_id }}/items/cart" class="btn-floating btn-large waves-effect waves-light btn z-depth-1">
+        <span class=""></span><i class="ion-ios-cart"></i>
+      </a>
+    </div>
     <!-- Modal Structure -->
     <div id="modal1" class="modal bottom-sheet">
       <div class="modal-content">
@@ -225,6 +250,16 @@
           getJson(tag,id);
           $('#modal2').modal('close');
         });
+
+        // 购物车数量
+          var num = {{ cart_goods_num }};
+          // console.log(num);
+          if(num>0){
+              $("#shop-car span:first-child").addClass('mark');
+              $("#shop-car span:first-child").html(num);
+          }else{
+            $("#shop-car span:first-child").removeClass('mark');
+          }
 
     })
     </script>

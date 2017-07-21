@@ -94,6 +94,14 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         second_categorys = data['rs']
 
+        # 获取商品数量
+        cart_goods = self.get_cart(club_id)
+        logging.info("got cart_goods %r", cart_goods)
+        cart_goods_num = 0
+        for cart_good in cart_goods:
+            cart_goods_num += cart_good['quantity']
+        logging.info("got cart_goods_num %r", cart_goods_num)
+
         second_specs = None
         second_brands = None
         if not second_category_id:
@@ -126,7 +134,8 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
                 second_categorys=second_categorys,
                 second_specs=second_specs,
                 second_brands=second_brands,
-                categorys=categorys)
+                categorys=categorys,
+                cart_goods_num=cart_goods_num)
 
 
 # old分类列表
@@ -573,3 +582,39 @@ class WxItemsMyordersHandler(AuthorizationHandler):
                 orders=orders,
                 payed_orders=payed_orders,
                 nopay_orders=nopay_orders)
+
+
+# 预估分类列表
+class WxItemsRecommendListHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+        # 查询分类
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        club = self.get_club_basic_info(club_id)
+        self.render('items/recommend-category.html',
+                API_DOMAIN=API_DOMAIN,
+                access_token=access_token,
+                LEAGUE_ID=LEAGUE_ID,
+                club=club,
+                club_id=club_id)
+
+
+# 预估商品列表
+class WxItemsRecommendProductsHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id):
+        logging.info("GET %r", self.request.uri)
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        recommend_category_id = self.get_argument('recommend_category_id','')
+        logging.info("got recommend_category_id %r", recommend_category_id)
+
+        self.render('items/recommend-products.html',
+                     api_domain=API_DOMAIN,
+                     club_id=club_id,
+                     access_token=access_token,
+                     recommend_category_id=recommend_category_id)

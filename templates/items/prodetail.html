@@ -38,24 +38,11 @@
       margin: 0!important;
       padding-left:0;
     }
-    .mark{
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      display: block;
-      border-radius: 50%;
-      background-color: #ef4018;
-      width: 1.5rem;
-      height: 1.5rem;
-      line-height: 1.5rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
     </style>
   </head>
   <body>
     <!-- Main Container -->
-    <div id="main" class="main">
+    <div id="main" class="main" style="margin-bottom:5rem;">
 
       <!-- Page Contents -->
       <div class="animated fadeinup">
@@ -79,13 +66,6 @@
             <div class="swiper-pagination"></div>
           </div>
           <!-- End of Slider -->
-
-          <!-- Floating Action Button -->
-          <div class="floating-button animated bouncein delay-3">
-            <a id="shop-car" href="/bf/wx/vendors/{{ club_id }}/items/cart" class="btn-floating btn-large waves-effect waves-light accent-color btn z-depth-1">
-              <span class=""></span><i class="ion-ios-cart" style="position:absolute;"></i>
-            </a>
-          </div>
         </div>
 
         <!-- Product Title -->
@@ -138,20 +118,17 @@
           </p>
       </div>
 
-        <div class="product-variation">
-          <a id="f_btn" class="waves-effect waves-light btn-large modal-trigger accent-color block m-20" href="javascript:;">
+        <!-- End of Page Contents -->
+        <div id="footer-bar">
+          <div class="cart-left" onclick="location.href='/bf/wx/vendors/{{ club_id }}/items/cart'">
+            <a id="shop-car" class="shop-car-btn">
+              <span></span><i class="ion-ios-cart-outline"></i>
+            </a>
+          </div>
+          <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" style="color:#666;" id="f_btn" >
             添加到购物车
           </a>
         </div>
-
-        <!-- Footer -->
-        <footer class="page-footer primary-color">
-          <div class="footer-copyright">
-            <div class="container center">
-              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
-            </div>
-          </div>
-        </footer>
 
       </div>
       <!-- End of Page Contents -->
@@ -199,7 +176,7 @@
 
       // 添加购物车数量
         var num = {{ cart_goods_num }};
-         console.log(num);
+        //  console.log(num);
         if(num>0){
             $("#shop-car span:first-child").addClass('mark');
             $("#shop-car span:first-child").html(num);

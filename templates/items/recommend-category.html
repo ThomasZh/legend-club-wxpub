@@ -1,0 +1,121 @@
+<!-- 供应商所卖商品 @2017/05/25 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>预估分类列表</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+    <style media="screen">
+      .cate-list{
+        margin: auto;
+        height: 6rem;
+        width: 85%;
+        border: 1px solid #01acc6;
+        border-radius: 5px;
+        padding:1rem 2rem;
+        margin: 1rem auto;
+      }
+      .cate-list .list-left{
+        float: left;
+      }
+      .cate-list .list-right{
+        float: right;
+      }
+      .cate-list .list-left span{
+        padding-left: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <!-- Page Contents -->
+      <div class="animated fadeinup" style="padding-top:3rem;" id="recommend-list"></div>
+        <!-- Footer -->
+      <footer class="page-footer primary-color" style="position: fixed;bottom: 0;left: 0;width: 100%;">
+        <div class="footer-copyright">
+          <div class="container center">
+            <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/helper.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/chart.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/js/myorders.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+      function getJson(pageNum){
+        $.ajax({
+          type: "GET",
+          url: "{{ API_DOMAIN }}/api/item-recommend/leagues/{{ LEAGUE_ID }}/categories",
+          dataType: "json",
+          headers: {"Authorization":"Bearer {{access_token}}"},
+          contentType: 'application/json',
+          success: function(data, status, xhr) {
+            // console.log(typeof(data));
+            var dataObj = data.rs;
+            console.log(dataObj);
+            if(data.err_code == 200){
+              for (var i=0; i<dataObj.length;i++){
+                var html = '<div class="cate-list">';
+                  html += '<div class="list-left">';
+                  html += '<a href="/bf/wx/vendors/{{ club_id }}/recommend/products?recommend_category_id = '+dataObj[i]['_id']+'">';
+                  html += '<i class="ion-leaf"></i>';
+                  html += '<span>'+dataObj[i]['title']+'</span></a>';
+                  html += '</div>';
+                  html += '<div class="list-right">';
+                  html += '<i class="ion-chevron-right"></i>';
+                  html += '</div></div>';
+                  $('#recommend-list').append(html);
+              }
+            }
+
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
+            $('.lostpwd-form-main-message').addClass('error').html(XMLHttpRequest.status + ": 服务器异常,请稍后重试!");
+          },
+          complete: function(XMLHttpRequest, textStatus) {
+            this; // 调用本次AJAX请求时传递的options参数
+          }
+        });
+      };
+      getJson('1');
+    })
+
+    </script>
+  </body>
+</html>
