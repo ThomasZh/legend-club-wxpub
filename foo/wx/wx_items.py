@@ -397,6 +397,8 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         logging.info("GET items %r", items)
         shipping_addr = order['shipping_addr']
         logging.info("GET shipping_addr %r", shipping_addr)
+        billing_addr = order['billing_addr']
+        logging.info("GET billing_addr %r", billing_addr)
 
         for item in items:
             item['amount'] = float(item['amount'])/100
@@ -453,6 +455,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
                     access_token = access_token,
                     api_domain = API_DOMAIN,
                     shipping_addr=shipping_addr,
+                    billing_addr=billing_addr,
                     club_id=club_id,
                     return_msg=response.body, order_return=_order_return,
                     order=order, items=items, order_index=order_index)
@@ -505,6 +508,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
                     api_domain = API_DOMAIN,
                     club_id=club_id,
                     shipping_addr=shipping_addr,
+                    billing_addr=billing_addr,
                     return_msg=response.body, order_return=_order_return,
                     order=order, items=items, order_index=order_index)
 
