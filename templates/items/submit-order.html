@@ -39,6 +39,12 @@
       .input-field{
         margin-bottom: 0;
       }
+      .z-address{
+        background-color: white;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        padding: 2rem;
+      }
     </style>
   </head>
   <body>
@@ -50,44 +56,43 @@
       <!-- Page Contents -->
       <form class="order-form" action="/bf/wxpay/items?club_id={{ club_id }}&guest_club_id='00000000000000000000000000000000'" method="post">
           <div class="animated fadeinup">
-
-            <ul class="collapsible checkout-header animated fadeindown delay-2" data-collapsible="accordion">
-              <li>
-                <div class="collapsible-header order-card-title">
-                  收货信息:
-                  <div class="row white_bg">
-                    <div id="t_name" class="col s3"></div>
-                    <div class="col s9" id="t_phone"></div>
-                  </div>
-                  <div class="col s12" id="t_address" style="padding-left: .8rem;"></div>
-                </div>
-
-                <div class="collapsible-body z-depth-1">
-                  <!-- <h4 class="shipping-address">地址一</h4> -->
-                  <div class="input-field">
-                    <input id="name" type="text" class="validate">
-                    <label for="name">姓名</label>
-                  </div>
-                  <div class="input-field">
-                    <input id="phone" type="number" class="validate">
-                    <label for="phone">手机号</label>
-                  </div>
-                  <div class="input-field">
-                    <input id="addr" type="text" class="validate">
-                    <label for="addr">地址</label>
-                  </div>
-                  <a href="javascript:" id="add-btn">确定</a>
-                </div>
-              </li>
-            </ul>
+            <div class="order-card-title">
+              收货信息:
+              <a href="#modal1" class="right-icon">
+                <i style="font-size:1.4rem;" class="ion-chevron-right"></i>
+              </a>
+            </div>
+            <div class="z-address" id="z-address"></div>
 
             <div class="order-card-title">
-              商品详情
+              商品详情:
             </div>
             <ul class="collection" id="list-item">
             </ul>
-          </div>
 
+            <div class="order-card-title">
+              发票信息:
+              <a href="#modal2" class="right-icon">
+                <i style="font-size:1.4rem;" class="ion-chevron-right"></i>
+              </a>
+            </div>
+            <div class="row" id="row" style="background-color: white;padding: 2rem;border-top: 1px solid #e0e0e0;">
+              <div class="col s6">是否需要发票</div>
+              <div class="col s6" style="display: flex;justify-content: space-around;">
+                <p>
+                  <input class="with-gap" name="billing" type="radio" id="test1" value="1" />
+                  <label for="test1">是</label>
+                </p>
+                <p>
+                  <input class="with-gap" name="billing" type="radio" id="test2" value="0" checked="true" />
+                  <label for="test2">否</label>
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- 底部地址 -->
+        <div id="modal1" class="modal bottom-sheet"><h4 style="margin: 1rem 1rem;">选择收货信息:</h4></div>
+        <div id="modal2" class="modal bottom-sheet"><h4 style="margin: 1rem 1rem;">选择发票信息:</h4></div>
         <!-- End of Page Contents -->
         <div id="footer-bar" class="primary-color ">
           <h3 class="title">
@@ -96,6 +101,7 @@
           <input type="hidden" name="total_amount" id="total_amount">
           <input type="hidden" name="items" id="item_input">
           <input type="hidden" name="addr" id="addr_input">
+          <input type="hidden" name="billing_addr" id="billing_addr_input">
           <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" id="sub-order">
             下单
           </a>
@@ -116,6 +122,81 @@
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/js/suborder.js') }}"></script>
+    <script type="text/javascript">
+      $(function(){
+        $("#modal1").modal();
+        getAddress();
+        function getAddress(){
+          $.ajax({
+            type: "GET",
+            url: "{{ api_domain }}/api/addr/shippings",
+            headers: {"Authorization": "Bearer  {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+                  console.log(data);
+                  data_obj = JSON.parse(data);
+                var pageData = data_obj.rs;
+                var inner_html = "";
+                var modal_html = '';
+                if(pageData == ''){
+                    $('#z-address').append('<div class="input-field">'
+                    +'<input id="name" type="text" class="validate" value="">'
+                    + '<label for="name">姓名</label>'
+                    + '</div>'
+                    + '<div class="input-field">'
+                    + '<input id="phone" type="number" class="validate" value="">'
+                    + '<label for="phone">手机号</label>'
+                    + '</div>'
+                    + '<div class="input-field">'
+                    + '<input id="addr" type="text" class="validate" value="">'
+                    + '<label for="addr">地址</label>'
+                    + '</div>');
+                }
+                else{
+                    inner_html += '<div class="input-field">';
+                    inner_html += '<input id="name" type="text" class="validate" value="'+ pageData[0].name +'">';
+                    inner_html += '<label for="name" class="active">姓名</label>';
+                    inner_html += '</div>';
+                    inner_html += '<div class="input-field">';
+                    inner_html += '<input id="phone" type="number" class="validate" value="'+ pageData[0].phone +'">';
+                    inner_html += '<label for="phone" class="active">手机号</label>';
+                    inner_html += '</div>';
+                    inner_html += '<div class="input-field">';
+                    inner_html += '<input id="addr" type="text" class="validate" value="'+ pageData[0]._addr +'">';
+                    inner_html += '<label for="addr" class="active">地址</label>';
+                    inner_html += '</div>';
+                    $('#z-address').append(inner_html);
+                }
+                // 获取所有收货地址列表
+                for(var i =0 ;i<pageData.length;i++){
+                  modal_html += '<div class="addr-wrap">';
+                  modal_html += '<div class="addr-title">';
+                  modal_html += '<p class="addr-name">'+ pageData[i].name +'</p><p class="addr-phone">'+ pageData[i].phone +'</p>';
+                  modal_html += '</div>';
+                  modal_html += '<div class="addr-footer">';
+                  modal_html += '<p class="addr-addr">'+ pageData[i]._addr +'</p>';
+                  modal_html += '</div>';
+                  modal_html += '</div>';
+                }
+                $("#modal1").append(modal_html);
+                // 点击切换收货信息
+                $("#modal1").on('click','.addr-wrap',function(){
+                  var addr_name = $('.addr-name',$(this)).text();
+                  var addr_phone = $('.addr-phone',$(this)).text();
+                  var addr_addr = $('.addr-addr',$(this)).text();
+                  $("#name").val(addr_name);
+                  $("#name").next().addClass('active');
+                  $("#phone").val(addr_phone);
+                  $("#phone").next().addClass('active');
+                  $("#addr").val(addr_addr);
+                  $("#addr").next().addClass('active');
+                  $("#modal1").modal('close');
+                });
+            }
+          })
+        }
+      })
+    </script>
   </body>
 
   </body>

@@ -66,14 +66,14 @@
         </div>
 
         <div class="order-card-title ">
-          收货信息
+          收货信息:
         </div>
         <div class="row white-bg">
           <div class="col s3">
             收货人：
           </div>
           <div class="col s9 ">
-            {{ address['name'] }}
+            {{ shipping_addr['name'] }}
           </div>
         </div>
         <div class="row white-bg">
@@ -81,7 +81,7 @@
             收货地址：
           </div>
           <div class="col s9">
-            {{ address['addr'] }}
+            {{ shipping_addr['_addr'] }}
           </div>
         </div>
         <div class="row white-bg">
@@ -89,18 +89,18 @@
             电话：
           </div>
           <div class="col s9">
-            {{ address['phone'] }}
+            {{ shipping_addr['phone'] }}
           </div>
         </div>
 
         <div class="order-card-title ">
-          商品详情
+          商品详情:
         </div>
         <ul class="collection">
           <ul class="collection list-item-info" id="list-item" >
             {% for item in items %}
             <li class="collection-item avatar">
-              <img src="{{ item['img'] }}" alt="" class="circle">
+              <img src="{{ item['img'] }}" alt="" class="circle" style="border-radius:0;">
               <span class="title">{{ item['title'] }}</span>
               <p>
                 规格: {{ item['spec_title'] }}
