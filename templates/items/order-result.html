@@ -116,6 +116,27 @@
             {% end %}
           </ul>
         </ul>
+    {% if order['billing_required'] == '1' %}
+        <div class="order-card-title ">
+          发票信息:
+        </div>
+        <div class="row white-bg">
+          <div class="col s3">
+            公司抬头：
+          </div>
+          <div class="col s9 ">
+            {{ billing_addr['company_title'] }}
+          </div>
+        </div>
+        <div class="row white-bg">
+          <div class="col s3">
+            公司税号：
+          </div>
+          <div class="col s9">
+            {{ billing_addr['tfn'] }}
+          </div>
+        </div>
+    {% end %}
 
       </div>
       <!-- End of Page Contents -->

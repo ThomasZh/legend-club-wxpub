@@ -116,6 +116,7 @@
             </li>
             {% end %}
           </ul>
+      {% if order['billing_required'] == '1' %}
         <div class="order-card-title" style="border-bottom:1px solid #E0E0E0;">
             发票信息:
         </div>
@@ -135,7 +136,7 @@
             {{ billing_addr['tfn'] }}
           </div>
         </div>
-
+      {% end %}
       </div>
       <!-- End of Page Contents -->
       <div id="footer-bar" class="primary-color ">

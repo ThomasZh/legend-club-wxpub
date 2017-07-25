@@ -526,6 +526,7 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
         items = order['items']
         logging.info("GET items %r", items)
         shipping_addr= order['shipping_addr']
+        billing_addr= order['billing_addr']
         order['amount'] = float(order['amount'])/100
         for item in items:
             item['amount'] = float(item['amount'])/100
@@ -535,6 +536,7 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
                         club_id=club_id,
                         items=items,
                         shipping_addr=shipping_addr,
+                        billing_addr=billing_addr,
                         access_token=access_token,
                         order_id=order_id,
                         order=order)
