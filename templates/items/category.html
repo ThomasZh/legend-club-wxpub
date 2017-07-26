@@ -198,7 +198,12 @@
                       num ++;
                   $(this).prev().text(num);
                   goods_num = goods_num + 1;
-                  $("#shop-car span:first-child").html(goods_num);
+                  if(num == 1){
+                    $("#shop-car span:first-child").addClass('mark');
+                    $("#shop-car span:first-child").text(goods_num);
+                  }else{
+                    $("#shop-car span:first-child").text(goods_num);
+                  }
                   $(this).parent().removeClass('hidden');
                   var item_id = $(this).attr('data_id');
                   var tem_id = $(this).attr('spec_id');
@@ -238,9 +243,12 @@
                 var begin_num = num;
                     num -- ;
                     goods_num = goods_num - 1;
-                    $("#shop-car span:first-child").html(goods_num);
+
+                    $("#shop-car span:first-child").text(goods_num);
                 if(num == 0){
                   $(this).parent().addClass('hidden');
+                  $("#shop-car span:first-child").removeClass('mark');
+                  $("#shop-car span:first-child").html('');
                 }
                   $(this).next().text(num);
                   var tem_id = $(this).attr('spec_id');
@@ -276,7 +284,7 @@
                       this; // 调用本次AJAX请求时传递的options参数
                     }
                   });
-                
+
               })
 
             },

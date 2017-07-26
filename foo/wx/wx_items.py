@@ -338,6 +338,10 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             logging.info("got _addr %r", _addr)
             billing_addr = JSON.loads(_addr)
             logging.info("got billing_addr %r", billing_addr)
+        # 运费
+        shipping_cost = self.get_argument('shipping_cost',0)
+        logging.info("got shipping_cost %r",shipping_cost)
+        shipping_cost = int(float(shipping_cost) * 100)
         #基本服务
         _base_fees = []
 
@@ -352,7 +356,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
 
         # 积分选项,数组
         points = 0
-        actual_payment = _total_amount + points
+        actual_payment = _total_amount + points + shipping_cost
         logging.info("got actual_payment %r", actual_payment)
 
         _order_id = str(uuid.uuid1()).replace('-', '')
@@ -371,6 +375,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "distributor_type": "item",
             "items":items,
             "shipping_addr":addr,
+            "shipping_cost":shipping_cost,
             "billing_required":billing,
             "billing_addr":billing_addr,
             "distributor_id": "00000000000000000000000000000000",
@@ -393,6 +398,8 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         order = self.get_symbol_object(order_id)
         logging.info("GET order %r", order)
         order['create_time'] = timestamp_datetime(float(order['create_time']))
+        order['shipping_cost'] = float(order['shipping_cost'])/100
+        order['actual_payment'] = float(order['actual_payment'])/100
         items = order['items']
         logging.info("GET items %r", items)
         shipping_addr = order['shipping_addr']
