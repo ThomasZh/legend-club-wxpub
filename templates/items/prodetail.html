@@ -76,27 +76,7 @@
           <h4 class="hilight">{{ item_specs[0]['amount'] }}元/根</h4>
         </div>
 
-        <!-- Prduct Description -->
-        <div class="product-description">
-          <ul class="tabs">
-            <li class="tab col s3"><a class="active" href="#product1">商品介绍</a></li>
-            <li class="tab col s3"><a href="#product2">商品评价</a></li>
-          </ul>
-
-          <div id="product1" class="p-20">
-            <p class="text-flow">{{ article['paragraphs'] }}</p>
-            <ul class="sell_prompt">
-              <li>15天内可无理由退货（不影响二次销售且不含砂石砖水泥类材料）</li>
-              <li>产品本身质量有问题，可无理由退货</li>
-              <li>单笔满599元（不含沙石砖水泥类），免运费</li>
-            </ul>
-          </div>
-          <div id="product2" class="p-20">
-            <p class="text-flow">这里应该有评价列表。。。。</p>
-          </div>
-        </div>
-
-        <div class="product-variation">
+        <div class="product-variation" style="border-top: 1px solid #eee;padding-top: 2rem;">
           <h5><strong>选择规格:</strong></h5>
             {% for i in range(len(item_specs)) %}
             <p class="flex">
@@ -117,6 +97,26 @@
             </span>
           </p>
       </div>
+
+          <!-- Prduct Description -->
+          <div class="product-description">
+            <ul class="tabs">
+              <li class="tab col s3"><a class="active" href="#product1">商品介绍</a></li>
+              <li class="tab col s3"><a href="#product2">商品评价</a></li>
+            </ul>
+
+            <div id="product1" class="p-20">
+              <p class="text-flow">{{ article['paragraphs'] }}</p>
+              <ul class="sell_prompt">
+                <li>15天内可无理由退货（不影响二次销售且不含砂石砖水泥类材料）</li>
+                <li>产品本身质量有问题，可无理由退货</li>
+                <li>单笔满599元（不含沙石砖水泥类），免运费</li>
+              </ul>
+            </div>
+            <div id="product2" class="p-20">
+              <p class="text-flow">这里应该有评价列表。。。。</p>
+            </div>
+          </div>
 
         <!-- End of Page Contents -->
         <div id="footer-bar">

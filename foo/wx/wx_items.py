@@ -272,7 +272,7 @@ class WxItemsSubmitOrderHandler(AuthorizationHandler):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_secure_cookie("access_token")
 
-        self.render('items/submit-order.html',api_domain=API_DOMAIN,club_id=club_id,access_token=access_token)
+        self.render('items/submit-order.html',api_domain=API_DOMAIN,league_id=LEAGUE_ID, club_id=club_id,access_token=access_token)
 
 
 # 调用wechat pay

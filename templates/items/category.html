@@ -178,16 +178,107 @@
               for (var i=0;i<dataObj.length;i++){
                   html += '<ul class="collection" style="display:block;">';
                   html += '<li class="collection-item avatar">';
-                  html += '<a href="/bf/wx/vendors/'+ dataObj[i]['club_id'] +'/items/'+ dataObj[i]['_id'] +'">';
+                  html += '<a href="'+'/bf/wx/vendors/'+dataObj[i]['club_id']+'/items/'+dataObj[i]['_id']+'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
                   html += '<span class="title">'+dataObj[i]['title']+'</span>';
-                  html += '<p>规格: '+dataObj[i]['spec_title']+'</p>';
+                  html += '<p>规格: '+dataObj[i]['spec_title']+'</p></a>';
                   html += '<div class="hilight">';
                   html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
-                  html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
-                  html += '</div></a></li></ul>';
+                  html += '<div class="hilight-right hidden">'
+                  html += '<a href="#!" class="left-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
+                  html += '<span class="quantity">0</span>';
+                  html += '<a href="#!" class="right-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
+                  html += '</div></div></li></ul>';
               }
               $("#content").append(html);
+
+              $(document).on('click','.right-side',function(event){
+                  var num = $(this).prev().text();
+                  var begin_num = num;
+                      num ++;
+                  $(this).prev().text(num);
+                  goods_num = goods_num + 1;
+                  $("#shop-car span:first-child").html(goods_num);
+                  $(this).parent().removeClass('hidden');
+                  var item_id = $(this).attr('data_id');
+                  var tem_id = $(this).attr('spec_id');
+                  var product_num = $(this).prev().text()-begin_num;
+                  var data = {"spec_id":tem_id, "quantity":product_num};
+                  var json = JSON.stringify(data);
+                  console.log(json);
+                  $.ajax({
+                    type: "POST",
+                    url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/increase",
+                    data: json,
+                    dataType: "json",
+                    headers: {"Authorization":"Bearer {{access_token}}"},
+                    contentType: 'application/json',
+                    success: function(data, status, xhr) {
+                      console.log(data);
+                      // var cart_goods_num = $("#shop-car span:first-child").html();
+                      // if(cart_goods_num == ''){
+                      //   $("#shop-car span:first-child").addClass('mark');
+                      //   cart_goods_num = 0;
+                      // }else{
+                      //
+                      // }
+                      //   var cart_num = parseInt(cart_goods_num) + parseInt(product_num);
+                      //     $("#shop-car span:first-child").html(cart_num);
+                          // console.log("ok");
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        console.log("error");
+                    },
+                    complete: function(XMLHttpRequest, textStatus) {
+                      this; // 调用本次AJAX请求时传递的options参数
+                    }
+                  });
+              }).on('click','.left-side',function(){
+                var num = $(this).next().text();
+                var begin_num = num;
+                    num -- ;
+                    goods_num = goods_num - 1;
+                    $("#shop-car span:first-child").html(goods_num);
+                if(num == 0){
+                  $(this).parent().addClass('hidden');
+                }
+                  $(this).next().text(num);
+                  var tem_id = $(this).attr('spec_id');
+                  var item_id = $(this).attr('data_id');
+                  var product_num = begin_num - $(this).next().text();
+                  var data = {"spec_id":tem_id,"quantity":product_num};
+                  var json = JSON.stringify(data);
+                  console.log(json);
+                  $.ajax({
+                    type: "POST",
+                    url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/decrease",
+                    data: json,
+                    dataType: "json",
+                    headers: {"Authorization":"Bearer {{access_token}}"},
+                    contentType: 'application/json',
+                    success: function(data, status, xhr) {
+                      console.log(data);
+                      // var cart_goods_num = $("#shop-car span:first-child").html();
+                      // if(cart_goods_num == ''){
+                      //   $("#shop-car span:first-child").addClass('mark');
+                      //   cart_goods_num = 0;
+                      // }else{
+                      //
+                      // }
+                      //   var cart_num = parseInt(cart_goods_num) + parseInt(product_num);
+                      //     $("#shop-car span:first-child").html(cart_num);
+                          // console.log("ok");
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        console.log("error");
+                    },
+                    complete: function(XMLHttpRequest, textStatus) {
+                      this; // 调用本次AJAX请求时传递的options参数
+                    }
+                  });
+                
+              })
+
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
               console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
@@ -252,11 +343,11 @@
         });
 
         // 购物车数量
-          var num = {{ cart_goods_num }};
+          var goods_num = {{ cart_goods_num }};
           // console.log(num);
-          if(num>0){
+          if(goods_num>0){
               $("#shop-car span:first-child").addClass('mark');
-              $("#shop-car span:first-child").html(num);
+              $("#shop-car span:first-child").html(goods_num);
           }else{
             $("#shop-car span:first-child").removeClass('mark');
           }
