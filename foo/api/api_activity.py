@@ -108,7 +108,7 @@ class ApiActivityMemberListXHR(tornado.web.RequestHandler):
 
         _status = ACTIVITY_STATUS_RECRUIT
         popular = 1
-        params = {"filter":"item", "item_id":activity_id, "page":1, "limit":20}
+        params = {"filter":"item", "item_id":activity_id, "page":1, "limit":2000}
         url = url_concat(API_DOMAIN + "/api/applies", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET", headers=headers)
