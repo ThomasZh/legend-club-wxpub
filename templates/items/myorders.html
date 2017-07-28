@@ -92,7 +92,7 @@
             <div id="item0" class="grid m-t-20">
               {% for order in orders %}
                 <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
-                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['_id'] }}</span></div>
+                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['trade_no'] }}</span></div>
                   <div class="order-cont">
                     <h5>{{ order['item_name'] }}</h5>
                     <p><span>状态:</span>
@@ -114,7 +114,7 @@
             <div id="item1" class="grid m-t-20">
               {% for order in payed_orders %}
                 <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
-                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['_id'] }}</span></div>
+                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['trade_no'] }}</span></div>
                   <div class="order-cont">
                     <h5>{{ order['item_name'] }}</h5>
                     <p><span>状态:</span>
@@ -132,7 +132,7 @@
             <div id="item2" class="grid m-t-20">
               {% for order in nopay_orders %}
                 <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
-                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['_id'] }}</span></div>
+                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['trade_no'] }}</span></div>
                   <div class="order-cont">
                     <h5>{{ order['item_name'] }}</h5>
                     <p><span>状态:</span>

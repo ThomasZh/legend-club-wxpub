@@ -32,7 +32,7 @@
       <div class="animated fadeinup">
 
         <div class="order-card-title btm-border">
-          订单号：{{ order['_id'] }}
+          订单号：{{ order['trade_no'] }}
         </div>
         <div class="row white-bg">
           <div class="col s3">
@@ -103,6 +103,9 @@
             <li class="collection-item avatar">
               <img src="{{ item['img'] }}" alt="" class="circle" style="border-radius:0;">
               <span class="title">{{ item['title'] }}</span>
+              <p>
+                品牌: {{ item['brand_title'] }}
+              </p>
               <p>
                 规格: {{ item['spec_title'] }}
               </p>
