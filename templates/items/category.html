@@ -122,7 +122,7 @@
       <div class="modal-content">
         <!-- <h4>Modal Header</h4> -->
         {% for second_brand in second_brands %}
-          <span class="checkbox brand" data_id="{{ second_brand['_id'] }}" style="curser:pointer;">{{ second_brand['title'] }}</span>
+          <span class="checkbox brand" data_id="{{ second_brand['_id'] }}" style="curser:pointer;margin-bottom: 1rem;">{{ second_brand['title'] }}</span>
         {% end %}
       </div>
     </div>
@@ -131,7 +131,7 @@
       <div class="modal-content">
         <!-- <h4>Modal Header</h4> -->
         {% for second_spec in second_specs %}
-          <span class="checkbox spec" data_id="{{ second_spec['_id'] }}" style="curser:pointer;">{{ second_spec['title'] }}</span>
+          <span class="checkbox spec" data_id="{{ second_spec['_id'] }}" style="curser:pointer;margin-bottom: 1rem;">{{ second_spec['title'] }}</span>
         {% end %}
       </div>
     </div>
@@ -175,21 +175,26 @@
               var dataObj = data.rs.data;
               $("#content").empty();
               var html = '';
+
               for (var i=0;i<dataObj.length;i++){
+                var specs = dataObj[i].specs;
+                for(var j = 0;j<specs.length;j++){
                   html += '<ul class="collection" style="display:block;">';
                   html += '<li class="collection-item avatar">';
                   html += '<a href="'+'/bf/wx/vendors/'+dataObj[i]['club_id']+'/items/'+dataObj[i]['_id']+'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
                   html += '<span class="title">'+dataObj[i]['title']+'</span>';
                   html += '<p>品牌: '+dataObj[i]['brand_title']+'</p>';
-                  html += '<p>规格: '+dataObj[i]['spec_title']+'</p></a>';
+                  html += '<p>规格: '+specs[j]['title']+'</p></a>';
                   html += '<div class="hilight">';
-                  html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
+                  html += '<span>'+specs[j]['amount']/100+'元/'+specs[j]['unit']+'</span>';
                   html += '<div class="hilight-right hidden">'
-                  html += '<a href="#!" class="left-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
+                  html += '<a href="#!" class="left-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
                   html += '<span class="quantity">0</span>';
-                  html += '<a href="#!" class="right-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
+                  html += '<a href="#!" class="right-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
                   html += '</div></div></li></ul>';
+                }
+
               }
               $("#content").append(html);
 

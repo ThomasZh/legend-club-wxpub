@@ -9,10 +9,10 @@
   <meta content="black" name="apple-mobile-web-app-status-bar-style" />
   <meta content="telephone=no" name="format-detection" />
 
+  <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+  <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
   <!-- 引入fontawesome字体 -->
   <link rel="stylesheet" href="{{ static_url('css/font-awesome.min.css') }}">
-  <!-- 引入YDUI样式 -->
-  <link rel="stylesheet" href="{{ static_url('ydui/css/ydui.css') }}">
   <!-- <link rel="stylesheet" href="{{ static_url('jquery-weui/lib/weui.min.css') }}"> -->
   <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
   <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
@@ -39,39 +39,29 @@
 <body>
 
   <div class="g-flexview">
-    <!-- Page Contents -->
-    <div id="mainForm" class="g-scrollview">
 
-      <!-- Hero Header -->
-      <div class="hero-header hero-big bg-3 animated fadeindown" style="background: url({{ club['img'] }}) no-repeat center / cover !important;">
-        <div class="hero-author">
-          <div class="media-top-object">
-            <div class="media-body left-align">
-              <span class="white-text small"><em>{{ club['name'] }}</em></span>
-            </div>
+      <div class="weui-msg">
+        <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg-primary"></i></div>
+        <div class="weui-msg__text-area">
+          <h2 class="weui-msg__title">绑定微信</h2>
+          <p class="weui-msg__desc">作为管理员，您可以通过绑定的微信号码，接收系统通知（用户下单支付情况）</p>
+        </div>
+        <div class="weui-msg__opr-area">
+          <form id="form" method="GET" action="/bf/wx/vendors/{{ club['_id'] }}/ops/{{ account_id }}/binding/step1">
+            <p class="weui-btn-area">
+              <a href="javascript:;" id="sub-btn" class="weui-btn weui-btn_primary">同意绑定</a>
+            </p>
+          </form>
+        </div>
+        <div class="weui-msg__extra-area">
+          <div class="weui-footer">
+            <p class="weui-footer__links">
+              <a href="javascript:void(0);" class="weui-footer__link">建材</a>
+            </p>
+            <p class="weui-footer__text">Copyright © 2015-2017 7x24hs.com</p>
           </div>
         </div>
-        <div class="opacity-overlay-gradient"></div>
       </div>
-
-      <!-- Article Content -->
-      <div class="animated fadeinup delay-1">
-        <div class="p-20">
-          <blockquote class="accent-border">作为管理员，您可以通过绑定的微信号码，接收系统通知（用户报名、取现申请）</blockquote>
-        </div>
-
-        <!-- 使用：样式模块以按钮为例 -->
-        <form method="GET" action="/bf/wx/vendors/{{ club['_id'] }}/ops/{{ account_id }}/binding/step1">
-          <div class="m-button">
-            <button type="submit" class="btn-block btn-primary primary-color">同意绑定</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Footer -->
-      {% module Template("eshop/block-footer.html", club=club) %}
-
-    </div>
     <!-- /Page Contents -->
   </div>
 
@@ -84,7 +74,16 @@
   <!-- <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script> -->
   <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
   <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+  <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
   <!-- <script src="{{ static_url('shuttle/js/main.js') }}"></script> -->
+  <script type="text/javascript">
+  $(function(){
+    $('#sub-btn').on('click',function(){
+      $('#form').submit();
+    })
+  })
+
+  </script>
 
 </body>
 </html>

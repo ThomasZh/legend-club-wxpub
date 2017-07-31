@@ -733,11 +733,12 @@ class WxOrderNotifyHandler(BaseHandler):
         logging.info("got transaction_id %r", _pay_return['transaction_id'])
         logging.info("got out_trade_no %r", _pay_return['out_trade_no'])
 
-        _order_id = _pay_return['out_trade_no']
+        trade_no = _pay_return['out_trade_no']
         _result_code = _pay_return['result_code']
         if _result_code == 'SUCCESS' :
             # 查询过去是否填报，有则跳过此步骤。主要是防止用户操作回退键，重新回到此页面
-            order_index = self.get_order_index(_order_id)
+            order_index = self.get_order_index_by_trade_no(trade_no)
+            _order_id = order_index['_id']
             logging.info("got order_index=[%r]", order_index)
             # 用于更新积分、优惠券
             vendor_id = order_index['club_id']
@@ -796,7 +797,10 @@ class WxOrderNotifyHandler(BaseHandler):
                 for op in ops:
                     wx_openid = op['binding_id']
                     logging.info("got wx_openid %r", wx_openid)
-                    wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+                    if order_index['order_type'] == "buy_activity":
+                        wx_wrap.sendActivityOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+                    elif order_index['order_type'] == "buy_item":
+                        wx_wrap.sendItemOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
 
                 # 如果是分销的订单，给分销商加上积分
                 if order_index['distributor_id'] != DEFAULT_USER_ID:

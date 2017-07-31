@@ -359,14 +359,14 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         actual_payment = _total_amount + points + shipping_cost
         logging.info("got actual_payment %r", actual_payment)
 
-        _order_id = str(uuid.uuid1()).replace('-', '')
+        order_id = str(uuid.uuid1()).replace('-', '')
         _status = ORDER_STATUS_BF_INIT
         if actual_payment == 0:
             _status = ORDER_STATUS_WECHAT_PAY_SUCCESS
 
         # 创建订单索引
         order_index = {
-            "_id": _order_id,
+            "_id": order_id,
             "order_type": "buy_item",
             "club_id": club_id,
             "item_type": "items",
@@ -393,7 +393,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "bonus_points": bonus_points, # 活动奖励积分
             "booking_time": _timestamp,
         }
-        order_id = self.create_order(order_index)
+        trade_no = self.create_order(order_index)
 
         order = self.get_symbol_object(order_id)
         logging.info("GET order %r", order)
@@ -401,6 +401,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         order['shipping_cost'] = float(order['shipping_cost'])/100
         order['actual_payment'] = float(order['actual_payment'])/100
         items = order['items']
+        _product_description = items[0]['title']
         logging.info("GET items %r", items)
         shipping_addr = order['shipping_addr']
         logging.info("GET shipping_addr %r", shipping_addr)
@@ -438,11 +439,9 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             _openid = myinfo['login']
             _store_id = 'Aplan'
             logging.info("got _store_id %r", _store_id)
-            _product_description = "order_title"
-            # logging.info("got _product_description %r", _product_description)
             #_ip = self.request.remote_ip
             _remote_ip = self.request.headers['X-Real-Ip']
-            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, _order_id, actual_payment, _timestamp)
+            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, trade_no, actual_payment, _timestamp)
 
             # wx统一下单记录保存
             _order_return['_id'] = _order_return['prepay_id']
@@ -451,9 +450,9 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             # 微信统一下单返回成功
             order_unified = None
             if(_order_return['return_msg'] == 'OK'):
-                order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
+                order_unified = {'_id':order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
             else:
-                order_unified = {'_id':_order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
+                order_unified = {'_id':order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
             # 微信统一下单返回成功
             # TODO: 更新订单索引中，订单状态pay_status,prepay_id
             self.update_order_unified(order_unified)

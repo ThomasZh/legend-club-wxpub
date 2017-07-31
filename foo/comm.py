@@ -387,6 +387,18 @@ class BaseHandler(tornado.web.RequestHandler):
         return data['rs']
 
 
+    def get_order_index_by_trade_no(self, trade_no):
+        headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
+
+        params={"page":1,"limit":1}
+        url = url_concat(API_DOMAIN + "/api/orders/trades/"+trade_no, params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got order_index response.body=[%r]", response.body)
+        data = json_decode(response.body)
+        return data['rs']['data'][0]
+
+
     def update_order_unified(self, order_unified):
         headers = {"Authorization":"Bearer "+DEFAULT_USER_ID}
 
@@ -601,7 +613,7 @@ class AuthorizationHandler(BaseHandler):
         logging.info("create order=[%r] response=[%r]", order_index, response.body)
         data = json_decode(response.body)
         rs = data['rs']
-        return rs['_id']
+        return rs['trade_no']
 
 
     def get_cart(self, club_id):
