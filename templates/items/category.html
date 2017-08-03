@@ -166,7 +166,7 @@
           var _id = "{{ second_category_id }}";
           $.ajax({
             type: "GET",
-            url: "{{ API_DOMAIN }}/api/def/categories/"+ _id +"/items",
+            url: "{{ API_DOMAIN }}/api/def/categories/"+ _id +"/items?attach_category=yes",
             dataType: "json",
             headers: {"Authorization":"Bearer {{access_token}}"},
             contentType: 'application/json',
