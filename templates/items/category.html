@@ -347,19 +347,22 @@
               $("#content").empty();
               var html = '';
               for (var i=0;i<dataObj.length;i++){
+                var specs = dataObj[i].specs;
+                for(var j = 0;j<specs.length;j++){
                   html += '<li class="collection-item avatar">';
-                  html += '<a href="/bf/wx/vendors/'+ dataObj[i]['club_id'] +'/items/'+ dataObj[i]['_id'] +'">';
+                  html += '<a href="'+'/bf/wx/vendors/'+dataObj[i]['club_id']+'/items/'+dataObj[i]['_id']+'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
                   html += '<span class="title">'+dataObj[i]['title']+'</span>';
                   html += '<p>品牌: '+dataObj[i]['brand_title']+'</p>';
-                  html += '<p>规格: '+dataObj[i]['spec_title']+'</p>';
+                  html += '<p>规格: '+specs[j]['title']+'</p></a>';
                   html += '<div class="hilight">';
-                  html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
+                  html += '<span>'+specs[j]['amount']/100+'元/'+specs[j]['unit']+'</span>';
                   html += '<div class="hilight-right hidden">'
-                  html += '<a href="#!" class="left-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
+                  html += '<a href="#!" class="left-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
                   html += '<span class="quantity">0</span>';
-                  html += '<a href="#!" class="right-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
+                  html += '<a href="#!" class="right-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
                   html += '</div></div></li>';
+                }
               }
               $("#content").append(html);
               ++pageNum;
