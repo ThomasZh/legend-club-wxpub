@@ -107,10 +107,10 @@
           </div>
           <div class="col s12" style="margin-top: 4.6rem;padding-left:25%;">
             <ul class="collection" style="display:block;" id="content"></ul>
-            <!-- <div class="weui-loadmore">
+            <div class="weui-loadmore">
               <i class="weui-loading"></i>
               <span class="weui-loadmore__tips">正在加载</span>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -355,8 +355,11 @@
                   html += '<p>规格: '+dataObj[i]['spec_title']+'</p>';
                   html += '<div class="hilight">';
                   html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
-                  html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
-                  html += '</div></a></li>';
+                  html += '<div class="hilight-right hidden">'
+                  html += '<a href="#!" class="left-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
+                  html += '<span class="quantity">0</span>';
+                  html += '<a href="#!" class="right-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
+                  html += '</div></div></li>';
               }
               $("#content").append(html);
               ++pageNum;
