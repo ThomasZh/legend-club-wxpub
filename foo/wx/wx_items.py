@@ -217,7 +217,7 @@ class WxItemsDetailHandler(AuthorizationHandler):
         # 获取产品说明
         article = self.get_article(item_id)
         if not article:
-            article = {'_id':activity_id, 'title':activity['title'], 'subtitle':[], 'img':activity['img'],'paragraphs':''}
+            article = {'_id':item_id, 'title':item['title'], 'subtitle':[], 'img':item['img'],'paragraphs':''}
             self.create_article(article)
         logging.info("got article %r", article)
 
