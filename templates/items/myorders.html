@@ -175,7 +175,7 @@
                 _html += '</span>';
                 _html += '</p>';
                 _html += '<p><span>申请时间:</span><span class="o-l">'+ getLocalTime(orders[i].create_time) +'</span></p>';
-                _html += '<p><span>金额:</span><span class="o-l">'+ (parseFloat(orders[i].amount)/100).toFixed(2) +'</span></p>';
+                _html += '<p><span>金额:</span><span class="o-l">'+ (parseFloat(orders[i].actual_payment)/100).toFixed(2) +'</span></p>';
                 _html += '</div></div>';
               }
               $('#'+dom).append(_html);
