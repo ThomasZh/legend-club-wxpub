@@ -82,79 +82,21 @@
       <div class="animated fadeinup">
         <section>
           <ul class="tabs">
-            <li class="tab col s3"><a class="active" href="#item0">全部订单</a></li>
-            <li class="tab col s3"><a href="#item1">已支付</a></li>
-            <li class="tab col s3"><a href="#item2">未支付</a></li>
+            <li class="tab col s3" id="list0"><a class="active" href="#item0">全部订单</a></li>
+            <li class="tab col s3" id="list1"><a href="#item1">已支付</a></li>
+            <li class="tab col s3" id="list2"><a href="#item2">未支付</a></li>
           </ul>
         </section>
 
         <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
-            <div id="item0" class="grid m-t-20">
-              {% for order in orders %}
-                <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
-                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['trade_no'] }}</span></div>
-                  <div class="order-cont">
-                    <h5>{{ order['item_name'] }}</h5>
-                    <p><span>状态:</span>
-                      <span class="o-l">
-                        {% if order['pay_status'] == 30 %}
-                          已支付
-                        {% else %}
-                          未支付
-                        {% end %}
-                      </span>
-                    </p>
-                    <p><span>申请时间:</span><span class="o-l">{{ order['create_time'] }}</span></p>
-                    <p><span>金额:</span><span class="o-l">{{ order['amount'] }}</span></p>
-                  </div>
-                </div>
-              {% end %}
-            </div>
-
-            <div id="item1" class="grid m-t-20">
-              {% for order in payed_orders %}
-                <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
-                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['trade_no'] }}</span></div>
-                  <div class="order-cont">
-                    <h5>{{ order['item_name'] }}</h5>
-                    <p><span>状态:</span>
-                      <span class="o-l">
-                          已支付
-                      </span>
-                    </p>
-                    <p><span>申请时间:</span><span class="o-l">{{ order['create_time'] }}</span></p>
-                    <p><span>金额:</span><span class="o-l">{{ order['amount'] }}</span></p>
-                  </div>
-                </div>
-              {% end %}
-            </div>
-
-            <div id="item2" class="grid m-t-20">
-              {% for order in nopay_orders %}
-                <div class="o_wrap" onclick="location.href='/bf/wx/vendors/{{ order['club_id'] }}/items/order/{{ order['_id'] }}/result'">
-                  <div class="menu-id"><span>订单号:</span><span class="o-l">{{ order['trade_no'] }}</span></div>
-                  <div class="order-cont">
-                    <h5>{{ order['item_name'] }}</h5>
-                    <p><span>状态:</span>
-                      <span class="o-l">
-                          未支付
-                      </span>
-                    </p>
-                    <p><span>申请时间:</span><span class="o-l">{{ order['create_time'] }}</span></p>
-                    <p><span>金额:</span><span class="o-l">{{ order['amount'] }}</span></p>
-                  </div>
-                </div>
-              {% end %}
+            <div id="item0" class="grid m-t-20"></div>
+            <div id="item1" class="grid m-t-20"></div>
+            <div id="item2" class="grid m-t-20"></div>
+            <div class="weui-loadmore">
+              <i class="weui-loading"></i>
+              <span class="weui-loadmore__tips">正在加载</span>
             </div>
         </div>
-        <!-- Footer -->
-        <footer class="page-footer primary-color">
-          <div class="footer-copyright">
-            <div class="container center">
-              <span>Made with <i class="ion-ios-heart"></i> by Thomas</span>
-            </div>
-          </div>
-        </footer>
 
 
       </div>
@@ -175,5 +117,75 @@
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/js/myorders.js') }}"></script>
+    <script type="text/javascript">
+      $(function(){
+
+        var limit = 10;
+        var pageNum = 1;
+
+        // 上拉加载更多start
+          var loading = false;  //状态标记
+          $(document.body).infinite().on("infinite", function() {
+            if(loading) return;
+            loading = true;
+            setTimeout(function() {
+              getOrders('all','item0');
+              loading = false;
+            }, 1000);   //模拟延迟
+          });
+        // end
+
+        function getLocalTime(nS) { //时间戳转换
+           return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+        };
+        $(document).on('click','#list1',function(){
+            pageNum = 1;
+            getOrders('30','item1');//已️支付订单
+        }).on('click','#list2',function(){
+            pageNum = 1;
+            getOrders('20','item2');//未支付订单
+        })
+        // 获取账单数据
+
+        getOrders('all','item0');//全部订单
+        function getOrders(_states,dom){
+          $.ajax({
+            type: "GET",
+            url: "{{ API_DOMAIN }}/api/orders?filter=mine&order_type=buy_item&pay_status="+_states+"&club_id={{ club_id }}&page="+pageNum+"&limit="+limit,
+            dataType: "json",
+            headers: {"Authorization":"Bearer {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+              console.log(data);
+              // var dataObj = JSON.parse(data);
+              var orders = data.rs.data;
+              var _html = "";
+              for (var i =0 ;i<orders.length;i++){
+                _html += '<div class="o_wrap" onclick = "location.href='+'\'/bf/wx/vendors/'+orders[i]['club_id']+'/items/order/'+orders[i]['_id']+'/result\'">';
+                _html += '<div class="menu-id"><span>订单号:</span><span class="o-l">'+ orders[i].trade_no +'</span></div>';
+                _html += '<div class="order-cont">';
+                _html += '<h5>'+ orders[i].item_name +'</h5>';
+                _html += '<p><span>状态:</span>';
+                _html += '<span class="o-l">';
+                if (orders[i].pay_status == 30){
+                    _html +=  '已支付';
+                }else if(orders[i].pay_status == 20){
+                    _html +=  '未支付';
+                }
+                _html += '</span>';
+                _html += '</p>';
+                _html += '<p><span>申请时间:</span><span class="o-l">'+ getLocalTime(orders[i].create_time) +'</span></p>';
+                _html += '<p><span>金额:</span><span class="o-l">'+ (parseFloat(orders[i].amount)/100).toFixed(2) +'</span></p>';
+                _html += '</div></div>';
+              }
+              $('#'+dom).append(_html);
+              ++pageNum;
+            }
+          })
+        };
+
+      })
+
+    </script>
   </body>
 </html>

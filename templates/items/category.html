@@ -105,14 +105,20 @@
               {% end %}
             </ul>
           </div>
-          <div id="content" class="col s12" style="margin-top: 4.6rem;padding-left:25%;"></div>
+          <div class="col s12" style="margin-top: 4.6rem;padding-left:25%;">
+            <ul class="collection" style="display:block;" id="content"></ul>
+            <!-- <div class="weui-loadmore">
+              <i class="weui-loading"></i>
+              <span class="weui-loadmore__tips">正在加载</span>
+            </div> -->
+          </div>
         </div>
       </div>
       <!-- End of Page Contents -->
     </div>
     <!-- End of Main Container -->
     <!-- 购物车图标 -->
-    <div class="floating-button animated bouncein delay-3 cart">
+    <div class="floating-button animated bouncein delay-3 cart" style="z-index:999;">
       <a id="shop-car" href="/bf/wx/vendors/{{ club_id }}/items/cart" class="btn-floating btn-large waves-effect waves-light btn z-depth-1">
         <span class=""></span><i class="ion-ios-cart"></i>
       </a>
@@ -162,24 +168,41 @@
     				$ul.eq($t).css('display','block');
           });
       // 二级菜单内容查询
-        window.onload=function(){
+      var limit = 5;
+      var pageNum = 1;
+
+      // 上拉加载更多start
+        var loading = false;  //状态标记
+        $(document.body).infinite(30).on("infinite", function() {
+          if(loading) return;
+          loading = true;
+          setTimeout(function() {
+            getitems();
+            loading = false;
+          }, 1000);   //模拟延迟
+        });
+      // end
+        getitems();
+        function getitems(){
           var _id = "{{ second_category_id }}";
           $.ajax({
             type: "GET",
-            url: "{{ API_DOMAIN }}/api/def/categories/"+ _id +"/items?attach_category=yes",
+            url: "{{ API_DOMAIN }}/api/def/categories/"+ _id +"/items?attach_category=yes&page="+pageNum+"&limit="+limit,
             dataType: "json",
             headers: {"Authorization":"Bearer {{access_token}}"},
             contentType: 'application/json',
             success: function(data, status, xhr) {
               console.log(data);
               var dataObj = data.rs.data;
-              $("#content").empty();
+              // $("#content").empty();
+              if(dataObj.length == 0){
+                $(document.body).destroyInfinite();
+                $('.weui-loadmore').hide();
+              }
               var html = '';
-
               for (var i=0;i<dataObj.length;i++){
                 var specs = dataObj[i].specs;
                 for(var j = 0;j<specs.length;j++){
-                  html += '<ul class="collection" style="display:block;">';
                   html += '<li class="collection-item avatar">';
                   html += '<a href="'+'/bf/wx/vendors/'+dataObj[i]['club_id']+'/items/'+dataObj[i]['_id']+'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
@@ -192,11 +215,11 @@
                   html += '<a href="#!" class="left-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
                   html += '<span class="quantity">0</span>';
                   html += '<a href="#!" class="right-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
-                  html += '</div></div></li></ul>';
+                  html += '</div></div></li>';
                 }
-
               }
               $("#content").append(html);
+              ++pageNum;
 
               $(document).on('click','.right-side',function(event){
                   var num = $(this).prev().text();
@@ -306,30 +329,37 @@
 
         // 品牌 规格查询
         function getJson(tag,id){
+          var pageNum = 1;
+          var limit = 5;
           $.ajax({
             type: "GET",
-            url: "{{ API_DOMAIN }}/api/def/"+ tag +"/"+ id +"/items",
+            url: "{{ API_DOMAIN }}/api/def/"+ tag +"/"+ id +"/items?page="+pageNum+"&limit="+limit,
             dataType: "json",
             headers: {"Authorization":"Bearer {{access_token}}"},
             contentType: 'application/json',
             success: function(data, status, xhr) {
               console.log(data);
               var dataObj = data.rs.data;
+              if(dataObj.length == 0){
+                $(document.body).destroyInfinite();
+                $('.weui-loadmore').hide();
+              }
               $("#content").empty();
               var html = '';
               for (var i=0;i<dataObj.length;i++){
-                  html += '<ul class="collection" style="display:block;">';
                   html += '<li class="collection-item avatar">';
                   html += '<a href="/bf/wx/vendors/'+ dataObj[i]['club_id'] +'/items/'+ dataObj[i]['_id'] +'">';
                   html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
                   html += '<span class="title">'+dataObj[i]['title']+'</span>';
-                  html += '<p>'+dataObj[i]['spec_title']+'</p>';
+                  html += '<p>品牌: '+dataObj[i]['brand_title']+'</p>';
+                  html += '<p>规格: '+dataObj[i]['spec_title']+'</p>';
                   html += '<div class="hilight">';
                   html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
                   html += '<a href="#!" class="right-side"><i class="ion-plus-circled"></i></a>';
-                  html += '</div></a></li></ul>';
+                  html += '</div></a></li>';
               }
               $("#content").append(html);
+              ++pageNum;
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
               console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
