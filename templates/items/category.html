@@ -158,32 +158,32 @@
       $(function(){
         // 二级菜单切换
           var $li = $('#c-tab li');
-    			var $ul = $('#content ul');
+    var $ul = $('#content ul');
           $li.on('click',function(){
             var $this = $(this);
-    				var $t = $this.index();
+    var $t = $this.index();
             $li.removeClass('current');
-    				$this.addClass('current');
-    				$ul.css('display','none');
-    				$ul.eq($t).css('display','block');
+    $this.addClass('current');
+    $ul.css('display','none');
+    $ul.eq($t).css('display','block');
           });
       // 二级菜单内容查询
-      var limit = 5;
-      var pageNum = 1;
 
       // 上拉加载更多start
-        var loading = false;  //状态标记
-        $(document.body).infinite(30).on("infinite", function() {
-          if(loading) return;
-          loading = true;
-          setTimeout(function() {
-            getitems();
-            loading = false;
-          }, 1000);   //模拟延迟
-        });
+        // var loading = false;  //状态标记
+        // $(document.body).infinite(30).on("infinite", function() {
+        //   if(loading) return;
+        //   loading = true;
+        //   setTimeout(function() {
+        //     getitems();
+        //     loading = false;
+        //   }, 1000);   //模拟延迟
+        // });
       // end
         getitems();
         function getitems(){
+          var limit = 50;
+          var pageNum = 1;
           var _id = "{{ second_category_id }}";
           $.ajax({
             type: "GET",
@@ -195,10 +195,10 @@
               console.log(data);
               var dataObj = data.rs.data;
               // $("#content").empty();
-              if(dataObj.length == 0){
-                $(document.body).destroyInfinite();
-                $('.weui-loadmore').hide();
-              }
+              // if(dataObj.length == 0){
+              //   $(document.body).destroyInfinite();
+              //   $('.weui-loadmore').hide();
+              // }
               var html = '';
               for (var i=0;i<dataObj.length;i++){
                 var specs = dataObj[i].specs;
@@ -219,7 +219,7 @@
                 }
               }
               $("#content").append(html);
-              ++pageNum;
+              // ++pageNum;
 
               $(document).on('click','.right-side',function(event){
                   var num = $(this).prev().text();
@@ -236,7 +236,7 @@
                   $(this).parent().removeClass('hidden');
                   var item_id = $(this).attr('data_id');
                   var tem_id = $(this).attr('spec_id');
-                  var product_num = $(this).prev().text()-begin_num;
+                  var product_num = parseInt($(this).prev().text())-parseInt(begin_num);
                   var data = {"spec_id":tem_id, "quantity":product_num};
                   var json = JSON.stringify(data);
                   console.log(json);
@@ -276,13 +276,15 @@
                     $("#shop-car span:first-child").text(goods_num);
                 if(num == 0){
                   $(this).parent().addClass('hidden');
-                  $("#shop-car span:first-child").removeClass('mark');
-                  $("#shop-car span:first-child").html('');
+                  if(goods_num == 0){
+                    $("#shop-car span:first-child").removeClass('mark');
+                    $("#shop-car span:first-child").html('');
+                  }
                 }
                   $(this).next().text(num);
                   var tem_id = $(this).attr('spec_id');
                   var item_id = $(this).attr('data_id');
-                  var product_num = begin_num - $(this).next().text();
+                  var product_num = parseInt(begin_num) - parseInt($(this).next().text());
                   var data = {"spec_id":tem_id,"quantity":product_num};
                   var json = JSON.stringify(data);
                   console.log(json);
@@ -330,7 +332,7 @@
         // 品牌 规格查询
         function getJson(tag,id){
           var pageNum = 1;
-          var limit = 5;
+          var limit = 10;
           $.ajax({
             type: "GET",
             url: "{{ API_DOMAIN }}/api/def/"+ tag +"/"+ id +"/items?page="+pageNum+"&limit="+limit,
@@ -340,10 +342,10 @@
             success: function(data, status, xhr) {
               console.log(data);
               var dataObj = data.rs.data;
-              if(dataObj.length == 0){
-                $(document.body).destroyInfinite();
-                $('.weui-loadmore').hide();
-              }
+              // if(dataObj.length == 0){
+              //   $(document.body).destroyInfinite();
+              //   $('.weui-loadmore').hide();
+              // }
               $("#content").empty();
               var html = '';
               for (var i=0;i<dataObj.length;i++){
@@ -365,7 +367,7 @@
                 }
               }
               $("#content").append(html);
-              ++pageNum;
+              // ++pageNum;
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
               console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
@@ -376,6 +378,53 @@
             }
           });
         };
+
+        function getSpecJson(id){
+          var pageNum = 1;
+          var limit = 100;
+          $.ajax({
+            type: "GET",
+            url: "{{ API_DOMAIN }}/api/def/specs/"+ id +"/items?page="+pageNum+"&limit="+limit,
+            dataType: "json",
+            headers: {"Authorization":"Bearer {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+              console.log(data);
+              var dataObj = data.rs.data;
+              // if(dataObj.length == 0){
+              //   $(document.body).destroyInfinite();
+              //   $('.weui-loadmore').hide();
+              // }
+              $("#content").empty();
+              var html = '';
+              for (var i=0;i<dataObj.length;i++){
+                  html += '<li class="collection-item avatar">';
+                  html += '<a href="'+'/bf/wx/vendors/'+dataObj[i]['club_id']+'/items/'+dataObj[i]['_id']+'">';
+                  html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0;" class="circle">';
+                  html += '<span class="title">'+dataObj[i]['title']+'</span>';
+                  html += '<p>品牌: '+dataObj[i]['brand_title']+'</p>';
+                  html += '<p>规格: '+dataObj[i]['spec_title']+'</p></a>';
+                  html += '<div class="hilight">';
+                  html += '<span>'+dataObj[i]['amount']/100+'元/'+dataObj[i]['unit']+'</span>';
+                  html += '<div class="hilight-right hidden">'
+                  html += '<a href="#!" class="left-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
+                  html += '<span class="quantity">0</span>';
+                  html += '<a href="#!" class="right-side" spec_id = "'+ dataObj[i]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
+                  html += '</div></div></li>';
+              }
+              $("#content").append(html);
+              // ++pageNum;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
+              $('.lostpwd-form-main-message').addClass('error').html(XMLHttpRequest.status + ": 服务器异常,请稍后重试!");
+            },
+            complete: function(XMLHttpRequest, textStatus) {
+              this; // 调用本次AJAX请求时传递的options参数
+            }
+          });
+        };
+
         $(".modal-content").on('click','.brand',function(){
             var tag = 'brands';
             var id = $(this).attr('data_id');
@@ -388,7 +437,7 @@
           var tag = 'specs';
           var id = $(this).attr('data_id');
           console.log(id);
-          getJson(tag,id);
+          getSpecJson(id);
           $('#modal2').modal('close');
         });
 

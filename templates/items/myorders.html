@@ -92,10 +92,10 @@
             <div id="item0" class="grid m-t-20"></div>
             <div id="item1" class="grid m-t-20"></div>
             <div id="item2" class="grid m-t-20"></div>
-            <div class="weui-loadmore">
+            <!-- <div class="weui-loadmore">
               <i class="weui-loading"></i>
               <span class="weui-loadmore__tips">正在加载</span>
-            </div>
+            </div> -->
         </div>
 
 
@@ -124,25 +124,27 @@
         var pageNum = 1;
 
         // 上拉加载更多start
-          var loading = false;  //状态标记
-          $(document.body).infinite().on("infinite", function() {
-            if(loading) return;
-            loading = true;
-            setTimeout(function() {
-              getOrders('all','item0');
-              loading = false;
-            }, 1000);   //模拟延迟
-          });
+          // var loading = false;  //状态标记
+          // $(document.body).infinite().on("infinite", function() {
+          //   if(loading) return;
+          //   loading = true;
+          //   setTimeout(function() {
+          //     getOrders('all','item0');
+          //     loading = false;
+          //   }, 1000);   //模拟延迟
+          // });
         // end
 
         function getLocalTime(nS) { //时间戳转换
            return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
         };
         $(document).on('click','#list1',function(){
-            pageNum = 1;
-            getOrders('30','item1');//已️支付订单
+            // pageNum = 1;
+            $("#item1").empty();
+            getOrders('30','item1');//支付订单
         }).on('click','#list2',function(){
-            pageNum = 1;
+            // pageNum = 1;
+            $("#item2").empty();
             getOrders('20','item2');//未支付订单
         })
         // 获取账单数据
@@ -179,7 +181,7 @@
                 _html += '</div></div>';
               }
               $('#'+dom).append(_html);
-              ++pageNum;
+              // ++pageNum;
             }
           })
         };
