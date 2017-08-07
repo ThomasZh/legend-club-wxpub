@@ -237,6 +237,52 @@ def sendItemOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, order
     logging.info("got response %r", response.body)
 
 
+def sendItemOrderPayedToOpsMessage_kkfcps(access_token, wx_notify_domain, openid, order):
+    # touser = 店小二openid
+    # template_id = 订单支付成功
+    # url = 模版链接跳转地址
+    data = {
+        "touser": openid,
+        "template_id": "k4s5U7jRGmazUZYKj4aQeHS9TY4sDe3B4U4-beJeiFc",
+        "url": wx_notify_domain + "/bf/wx/vendors/"+order['club_id']+"/items/order/"+order['_id']+"/result",
+        "data": {
+           "first": {
+               "value":u"有用户("+order['nickname']+u")下单并支付成功",
+               "color":"#173177"
+           },
+           "keyword1": {
+               "value":order['item_name'],
+               "color":"#173177"
+           },
+           "keyword2": {
+               "value":order['trade_no'],
+               "color":"#173177"
+           },
+           "keyword3": {
+               "value":order['quantity'],
+               "color":"#173177"
+           },
+           "keyword4": {
+               "value":str(float(order['actual_payment'])/100)+"元",
+               "color":"#173177"
+           },
+           "keyword5": {
+               "value":timestamp_datetime(order['create_time']),
+               "color":"#173177"
+           },
+           "Remark": {
+               "value":u"请尽快准备及时发货",
+               "color":"#173177"
+           },
+        }
+    }
+    _json = json_encode(data)
+    url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_json)
+    logging.info("got response %r", response.body)
+
+
 def sendApplyCashoutToAdminMessage(access_token, wx_notify_domain, openid, apply_cashout):
     # touser = 联盟管理员openid
     # template_id = 提现申请通知
