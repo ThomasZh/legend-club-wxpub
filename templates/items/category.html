@@ -107,10 +107,10 @@
           </div>
           <div class="col s12" style="margin-top: 4.6rem;padding-left:25%;">
             <ul class="collection" style="display:block;" id="content"></ul>
-            <!-- <div class="weui-loadmore">
+            <div class="weui-loadmore">
               <i class="weui-loading"></i>
               <span class="weui-loadmore__tips">正在加载</span>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -168,22 +168,23 @@
     $ul.eq($t).css('display','block');
           });
       // 二级菜单内容查询
-
+      var pageNum = 1;
+      getitems();
       // 上拉加载更多start
-        // var loading = false;  //状态标记
-        // $(document.body).infinite(30).on("infinite", function() {
-        //   if(loading) return;
-        //   loading = true;
-        //   setTimeout(function() {
-        //     getitems();
-        //     loading = false;
-        //   }, 1000);   //模拟延迟
-        // });
+        var loading = false;  //状态标记
+        $(document.body).infinite().on("infinite", function() {
+          if(loading) return;
+          loading = true;
+          setTimeout(function() {
+            getitems();
+            loading = false;
+          }, 1000);   //模拟延迟
+        });
       // end
-        getitems();
+
+
         function getitems(){
-          var limit = 50;
-          var pageNum = 1;
+          var limit = 2;
           var _id = "{{ second_category_id }}";
           $.ajax({
             type: "GET",
@@ -219,7 +220,7 @@
                 }
               }
               $("#content").append(html);
-              // ++pageNum;
+              pageNum = pageNum + 1;
 
               $(document).on('click','.right-side',function(event){
                   var num = $(this).prev().text();
@@ -331,7 +332,6 @@
 
         // 品牌 规格查询
         function getJson(tag,id){
-          var pageNum = 1;
           var limit = 10;
           $.ajax({
             type: "GET",
@@ -367,7 +367,7 @@
                 }
               }
               $("#content").append(html);
-              // ++pageNum;
+              pageNum = pageNum + 1;
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
               console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
@@ -380,8 +380,7 @@
         };
 
         function getSpecJson(id){
-          var pageNum = 1;
-          var limit = 100;
+          var limit = 10;
           $.ajax({
             type: "GET",
             url: "{{ API_DOMAIN }}/api/def/specs/"+ id +"/items?page="+pageNum+"&limit="+limit,
@@ -413,7 +412,7 @@
                   html += '</div></div></li>';
               }
               $("#content").append(html);
-              // ++pageNum;
+              pageNum = pageNum + 1;
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
               console.log("XMLHttpRequest.status:" + XMLHttpRequest.status);
@@ -429,15 +428,16 @@
             var tag = 'brands';
             var id = $(this).attr('data_id');
             console.log(id);
+            var pageNum = 1;
             getJson(tag,id);
             $('#modal1').modal('close');
-        });
-
-        $(".modal-content").on('click','.spec',function(){
+        }).on('click','.spec',function(){
           var tag = 'specs';
           var id = $(this).attr('data_id');
           console.log(id);
+          var pageNum = 1;
           getSpecJson(id);
+
           $('#modal2').modal('close');
         });
 

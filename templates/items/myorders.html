@@ -89,13 +89,13 @@
         </section>
 
         <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
-            <div id="item0" class="grid m-t-20"></div>
-            <div id="item1" class="grid m-t-20"></div>
-            <div id="item2" class="grid m-t-20"></div>
-            <!-- <div class="weui-loadmore">
+            <div id="hhh"><div id="item0" class="grid m-t-20 infinite"></div></div>
+            <div id="item1" class="grid m-t-20 infinite"></div>
+            <div id="item2" class="grid m-t-20 infinite"></div>
+            <div class="weui-loadmore">
               <i class="weui-loading"></i>
               <span class="weui-loadmore__tips">正在加载</span>
-            </div> -->
+            </div>
         </div>
 
 
@@ -120,9 +120,47 @@
     <script type="text/javascript">
       $(function(){
 
+        // 根据实际情况自定义获取数据方法
         var limit = 10;
         var pageNum = 1;
 
+        $('body').infiniteScroll({
+            binder:'body',
+            pageSize: limit,
+            loadingHtml: '<strong><span style="font-size:14px; display:block; margin-top:20px;">数据加载中...</span></strong>',
+            doneTxt: '<span style="font-size:14px; display:block; margin-top:20px;">已全部加载完毕</span>',
+            loadListFn: function(){
+              var def = $.Deferred();
+              $.ajax({
+                type: "GET",
+                url: "{{api_domain}}/api/leagues/{{ league_id }}/clubs?filter=league&franchise_type=供应商&page="+pageNum+"&limit="+limit,
+                headers: {
+                  "Authorization": "Bearer {{ access_token }}"
+                },
+                contentType: 'application/json',
+                success: function(data, status, xhr) {
+                      console.log(data);
+                      data_obj = JSON.parse(data);
+                      data = data_obj.rs;
+                  var pageData = data.data;
+                  var inner_html = "";
+                  for (var i in pageData) {
+                        inner_html += '<p class="todo-element" data-id="'+pageData[i]['club_id']+'">';
+                        inner_html += '<img alt="" src="'+pageData[i]['img']+'!200x200">';
+                        inner_html += '<label for="todo2">'+pageData[i]['name']+'</label>';
+                        inner_html += '<span class="small">'+pageData[i]['introduction']+'</span>';
+                        inner_html += '<span class="more"><i class="ion-ios-arrow-right"></i></span>';
+                        inner_html += '</p>';
+                    };
+                    $('#ListContent').append(inner_html);
+                    def.resolve(pageData);
+                    ++pageNum;
+                  }
+                })
+                return def.promise();
+            }
+        });
+        
         // 上拉加载更多start
           // var loading = false;  //状态标记
           // $(document.body).infinite().on("infinite", function() {
@@ -134,22 +172,54 @@
           //   }, 1000);   //模拟延迟
           // });
         // end
-
+        var limit = 10;
+        var pageNum = 1;
+        // getOrders('all','item0');//全部订单
         function getLocalTime(nS) { //时间戳转换
            return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
         };
-        $(document).on('click','#list1',function(){
-            // pageNum = 1;
+        $(document).on('click','#list0',function(){
+            pageNum = 1;
+            $("#item0").empty();
+            getOrders('all','item0');//支付订单
+            var loading = false;  //状态标记
+            $(document.body).infinite().on("infinite", function() {
+              if(loading) return;
+              loading = true;
+              setTimeout(function() {
+                getOrders('all','item0');
+                loading = false;
+              }, 1000);   //模拟延迟
+            });
+        }).on('click','#list1',function(){
+            pageNum = 1;
             $("#item1").empty();
+
             getOrders('30','item1');//支付订单
+            var loading = false;  //状态标记
+            $(document.body).infinite().on("infinite", function() {
+              if(loading) return;
+              loading = true;
+              setTimeout(function() {
+                getOrders('30','item1');
+                loading = false;
+              }, 1000);   //模拟延迟
+            });
         }).on('click','#list2',function(){
-            // pageNum = 1;
+            pageNum = 1;
             $("#item2").empty();
             getOrders('20','item2');//未支付订单
-        })
+            var loading = false;  //状态标记
+            $(document.body).infinite().on("infinite", function() {
+              if(loading) return;
+              loading = true;
+              setTimeout(function() {
+                getOrders('20','item2');
+                loading = false;
+              }, 1000);   //模拟延迟
+            });
+        });
         // 获取账单数据
-
-        getOrders('all','item0');//全部订单
         function getOrders(_states,dom){
           $.ajax({
             type: "GET",
@@ -181,9 +251,17 @@
                 _html += '</div></div>';
               }
               $('#'+dom).append(_html);
-              // ++pageNum;
+              nodata(orders);
             }
           })
+        };
+
+        function nodata(res) {//数据加载完毕的操作
+            if(res.length==0){
+                $(".weui-loadmore").html('<div class="weui-loadmore_line"> <span class="weui-loadmore__tips">数据已经加载完毕</span> </div>');
+                $(document.body).destroyInfinite();
+            }
+            pageNum = pageNum + 1;
         };
 
       })
