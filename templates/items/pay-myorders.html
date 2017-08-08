@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>全部订单</title>
+    <title>已支付订单</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -25,24 +25,24 @@
     <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
     <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
     <style media="screen">
-      .z-tabs{
-          height: auto;
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content:space-around;
-          align-items:center;
-          margin-bottom: 0;
-      }
-      .z-tabs .z-tab{
-        height: 4rem;
-        line-height: 4rem;
-        text-align: center;
-      }
-      .z-tabs .active {
-          width: auto;
-          border-bottom:2px solid #01acc6;
-      }
+    .z-tabs{
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content:space-around;
+        align-items:center;
+        margin-bottom: 0;
+    }
+    .z-tabs .z-tab{
+      height: 4rem;
+      line-height: 4rem;
+      text-align: center;
+    }
+    .z-tabs .active {
+        width: auto;
+        border-bottom:2px solid #01acc6;
+    }
       .o_wrap{
         width: 100%;
         padding: 0 1.5rem;
@@ -81,14 +81,14 @@
       <div class="animated fadeinup">
         <section>
           <ul class="z-tabs">
-            <li class="z-tab col s3 active" id="list0"><a href="/bf/wx/vendors/{{ club_id }}/items/myorders">全部订单</a></li>
-            <li class="z-tab col s3" id="list1"><a href="/bf/wx/vendors/{{ club_id }}/items/pay-myorders">已支付</a></li>
+            <li class="z-tab col s3" id="list0"><a href="/bf/wx/vendors/{{ club_id }}/items/myorders">全部订单</a></li>
+            <li class="z-tab col s3 active" id="list1"><a href="/bf/wx/vendors/{{ club_id }}/items/pay-myorders">已支付</a></li>
             <li class="z-tab col s3" id="list2"><a href="/bf/wx/vendors/{{ club_id }}/items/nopay-myorders">未支付</a></li>
           </ul>
         </section>
 
         <div class="with-tab grey lighten-4 animated fadeinup" style="padding:5px 0;">
-            <div id="item0" class="grid m-t-20 infinite"></div>
+            <div id="item1" class="grid m-t-20 infinite"></div>
             <div class="weui-loadmore">
               <i class="weui-loading"></i>
               <span class="weui-loadmore__tips">正在加载</span>
@@ -118,14 +118,14 @@
       $(function(){
         var limit = 10;
         var pageNum = 1;
-        getOrders('all','item0');
+        getOrders('30','item1');
         // 上拉加载更多start
           var loading = false;  //状态标记
           $(document.body).infinite().on("infinite", function() {
             if(loading) return;
             loading = true;
             setTimeout(function() {
-              getOrders('all','item0');
+              getOrders('30','item1');
               loading = false;
             }, 1000);   //模拟延迟
           });

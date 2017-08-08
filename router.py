@@ -125,6 +125,8 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/items/submit/order", getattr(wx_items, 'WxItemsSubmitOrderHandler')),
 
         (r"/bf/wx/vendors/([a-z0-9]*)/items/myorders", getattr(wx_items, 'WxItemsMyordersHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/pay-myorders", getattr(wx_items, 'WxItemsPayMyordersHandler')),
+        (r"/bf/wx/vendors/([a-z0-9]*)/items/nopay-myorders", getattr(wx_items, 'WxItemsNopayMyordersHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
         # 点击结算按钮
         (r"/bf/wxpay/items", getattr(wx_items, 'WxItemsOrderCheckoutHandler')),
