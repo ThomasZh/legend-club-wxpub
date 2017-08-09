@@ -138,6 +138,178 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
                 cart_goods_num=cart_goods_num)
 
 
+# 规格分类列表
+class WxItemsCategorySpecsListHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id, spec_id):
+        logging.info("GET %r", self.request.uri)
+        category_id = self.get_argument("category_id", "")
+        logging.info("got category_id %r", category_id)
+        second_category_id = self.get_argument("second_category_id", "")
+        logging.info("got second_category_id %r", second_category_id)
+        # 查询分类
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        url = API_DOMAIN + "/api/def/leagues/"+ LEAGUE_ID +"/categories"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        categorys = data['rs']
+
+        if not category_id:
+            category_id = categorys[0]['_id']
+
+        url = API_DOMAIN + "/api/def/categories/" + category_id + "/level2"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        second_categorys = data['rs']
+
+        # 获取商品数量
+        cart_goods = self.get_cart(club_id)
+        logging.info("got cart_goods %r", cart_goods)
+        cart_goods_num = 0
+        for cart_good in cart_goods:
+            cart_goods_num += cart_good['quantity']
+        logging.info("got cart_goods_num %r", cart_goods_num)
+
+        second_specs = None
+        second_brands = None
+        if not second_category_id:
+            second_category_id = second_categorys[0]['_id']
+
+        url = API_DOMAIN + "/api/def/categories/"+ second_category_id +"/specs"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        second_specs = data['rs']
+
+        url = API_DOMAIN + "/api/def/categories/"+ second_category_id +"/brands"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        second_brands = data['rs']
+
+        url = API_DOMAIN + "/api/def/specs/"+spec_id
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        _spec = data['rs']
+
+        club = self.get_club_basic_info(club_id)
+        self.render('items/category-specs.html',
+                API_DOMAIN=API_DOMAIN,
+                access_token=access_token,
+                club=club,
+                club_id=club_id,
+                spec_id=spec_id,
+                category_id=category_id,
+                second_category_id=second_category_id,
+                second_categorys=second_categorys,
+                second_specs=second_specs,
+                second_brands=second_brands,
+                categorys=categorys,
+                _spec=_spec,
+                cart_goods_num=cart_goods_num)
+
+
+# 品牌分类列表
+class WxItemsCategoryBrandsListHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id, brand_id):
+        logging.info("GET %r", self.request.uri)
+        category_id = self.get_argument("category_id", "")
+        logging.info("got category_id %r", category_id)
+        second_category_id = self.get_argument("second_category_id", "")
+        logging.info("got second_category_id %r", second_category_id)
+        # 查询分类
+        access_token = self.get_access_token()
+        logging.info("GET access_token %r", access_token)
+
+        url = API_DOMAIN + "/api/def/leagues/"+ LEAGUE_ID +"/categories"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        categorys = data['rs']
+
+        if not category_id:
+            category_id = categorys[0]['_id']
+
+        url = API_DOMAIN + "/api/def/categories/" + category_id + "/level2"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        second_categorys = data['rs']
+
+        # 获取商品数量
+        cart_goods = self.get_cart(club_id)
+        logging.info("got cart_goods %r", cart_goods)
+        cart_goods_num = 0
+        for cart_good in cart_goods:
+            cart_goods_num += cart_good['quantity']
+        logging.info("got cart_goods_num %r", cart_goods_num)
+
+        second_specs = None
+        second_brands = None
+        if not second_category_id:
+            second_category_id = second_categorys[0]['_id']
+
+        url = API_DOMAIN + "/api/def/categories/"+ second_category_id +"/specs"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        second_specs = data['rs']
+
+        url = API_DOMAIN + "/api/def/categories/"+ second_category_id +"/brands"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        second_brands = data['rs']
+
+        url = API_DOMAIN + "/api/def/brands/"+brand_id
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        _brand = data['rs']
+
+        club = self.get_club_basic_info(club_id)
+        self.render('items/category-brands.html',
+                API_DOMAIN=API_DOMAIN,
+                access_token=access_token,
+                club=club,
+                club_id=club_id,
+                brand_id=brand_id,
+                category_id=category_id,
+                second_category_id=second_category_id,
+                second_categorys=second_categorys,
+                second_specs=second_specs,
+                second_brands=second_brands,
+                categorys=categorys,
+                _brand=_brand,
+                cart_goods_num=cart_goods_num)
+
+
 # old分类列表
 class WxItemsListHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page

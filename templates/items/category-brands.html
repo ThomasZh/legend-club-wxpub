@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>商品列表</title>
+    <title>商品列表－品牌</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -65,7 +65,7 @@
         <!-- Tabs -->
         <ul class="tabs">
           {% for category in categorys %}
-            {% if category['_id'] == category_id %}
+            {% if category['_id'] == _brand['super_category_id'] %}
             <li class="tab col s2"><a onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
             {% else %}
             <li class="tab col s2"><a onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
@@ -97,7 +97,7 @@
           <div class="col s3 sub-category" style="position: fixed;z-index:99;height:100%;">
             <ul class="collection" id="c-tab">
               {% for second_category in second_categorys %}
-                {% if second_category['_id'] == second_category_id %}
+                {% if second_category['_id'] == _brand['category_id'] %}
                 <li class="collection-item current" ><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% else %}
                 <li class="collection-item" ><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
@@ -170,19 +170,18 @@
       // 二级菜单内容查询
       var pageNum = 1;
       var limit = 5;
-
       // 上拉加载更多start
         var loading = false;  //状态标记
         $(document.body).infinite().on("infinite", function() {
           if(loading) return;
           loading = true;
           setTimeout(function() {
-            getitems("categories","{{ second_category_id }}");//获取数据函数
+            getitems("brands","{{ brand_id }}");
             loading = false;
           }, 1000);   //模拟延迟
         });
       // end
-        getitems("categories","{{ second_category_id }}");//获取数据函数
+        getitems("brands","{{ brand_id }}");//获取数据函数
         // 查询二级分类下的商品
         function getitems(dom,id){
           $.ajax({
@@ -194,6 +193,7 @@
             success: function(data, status, xhr) {
               console.log(data);
               var dataObj = data.rs.data;
+
               var html = '';
               for (var i=0;i<dataObj.length;i++){
                 var specs = dataObj[i].specs;
@@ -300,7 +300,7 @@
         function nodata(res) {//数据加载完毕的操作
             if(res.length==0 || res.length < limit){
                 $(".weui-loadmore").html('<div class="weui-loadmore_line"> <span class="weui-loadmore__tips">数据加载完毕</span> </div>');
-                // $(document.body).destroyInfinite();
+                $(document.body).destroyInfinite();
             }
             pageNum = pageNum + 1;
         };
