@@ -604,6 +604,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         wx_mch_id = wx_app_info['wx_mch_id']
         wx_notify_domain = wx_app_info['wx_notify_domain']
 
+
         _timestamp = (int)(time.time())
         if actual_payment != 0:
             # wechat 统一下单
@@ -636,7 +637,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
                     billing_addr=billing_addr,
                     club_id=club_id,
                     return_msg=response.body, order_return=_order_return,
-                    order=order, items=items, order_index=order_index)
+                    order=order, items=items,     )
             # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
         else: #actual_payment == 0:
@@ -718,6 +719,113 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
                         access_token=access_token,
                         order_id=order_id,
                         order=order)
+
+# 重新支付订单操作
+class WxOrdersCheckoutHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def post(self):
+        club_id = self.get_argument("club_id", "")
+        logging.info("got club_id %r", club_id)
+
+        _account_id = self.get_secure_cookie("account_id")
+        order_id = self.get_argument("order_id","")
+        logging.info("got order_id %r",order_id)
+
+        access_token = self.get_access_token()
+        item_id = "00000000000000000000000000000000"
+        guest_club_id = "00000000000000000000000000000000"
+
+        # 取得自己的最后一笔订单
+        params = {"filter":"account", "account_id":_account_id, "page":1, "limit":1,}
+        url = url_concat(API_DOMAIN + "/api/orders", params)
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        orders = rs['data']
+
+        _timestamp = time.time()
+        # 一分钟内不能创建第二个订单,
+        # 防止用户点击回退按钮，产生第二个订单
+        if len(orders) > 0:
+            for order in orders:
+                if (_timestamp - order['create_time']) < 60:
+                    self.redirect('/bf/wx/orders/wait')
+                    return
+
+        # 更改pay_id
+        url = API_DOMAIN + "/api/orders/"+order_id+"/payid"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        _json = json_encode(headers)
+        response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        rs = data['rs']
+        pay_id = rs['pay_id']
+
+        order = self.get_symbol_object(order_id)
+        _product_description = order['items'][0]['title']
+        actual_payment = order['actual_payment']
+        _timestamp = (int)(time.time())
+        items = order['items']
+
+        for item in items:
+            item['amount'] = float(item['amount'])/100
+
+        order['create_time'] = timestamp_datetime(float(order['create_time']))
+        order['shipping_cost'] = float(order['shipping_cost'])/100
+        order['actual_payment'] = float(order['actual_payment'])/100
+
+        shipping_addr = order['shipping_addr']
+        logging.info("GET shipping_addr %r", shipping_addr)
+        billing_addr = order['billing_addr']
+        logging.info("GET billing_addr %r", billing_addr)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        logging.info("got wx_app_id %r in uri", wx_app_id)
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_mch_key = wx_app_info['wx_mch_key']
+        wx_mch_id = wx_app_info['wx_mch_id']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+
+
+        _timestamp = (int)(time.time())
+        if actual_payment != 0:
+            # wechat 统一下单
+            myinfo = self.get_myinfo_login()
+            _openid = myinfo['login']
+            _store_id = 'Aplan'
+            logging.info("got _store_id %r", _store_id)
+            #_ip = self.request.remote_ip
+            _remote_ip = self.request.headers['X-Real-Ip']
+            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, pay_id, actual_payment, _timestamp)
+
+            # wx统一下单记录保存
+            _order_return['_id'] = _order_return['prepay_id']
+            self.create_symbol_object(_order_return)
+
+            # 微信统一下单返回成功
+            order_unified = None
+            if(_order_return['return_msg'] == 'OK'):
+                order_unified = {'_id':order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_SUCCESS}
+            else:
+                order_unified = {'_id':order_id,'prepay_id': _order_return['prepay_id'], 'pay_status': ORDER_STATUS_WECHAT_UNIFIED_FAILED}
+            # 微信统一下单返回成功
+            # TODO: 更新订单索引中，订单状态pay_status,prepay_id
+            self.update_order_unified(order_unified)
+
+            self.render('items/re-order-confirm.html',
+                    access_token = access_token,
+                    api_domain = API_DOMAIN,
+                    shipping_addr=shipping_addr,
+                    billing_addr=billing_addr,
+                    club_id=club_id,
+                    return_msg=response.body, order_return=_order_return,
+                    order=order, items=items)
 
 
 # 订单中心-所有订单

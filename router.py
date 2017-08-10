@@ -132,6 +132,7 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
         # 点击结算按钮
         (r"/bf/wxpay/items", getattr(wx_items, 'WxItemsOrderCheckoutHandler')),
+        (r"/bf/wxpay/orders", getattr(wx_items, 'WxOrdersCheckoutHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/order/([a-z0-9]*)/result", getattr(wx_items, 'WxItemsOrderResultHandler')),
         # 预估begin
         (r"/bf/wx/vendors/([a-z0-9]*)/recommend", getattr(wx_items, 'WxItemsRecommendListHandler')),

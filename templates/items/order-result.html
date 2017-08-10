@@ -32,7 +32,7 @@
 
       <!-- Page Contents -->
       <div class="animated fadeinup">
-
+      <form id = "form1" action="/bf/wxpay/orders?club_id={{ club_id }}&order_id={{ order_id }}&guest_club_id='00000000000000000000000000000000'" method="post">
         <div class="order-card-title btm-border">
           订单号：{{ order['trade_no'] }}
         </div>
@@ -43,6 +43,8 @@
           <div class="col s9 accent-text">
             {% if order['pay_status'] == 30 %}
               <span class="flt-right-30">支付成功</span>
+            {% elif order['pay_status'] == 20 %}
+              <span class="flt-right-30">待支付</span>
             {% else %}
               <span class="flt-right-30">支付失败</span>
             {% end %}
@@ -147,7 +149,13 @@
         <h3 class="title">
           总计 <span>{{ float(order['actual_payment'])/100 }}</span>元
         </h3>
+        {% if order['pay_status'] != 30 %}
+        <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" id="con-order">
+          继续支付
+        </a>
+        {% end %}
       </div>
+     </form>
     </div>
     <!-- End of Main Container -->
 
@@ -164,7 +172,13 @@
     <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
-    <script src="order.js"></script>
+    <script>
+    $(function(){
+      $("#con-order").on('click',function(){
+          $('#form1').submit();
+      })
+    })
+    </script>
   </body>
 
   </body>
