@@ -231,76 +231,6 @@
               }
               $("#content").append(html);
               nodata(dataObj);
-              $(html).on('click','.right-side',function(event){
-                  var num = $(this).prev().text();
-                  var begin_num = num;
-                      num ++;
-                  $(this).prev().text(num);
-                  goods_num = goods_num + 1;
-                  if(num == 1){
-                    $("#shop-car span:first-child").addClass('mark');
-                    $("#shop-car span:first-child").text(goods_num);
-                  }else{
-                    $("#shop-car span:first-child").text(goods_num);
-                  }
-                  $(this).parent().removeClass('hidden');
-                  var item_id = $(this).attr('data_id');
-                  var tem_id = $(this).attr('spec_id');
-                  var product_num = parseInt($(this).prev().text())-parseInt(begin_num);
-                  var data = {"spec_id":tem_id, "quantity":product_num};
-                  var json = JSON.stringify(data);
-                  console.log(json);
-                  $.ajax({
-                    type: "POST",
-                    url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/increase",
-                    data: json,
-                    dataType: "json",
-                    headers: {"Authorization":"Bearer {{access_token}}"},
-                    contentType: 'application/json',
-                    success: function(data, status, xhr) {
-                      console.log(data);
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        console.log("error");
-                    }
-                  });
-              }).on('click','.left-side',function(){
-                var num = $(this).next().text();
-                var begin_num = num;
-                    num -- ;
-                    goods_num = goods_num - 1;
-
-                    $("#shop-car span:first-child").text(goods_num);
-                if(num == 0){
-                  $(this).parent().addClass('hidden');
-                  if(goods_num == 0){
-                    $("#shop-car span:first-child").removeClass('mark');
-                    $("#shop-car span:first-child").html('');
-                  }
-                }
-                  $(this).next().text(num);
-                  var tem_id = $(this).attr('spec_id');
-                  var item_id = $(this).attr('data_id');
-                  var product_num = parseInt(begin_num) - parseInt($(this).next().text());
-                  var data = {"spec_id":tem_id,"quantity":product_num};
-                  var json = JSON.stringify(data);
-                  console.log(json);
-                  $.ajax({
-                    type: "POST",
-                    url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/decrease",
-                    data: json,
-                    dataType: "json",
-                    headers: {"Authorization":"Bearer {{access_token}}"},
-                    contentType: 'application/json',
-                    success: function(data, status, xhr) {
-                      console.log(data);
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        console.log("error");
-                    }
-                  });
-
-              })
 
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -312,6 +242,77 @@
             }
           });
         };
+
+        $(document).on('click','.right-side',function(event){
+            var num = $(this).prev().text();
+            var begin_num = num;
+                num ++;
+            $(this).prev().text(num);
+            goods_num = goods_num + 1;
+            if(num == 1){
+              $("#shop-car span:first-child").addClass('mark');
+              $("#shop-car span:first-child").text(goods_num);
+            }else{
+              $("#shop-car span:first-child").text(goods_num);
+            }
+            $(this).parent().removeClass('hidden');
+            var item_id = $(this).attr('data_id');
+            var tem_id = $(this).attr('spec_id');
+            var product_num = parseInt($(this).prev().text())-parseInt(begin_num);
+            var data = {"spec_id":tem_id, "quantity":product_num};
+            var json = JSON.stringify(data);
+            console.log(json);
+            $.ajax({
+              type: "POST",
+              url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/increase",
+              data: json,
+              dataType: "json",
+              headers: {"Authorization":"Bearer {{access_token}}"},
+              contentType: 'application/json',
+              success: function(data, status, xhr) {
+                console.log(data);
+              },
+              error: function(XMLHttpRequest, textStatus, errorThrown) {
+                  console.log("error");
+              }
+            });
+        }).on('click','.left-side',function(){
+          var num = $(this).next().text();
+          var begin_num = num;
+              num -- ;
+              goods_num = goods_num - 1;
+
+              $("#shop-car span:first-child").text(goods_num);
+          if(num == 0){
+            $(this).parent().addClass('hidden');
+            if(goods_num == 0){
+              $("#shop-car span:first-child").removeClass('mark');
+              $("#shop-car span:first-child").html('');
+            }
+          }
+            $(this).next().text(num);
+            var tem_id = $(this).attr('spec_id');
+            var item_id = $(this).attr('data_id');
+            var product_num = parseInt(begin_num) - parseInt($(this).next().text());
+            var data = {"spec_id":tem_id,"quantity":product_num};
+            var json = JSON.stringify(data);
+            console.log(json);
+            $.ajax({
+              type: "POST",
+              url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/decrease",
+              data: json,
+              dataType: "json",
+              headers: {"Authorization":"Bearer {{access_token}}"},
+              contentType: 'application/json',
+              success: function(data, status, xhr) {
+                console.log(data);
+              },
+              error: function(XMLHttpRequest, textStatus, errorThrown) {
+                  console.log("error");
+              }
+            });
+
+        });
 
         function nodata(res) {//数据加载完毕的操作
             if(res.length==0 || res.length < limit){
