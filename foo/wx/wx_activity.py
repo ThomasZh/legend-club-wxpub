@@ -733,10 +733,15 @@ class WxOrderNotifyHandler(BaseHandler):
         logging.info("got transaction_id %r", _pay_return['transaction_id'])
         logging.info("got out_trade_no %r", _pay_return['out_trade_no'])
 
-        trade_no = _pay_return['out_trade_no']
+        pay_id = _pay_return['out_trade_no']
+        logging.info("got pay_id %r", pay_id)
         _result_code = _pay_return['result_code']
         if _result_code == 'SUCCESS' :
             # 查询过去是否填报，有则跳过此步骤。主要是防止用户操作回退键，重新回到此页面
+            trade_no = pay_id
+            if len(pay_id) == 30:
+                trade_no = pay_id[0:24]
+            logging.info("got trade_no %r", trade_no)
             order_index = self.get_order_index_by_trade_no(trade_no)
             _order_id = order_index['_id']
             logging.info("got order_index=[%r]", order_index)

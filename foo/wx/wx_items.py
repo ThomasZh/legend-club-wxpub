@@ -565,7 +565,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "bonus_points": bonus_points, # 活动奖励积分
             "booking_time": _timestamp,
         }
-        trade_no = self.create_order(order_index)
+        pay_id = self.create_order(order_index)
 
         order = self.get_symbol_object(order_id)
         logging.info("GET order %r", order)
@@ -613,7 +613,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             logging.info("got _store_id %r", _store_id)
             #_ip = self.request.remote_ip
             _remote_ip = self.request.headers['X-Real-Ip']
-            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, trade_no, actual_payment, _timestamp)
+            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, pay_id, actual_payment, _timestamp)
 
             # wx统一下单记录保存
             _order_return['_id'] = _order_return['prepay_id']
@@ -733,6 +733,7 @@ class WxItemsMyordersHandler(AuthorizationHandler):
                 API_DOMAIN=API_DOMAIN,
                 access_token=access_token)
 
+
 # 订单中心-已支付订单
 class WxItemsPayMyordersHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
@@ -745,6 +746,7 @@ class WxItemsPayMyordersHandler(AuthorizationHandler):
                 club_id=club_id,
                 API_DOMAIN=API_DOMAIN,
                 access_token=access_token)
+
 
 # 订单中心-未支付订单
 class WxItemsNopayMyordersHandler(AuthorizationHandler):

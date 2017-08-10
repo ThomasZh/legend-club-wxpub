@@ -613,7 +613,7 @@ class AuthorizationHandler(BaseHandler):
         logging.info("create order=[%r] response=[%r]", order_index, response.body)
         data = json_decode(response.body)
         rs = data['rs']
-        return rs['trade_no']
+        return rs['pay_id']
 
 
     def get_cart(self, club_id):
