@@ -109,9 +109,9 @@
             <ul class="collection" id="c-tab">
               {% for second_category in second_categorys %}
                 {% if second_category['_id'] == _spec['category_id'] %}
-                <li class="collection-item current" ><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                <li class="collection-item current" style="padding-left: 5px; padding-right: 5px;"><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% else %}
-                <li class="collection-item" ><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                <li class="collection-item" style="padding-left: 5px; padding-right: 5px;"><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% end %}
               {% end %}
             </ul>
