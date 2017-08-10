@@ -56,18 +56,15 @@
         font-weight: 600;
       }
 
-      .prod_img
+      .spec_list
       {
-        border-radius:0;
-        margin-top: -5px;
-        left: 2px;
-        width: 65px;
-        height: 65px;
+        padding-top: 5px;
+        margin-bottom: 5px;
       }
-
       .spec_item
       {
         border-top:1px solid #e0e0e0;
+        margin-top: 10px;
       }
     </style>
   </head>
@@ -211,9 +208,9 @@
               var html = '';
               for (var i=0;i<dataObj.length;i++){
                 html += '<li class="collection-item avatar">';
-                html += '<img src="'+ dataObj[0]['img'] +'!200x200" class="circle prod_img">';
-                html += '<span class="title">'+dataObj[0]['title']+'</span>';
-                html += '<p>品牌: '+dataObj[0]['brand_title']+'</p>';
+                html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0; margin-top: -5px; left: 2px; width: 65px; height: 65px;" class="circle prod_img">';
+                html += '<span class="title">'+dataObj[i]['title']+'</span>';
+                html += '<p>品牌: '+dataObj[i]['brand_title']+'</p>';
 
                 html += '<ul class="spec_list" style="display:block;">';
 
@@ -234,7 +231,7 @@
               }
               $("#content").append(html);
               nodata(dataObj);
-              $(document).on('click','.right-side',function(event){
+              $(html).on('click','.right-side',function(event){
                   var num = $(this).prev().text();
                   var begin_num = num;
                       num ++;
