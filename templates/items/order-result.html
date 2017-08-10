@@ -145,7 +145,7 @@
       <!-- End of Page Contents -->
       <div id="footer-bar" class="primary-color" style="text-align:center;">
         <h3 class="title">
-          总计 <span>{{ order['amount'] }}</span>元
+          总计 <span>{{ float(order['actual_payment'])/100 }}</span>元
         </h3>
       </div>
     </div>
