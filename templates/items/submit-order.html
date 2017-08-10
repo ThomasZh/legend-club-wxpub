@@ -156,29 +156,29 @@
                 if(pageData == ''){
                     $('#z-address').append('<div class="input-field">'
                     +'<input id="name" type="text" class="validate" style="font-size:16px;" value="">'
-                    + '<label for="name">姓名</label>'
+                    + '<label for="name" style="font-size:14px;">姓名</label>'
                     + '</div>'
                     + '<div class="input-field">'
                     + '<input id="phone" type="number" class="validate" style="font-size:16px;" value="">'
-                    + '<label for="phone">手机号</label>'
+                    + '<label for="phone" style="font-size:14px;">手机号</label>'
                     + '</div>'
                     + '<div class="input-field">'
                     + '<input id="addr" type="text" class="validate" style="font-size:16px;" value="">'
-                    + '<label for="addr">地址</label>'
+                    + '<label for="addr" style="font-size:14px;">地址</label>'
                     + '</div>');
                 }
                 else{
                     inner_html += '<div class="input-field">';
                     inner_html += '<input id="name" type="text" class="validate" style="font-size:16px;" value="'+ pageData[0].name +'">';
-                    inner_html += '<label for="name" class="active">姓名</label>';
+                    inner_html += '<label for="name" class="active" style="font-size:14px;">姓名</label>';
                     inner_html += '</div>';
                     inner_html += '<div class="input-field">';
                     inner_html += '<input id="phone" type="number" class="validate" style="font-size:16px;" value="'+ pageData[0].phone +'">';
-                    inner_html += '<label for="phone" class="active">手机号</label>';
+                    inner_html += '<label for="phone" class="active" style="font-size:14px;">手机号</label>';
                     inner_html += '</div>';
                     inner_html += '<div class="input-field">';
                     inner_html += '<input id="addr" type="text" class="validate" style="font-size:16px;" value="'+ pageData[0]._addr +'">';
-                    inner_html += '<label for="addr" class="active">地址</label>';
+                    inner_html += '<label for="addr" class="active" style="font-size:14px;">地址</label>';
                     inner_html += '</div>';
                     $('#z-address').append(inner_html);
                 }
