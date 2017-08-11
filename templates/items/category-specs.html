@@ -77,9 +77,9 @@
         <ul class="tabs">
           {% for category in categorys %}
             {% if category['_id'] == _spec['super_category_id'] %}
-            <li class="tab col s2"><a onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
+            <li class="tab col s2"><a style="font-size: 22px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
             {% else %}
-            <li class="tab col s2"><a onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
+            <li class="tab col s2"><a style="font-size: 22px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
             {% end %}
           {% end %}
         </ul>
@@ -89,7 +89,7 @@
       <!-- Page Contents -->
       <div class="with-tab animated fadeinup with-filters">
         <!-- 规格条件 -->
-        <div class="fixed" style="width:75%">
+        <div class="fixed" style="padding-left:89px;">
           <div class="row filters">
             <div class="col s6 center ">
               <a href="#modal2" class="drop-condition ">
@@ -105,18 +105,18 @@
         </div>
         <!-- 商品分类 -->
         <div id="product1" class="row product">
-          <div class="col s3 sub-category" style="position: fixed;z-index:99;height:100%;">
+          <div class="col s3 sub-category" style="position: fixed;z-index:99;height:100%; width:85px;">
             <ul class="collection" id="c-tab">
               {% for second_category in second_categorys %}
                 {% if second_category['_id'] == _spec['category_id'] %}
-                <li class="collection-item current" style="padding-left: 5px; padding-right: 5px;"><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                <li class="collection-item current" style="padding-left: 5px; padding-right: 5px;"><a style="font-size: 12px; font-weight: bold;" data_id="{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% else %}
-                <li class="collection-item" style="padding-left: 5px; padding-right: 5px;"><a data_id= "{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                <li class="collection-item" style="padding-left: 5px; padding-right: 5px;"><a style="font-size: 12px; font-weight: bold;" data_id="{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% end %}
               {% end %}
             </ul>
           </div>
-          <div class="col s12" style="margin-top: 4.6rem;padding-left:25%;">
+          <div class="col s12" style="margin-top: 4.6rem;padding-left:85px;">
             <ul class="collection" style="display:block;" id="content"></ul>
             <div class="weui-loadmore">
               <i class="weui-loading"></i>
@@ -207,9 +207,9 @@
 
               var html = '';
               for (var i=0;i<dataObj.length;i++){
-                html += '<li class="collection-item avatar">';
-                html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0; margin-top: -5px; left: 2px; width: 65px; height: 65px;" class="circle prod_img">';
-                html += '<span class="title">'+dataObj[i]['title']+'</span>';
+                html += '<li class="collection-item avatar" style="padding-left:95px;">';
+                html += '<img src="'+ dataObj[i]['img'] +'!200x200" style="border-radius:0; margin-top: -5px; left: 4px; width: 85px; height: 85px;" class="circle prod_img">';
+                html += '<span class="title" style="font-weight: bold;">'+dataObj[i]['title']+'</span>';
                 html += '<p>品牌: '+dataObj[i]['brand_title']+'</p>';
 
                 html += '<ul class="spec_list" style="display:block;">';
