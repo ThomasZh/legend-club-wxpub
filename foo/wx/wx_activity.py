@@ -805,7 +805,8 @@ class WxOrderNotifyHandler(BaseHandler):
                     if order_index['order_type'] == "buy_activity":
                         wx_wrap.sendActivityOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
                     elif order_index['order_type'] == "buy_item":
-                        wx_wrap.sendItemOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+                        # wx_wrap.sendItemOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+                        wx_wrap.sendItemOrderPayedToOpsMessage_kkfcps(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
 
                 # 如果是分销的订单，给分销商加上积分
                 if order_index['distributor_id'] != DEFAULT_USER_ID:
