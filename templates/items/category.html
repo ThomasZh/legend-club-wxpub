@@ -35,6 +35,10 @@
         justify-content:space-between;
         align-items:center;
       }
+      .modal-content .active{
+        background-color: #01acc6;
+        color: white;
+      }
       .cart{
         position: fixed;
         bottom: 3rem;
@@ -78,9 +82,9 @@
         <ul class="tabs">
           {% for category in categorys %}
             {% if category['_id'] == category_id %}
-            <li class="tab col s2"><a style="font-size: 22px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
+            <li class="tab col s2"><a style="font-size: 18px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
             {% else %}
-            <li class="tab col s2"><a style="font-size: 22px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
+            <li class="tab col s2"><a style="font-size: 18px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
             {% end %}
           {% end %}
         </ul>
@@ -90,7 +94,7 @@
       <!-- Page Contents -->
       <div class="with-tab animated fadeinup with-filters">
         <!-- 规格条件 -->
-        <div class="fixed" style="padding-left:89px;">
+        <div class="fixed" style="width:78%;">
           <div class="row filters">
             <div class="col s6 center ">
               <a href="#modal2" class="drop-condition ">
@@ -106,13 +110,13 @@
         </div>
         <!-- 商品分类 -->
         <div id="product1" class="row product">
-          <div class="col s3 sub-category" style="position: fixed;z-index:99;height:100%; width:85px;">
-            <ul class="collection" id="c-tab">
+          <div class="col s3 sub-category" style="position: fixed;z-index:99;height:100%; width:22%;">
+            <ul class="collection" id="c-tab" style="margin:0;">
               {% for second_category in second_categorys %}
                 {% if second_category['_id'] == second_category_id %}
-                <li class="collection-item current" style="padding-left: 5px; padding-right: 5px;"><a style="font-size: 12px; font-weight: bold;" data_id="{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                <li class="collection-item current" style="padding-bottom:18px"><a style="font-size: 12px; font-weight: bold;" data_id="{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% else %}
-                <li class="collection-item" style="padding-left: 5px; padding-right: 5px;"><a style="font-size: 12px; font-weight: bold;" data_id="{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
+                <li class="collection-item"><a style="font-size: 12px; font-weight: bold;" data_id="{{ second_category['_id'] }}" class="second-category-btn" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category_id }}&second_category_id={{ second_category['_id'] }}'">{{ second_category['title'] }}</a></li>
                 {% end %}
               {% end %}
             </ul>
@@ -139,6 +143,7 @@
     <div id="modal1" class="modal bottom-sheet">
       <div class="modal-content">
         <!-- <h4>Modal Header</h4> -->
+        <a href="" class="checkbox spec active" style="curser:pointer;margin-bottom: 1rem;"><span>全部</span></a>
         {% for second_brand in second_brands %}
           <span class="checkbox brand" data_id="{{ second_brand['_id'] }}" style="curser:pointer;margin-bottom: 1rem;">{{ second_brand['title'] }}</span>
         {% end %}
@@ -148,6 +153,7 @@
     <div id="modal2" class="modal bottom-sheet">
       <div class="modal-content">
         <!-- <h4>Modal Header</h4> -->
+        <a href="" class="checkbox spec active" style="curser:pointer;margin-bottom: 1rem;"><span>全部</span></a>
         {% for second_spec in second_specs %}
           <span class="checkbox spec" data_id="{{ second_spec['_id'] }}" style="curser:pointer;margin-bottom: 1rem;">{{ second_spec['title'] }}</span>
         {% end %}
