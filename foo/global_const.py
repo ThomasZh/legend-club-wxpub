@@ -58,6 +58,7 @@ WX_APP_SECRET = "03325dea1b00c151cf6b7c1fe52ea2fa"
 WX_MCH_ID = "1419954602"
 WX_MCH_KEY = "91575df83aac11e79defa45e60efbf2d"
 WX_NOTIFY_DOMAIN="http://7x24hs.com"
+WX_MESSAGE_TEMPLATE="kkfcps"
 
 
 QRCODE_CREATE_URL = "http://qrcode.7x24hs.com/api/qrcode"
