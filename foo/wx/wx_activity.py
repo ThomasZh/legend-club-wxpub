@@ -552,8 +552,8 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
                     'org_type':'club',
                     'account_id':_account_id,
                     'account_type':'user',
-                    'action': 'buy_activity',
-                    'item_type': 'activity',
+                    'action': 'buy_item',
+                    'item_type': 'item',
                     'item_id': activity_id,
                     'item_name': _activity['title'],
                     'bonus_type':'bonus',
@@ -760,6 +760,22 @@ class WxOrderNotifyHandler(BaseHandler):
                 }
                 self.update_order_payed(order_payed)
 
+                # 购买商品活动奖励积分
+                bonus_points = {
+                    'org_id':vendor_id,
+                    'org_type':'club',
+                    'account_id':order_index['account_id'],
+                    'account_type':'user',
+                    'action': 'get_bonus_points_buy_item',
+                    'item_type': order_index['item_type'],
+                    'item_id': order_index['item_id'],
+                    'item_name': order_index['item_name'],
+                    'bonus_type':'bonus',
+                    'points': _pay_return['total_fee'],
+                    'order_id': order_index['_id']
+                }
+                self.create_points(bonus_points)
+
                 # 如使用积分抵扣，则将积分减去
                 points = int(order_index['points_used'])
                 if points < 0:
@@ -769,7 +785,7 @@ class WxOrderNotifyHandler(BaseHandler):
                         'org_type':'club',
                         'account_id':order_index['account_id'],
                         'account_type':'user',
-                        'action': 'buy_activity',
+                        'action': 'consumer_reward_points_buy_item',
                         'item_type': order_index['item_type'],
                         'item_id': order_index['item_id'],
                         'item_name': order_index['item_name'],
@@ -828,7 +844,7 @@ class WxOrderNotifyHandler(BaseHandler):
                         'org_type':'club',
                         'account_id':order_index['distributor_id'],
                         'account_type':'club',
-                        'action': 'resale_activity',
+                        'action': 'resale_item',
                         'item_type': order_index['item_type'],
                         'item_id': order_index['item_id'],
                         'item_name': order_index['item_name'],
