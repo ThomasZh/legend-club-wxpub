@@ -739,10 +739,13 @@ class WxOrderNotifyHandler(BaseHandler):
         if _result_code == 'SUCCESS' :
             # 查询过去是否填报，有则跳过此步骤。主要是防止用户操作回退键，重新回到此页面
             trade_no = pay_id
-            if len(pay_id) == 30:
+            order_index = None
+            if len(pay_id) == 30: # item
                 trade_no = pay_id[0:24]
-            logging.info("got trade_no %r", trade_no)
-            order_index = self.get_order_index_by_trade_no(trade_no)
+                logging.info("got trade_no %r", trade_no)
+                order_index = self.get_order_index_by_trade_no(trade_no)
+            else: # activity, len(trade_no)==32
+                order_index = self.get_order_index(trade_no)
             _order_id = order_index['_id']
             logging.info("got order_index=[%r]", order_index)
             # 用于更新积分、优惠券
