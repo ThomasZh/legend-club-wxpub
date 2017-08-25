@@ -893,6 +893,7 @@ class WxItemsRecommendProductsHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id, recommend_category_id):
         logging.info("GET %r", self.request.uri)
+        logging.info("GET club_id %r", club_id)
         access_token = self.get_access_token()
         logging.info("GET access_token %r", access_token)
         logging.info("got recommend_category_id %r", recommend_category_id)
