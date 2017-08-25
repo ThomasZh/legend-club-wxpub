@@ -91,7 +91,7 @@
             if(data.err_code == 200){
               for (var i=0; i<dataObj.length;i++){
                 var html = '<div class="cate-list" onclick = "location.href='+'\'/bf/wx/vendors/'+dataObj[i]['club_id']+'/recommend/'+dataObj[i]['_id']+'/products\'">';
-                  html += '<div class="list-left">';
+                  html += '<div class="list-left" style="width:80%;">';
                   html += '<i class="ion-leaf"></i>';
                   html += '<span>'+dataObj[i]['title']+'</span>';
                   html += '</div>';
