@@ -514,6 +514,10 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         shipping_cost = self.get_argument('shipping_cost',0)
         logging.info("got shipping_cost %r",shipping_cost)
         shipping_cost = int(float(shipping_cost) * 100)
+
+        coupon = self.get_argument('coupon',0)
+        logging.info("got coupon %r",coupon)
+
         #基本服务
         _base_fees = []
 
@@ -550,6 +554,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "shipping_cost":shipping_cost,
             "billing_required":billing,
             "billing_addr":billing_addr,
+            "coupon":coupon,
             "distributor_id": "00000000000000000000000000000000",
             "create_time": _timestamp,
             "pay_type": "wxpay",
@@ -564,6 +569,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "points_used": points,
             "bonus_points": bonus_points, # 活动奖励积分
             "booking_time": _timestamp,
+
         }
         pay_id = self.create_order(order_index)
 

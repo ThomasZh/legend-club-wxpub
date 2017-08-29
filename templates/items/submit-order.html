@@ -103,6 +103,22 @@
                 <span id="express-fee">0.00</span>元
               </div>
             </div>
+            <div class="order-card-title">
+              优惠券:
+            </div>
+            <div class="row" id="fee" style="background-color: white;padding: 2rem;border-top: 1px solid #e0e0e0;">
+              <div class="col s12" style="display: flex;justify-content: space-around;">
+                <p>
+                  <input id="coupons-code" type="text" class="validate" style="font-size:16px;" placeholder="优惠券码">
+                  <input type="hidden" id="coup-code">
+                </p>
+                <a class="waves-effect waves-light btn" id="coupons-s">查询</a>
+              </div>
+              <p style="display:none;padding-left: 2rem;justify-content: space-between;" id="coupons-fee">
+                <span>此优惠券:¥</span>
+                <input type="checkbox" class="filled-in" id="filled-in-box" name="filled-in" /><label for="filled-in-box"></label>
+              </p>
+            </div>
           </div>
           <!-- 底部地址 -->
         <div id="modal1" class="modal bottom-sheet"><h4 style="margin: 1rem 1rem;">选择收货信息:</h4></div>
@@ -117,6 +133,7 @@
           <input type="hidden" name="addr" id="addr_input">
           <input type="hidden" name="billing_addr" id="billing_addr_input">
           <input type="hidden" name="shipping_cost" id="shipping_cost">
+          <input type="hidden" name="coupon" id="coupon_input">
           <a class="waves-effect waves-light btn-large modal-trigger accent-color block open-right" id="sub-order">
             下单
           </a>
@@ -209,7 +226,8 @@
                 });
             }
           })
-        }
+        };
+
       })
     </script>
   </body>
