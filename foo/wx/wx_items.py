@@ -515,8 +515,14 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         logging.info("got shipping_cost %r",shipping_cost)
         shipping_cost = int(float(shipping_cost) * 100)
 
+        # 优惠
+        coupon_fee = self.get_argument('coupon_fee',0)
+        logging.info("got coupon_fee %r",coupon_fee)
+        coupon_fee = int(float(coupon_fee) * 100)
+
         coupon = self.get_argument('coupon',0)
         logging.info("got coupon %r",coupon)
+        coupon = JSON.loads(coupon)
 
         #基本服务
         _base_fees = []
@@ -532,7 +538,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
 
         # 积分选项,数组
         points = 0
-        actual_payment = _total_amount + points + shipping_cost
+        actual_payment = _total_amount + points + shipping_cost - coupon_fee
         logging.info("got actual_payment %r", actual_payment)
 
         order_id = str(uuid.uuid1()).replace('-', '')

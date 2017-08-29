@@ -142,7 +142,29 @@
           </div>
         </div>
     {% end %}
-
+        <div class="order-card-title">
+          费用信息:
+        </div>
+        <div class="row" id="fee" style="background-color: white;padding: 2rem;border-top: 1px solid #e0e0e0;">
+          <div class="col s6">原价合计:</div>
+          <div class="col s6" style="text-align: right;">
+            <span id="pro-fee">{{ float(order['amount']) }}</span>元
+          </div>
+          <div class="col s6">运费:</div>
+          <div class="col s6" style="text-align: right;">
+            <span id="express-fee">{{ float(order['shipping_cost'])/100 }}</span>元
+          </div>
+          <div class="col s6">优惠:</div>
+          <div class="col s6" style="text-align: right;">
+            <span id="pro-fee">
+              {% if order.has_key('coupon') %}
+                {{ float(order['coupon']['actual_discount'])/100 }}
+              {% else %}
+                0
+              {% end %}
+            </span>元
+          </div>
+        </div>
       </div>
       <!-- End of Page Contents -->
       <div id="footer-bar" class="primary-color" style="text-align:center;">
