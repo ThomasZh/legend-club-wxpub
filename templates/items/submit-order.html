@@ -166,7 +166,7 @@
             headers: {"Authorization": "Bearer  {{access_token}}"},
             contentType: 'application/json',
             success: function(data, status, xhr) {
-                  console.log(data);
+                  // console.log(data);
                   data_obj = JSON.parse(data);
                 var pageData = data_obj.rs;
                 var inner_html = "";
