@@ -518,7 +518,10 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         # 优惠
         coupon_fee = self.get_argument('coupon_fee',0)
         logging.info("got coupon_fee %r",coupon_fee)
-        coupon_fee = int(float(coupon_fee) * 100)
+        if coupon_fee:
+            coupon_fee = int(float(coupon_fee) * 100)
+        else:
+            coupon_fee = 0
 
         coupon = self.get_argument('coupon',0)
         logging.info("got coupon %r",coupon)
@@ -582,8 +585,8 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         order = self.get_symbol_object(order_id)
         logging.info("GET order %r", order)
         order['create_time'] = timestamp_datetime(float(order['create_time']))
-        order['shipping_cost'] = float(order['shipping_cost'])/100
-        order['actual_payment'] = float(order['actual_payment'])/100
+        # order['shipping_cost'] = float(order['shipping_cost'])/100
+        # order['actual_payment'] = float(order['actual_payment'])/100
         items = order['items']
         _product_description = items[0]['title']
         logging.info("GET items %r", items)
@@ -788,8 +791,8 @@ class WxOrdersCheckoutHandler(AuthorizationHandler):
             item['amount'] = float(item['amount'])/100
 
         order['create_time'] = timestamp_datetime(float(order['create_time']))
-        order['shipping_cost'] = float(order['shipping_cost'])/100
-        order['actual_payment'] = float(order['actual_payment'])/100
+        # order['shipping_cost'] = float(order['shipping_cost'])/100
+        # order['actual_payment'] = float(order['actual_payment'])/100
 
         shipping_addr = order['shipping_addr']
         logging.info("GET shipping_addr %r", shipping_addr)
