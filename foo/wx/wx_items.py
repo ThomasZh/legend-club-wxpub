@@ -532,7 +532,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "ext_fees": [], # 附加服务项编号数组
             "insurances": [], # 保险选项,数组
             "vouchers": [], #代金券选项,数组
-            "points_used": [], # 积分选项,数组
+            "points_used": 0, # 使用积分数量
             "bonus_points": 0, # 购买商品获得奖励积分
             "booking_time": _timestamp,
         }
