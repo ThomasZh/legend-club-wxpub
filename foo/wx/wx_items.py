@@ -600,7 +600,6 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
 
         # 清空购物车
         headers = {"Authorization":"Bearer "+access_token}
-
         url = API_DOMAIN + "/api/clubs/"+ club_id +"/cart/items"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="DELETE", headers=headers)
@@ -629,7 +628,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             logging.info("got _store_id %r", _store_id)
             #_ip = self.request.remote_ip
             _remote_ip = self.request.headers['X-Real-Ip']
-            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, pay_id, actual_payment, _timestamp)
+            _order_return = wx_wrap.getUnifiedOrder(_remote_ip, wx_app_id, _store_id, _product_description, wx_notify_domain, wx_mch_id, wx_mch_key, _openid, pay_id, order['actual_payment'], _timestamp)
 
             # wx统一下单记录保存
             _order_return['_id'] = _order_return['prepay_id']
