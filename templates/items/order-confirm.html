@@ -166,7 +166,7 @@
           </div>
           <div class="col s6">税金:</div>
           <div class="col s6" style="text-align: right;">
-            <span id="coupon-fee">
+            <span id="tax-fee">
               {% if order.has_key('tax_amount') %}
                 {{ float(order['tax_amount'])/100 }}
               {% else %}

@@ -471,7 +471,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         rs = data['rs']
         orders = rs['data']
 
-        _timestamp = time.time()
+        _timestamp = int(time.time())
         # 一分钟内不能创建第二个订单,
         # 防止用户点击回退按钮，产生第二个订单
         if len(orders) > 0:
@@ -480,16 +480,6 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
                     self.redirect('/bf/wx/orders/wait')
                     return
 
-        # 订单总金额
-        _total_amount = self.get_argument("total_amount", 0)
-        logging.info("got _total_amount %r", _total_amount)
-        # 价格转换成分
-        _total_amount = int(float(_total_amount) * 100)
-        # logging.info("got _total_amount %r", _total_amount)
-        # 订单申报数目
-        quantity = 0
-
-        bonus_points = 0
         #购物车商品json
         items = self.get_body_argument("items", [])
         logging.info("got items %r", items)
@@ -510,45 +500,12 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             logging.info("got _addr %r", _addr)
             billing_addr = JSON.loads(_addr)
             logging.info("got billing_addr %r", billing_addr)
-        # 运费
-        shipping_cost = self.get_argument('shipping_cost',0)
-        logging.info("got shipping_cost %r",shipping_cost)
-        shipping_cost = int(float(shipping_cost) * 100)
-
-        # 优惠
-        coupon_fee = self.get_argument('coupon_fee',0)
-        logging.info("got coupon_fee %r",coupon_fee)
-        if coupon_fee:
-            coupon_fee = int(float(coupon_fee) * 100)
-        else:
-            coupon_fee = 0
 
         coupon = self.get_argument('coupon',0)
         logging.info("got coupon %r",coupon)
         coupon = JSON.loads(coupon)
 
-        #基本服务
-        _base_fees = []
-
-        # 附加服务项编号数组
-        _ext_fees = []
-
-        # 保险选项,数组
-        _insurances = []
-
-        #代金券选项,数组
-        _vouchers = []
-
-        # 积分选项,数组
-        points = 0
-        actual_payment = _total_amount + points + shipping_cost - coupon_fee
-        logging.info("got actual_payment %r", actual_payment)
-
         order_id = str(uuid.uuid1()).replace('-', '')
-        _status = ORDER_STATUS_BF_INIT
-        if actual_payment == 0:
-            _status = ORDER_STATUS_WECHAT_PAY_SUCCESS
-
         # 创建订单索引
         order_index = {
             "_id": order_id,
@@ -556,29 +513,28 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "club_id": club_id,
             "item_type": "items",
             "item_id": item_id,
-            "item_name": "cart000",
+            "item_name": "", # 由服务器端填写第一个商品名称
             "distributor_type": "item",
             "items":items,
             "shipping_addr":addr,
-            "shipping_cost":shipping_cost,
+            "shipping_cost":0, # 由服务器端计算运费
             "billing_required":billing,
             "billing_addr":billing_addr,
             "coupon":coupon,
             "distributor_id": "00000000000000000000000000000000",
             "create_time": _timestamp,
             "pay_type": "wxpay",
-            "pay_status": _status,
-            "quantity": quantity,
-            "amount": _total_amount, #已经转换为分，注意转为数值
-            "actual_payment": actual_payment, #已经转换为分，注意转为数值
-            "base_fees": _base_fees,
-            "ext_fees": _ext_fees,
-            "insurances": _insurances,
-            "vouchers": _vouchers,
-            "points_used": points,
-            "bonus_points": bonus_points, # 活动奖励积分
+            "pay_status": ORDER_STATUS_BF_INIT,
+            "quantity": 0, # 由服务器端计算商品数量
+            "amount": 0, # 由服务器端计算商品合计
+            "actual_payment": 0, # 由服务器端计算实际支付金额
+            "base_fees": [], #基本服务
+            "ext_fees": [], # 附加服务项编号数组
+            "insurances": [], # 保险选项,数组
+            "vouchers": [], #代金券选项,数组
+            "points_used": [], # 积分选项,数组
+            "bonus_points": 0, # 购买商品获得奖励积分
             "booking_time": _timestamp,
-
         }
         pay_id = self.create_order(order_index)
 
@@ -594,9 +550,6 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         logging.info("GET shipping_addr %r", shipping_addr)
         billing_addr = order['billing_addr']
         logging.info("GET billing_addr %r", billing_addr)
-
-        for item in items:
-            item['amount'] = float(item['amount'])/100
 
         # 清空购物车
         headers = {"Authorization":"Bearer "+access_token}
@@ -618,9 +571,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         wx_mch_id = wx_app_info['wx_mch_id']
         wx_notify_domain = wx_app_info['wx_notify_domain']
 
-
-        _timestamp = (int)(time.time())
-        if actual_payment != 0:
+        if order['actual_payment'] != 0:
             # wechat 统一下单
             myinfo = self.get_myinfo_login()
             _openid = myinfo['login']
@@ -644,6 +595,9 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             # TODO: 更新订单索引中，订单状态pay_status,prepay_id
             self.update_order_unified(order_unified)
 
+            for item in items:
+                item['amount'] = float(item['amount'])/100
+
             self.render('items/order-confirm.html',
                     access_token = access_token,
                     api_domain = API_DOMAIN,
@@ -655,6 +609,9 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
         else: #actual_payment == 0:
+            # _status = ORDER_STATUS_WECHAT_PAY_SUCCESS
+            # self.update_order_status(order['_id'], _status)
+
             # 如使用积分抵扣，则将积分减去
             if order_index['points_used'] < 0:
                 # 修改个人积分信息
