@@ -164,6 +164,16 @@
               {% end %}
             </span>元
           </div>
+          <div class="col s6">税金:</div>
+          <div class="col s6" style="text-align: right;">
+            <span id="coupon-fee">
+              {% if order.has_key('tax_amount') %}
+                {{ float(order['tax_amount'])/100 }}
+              {% else %}
+                0
+              {% end %}
+            </span>元
+          </div>
         </div>
       </div>
       <!-- End of Page Contents -->
