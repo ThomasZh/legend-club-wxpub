@@ -233,7 +233,7 @@
                   html += '<span>'+specs[j]['amount']/100+'元/'+specs[j]['unit']+'</span>';
                   html += '<div class="hilight-right hidden">'
                   html += '<a href="#!" class="left-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-minus-circled"></i></a>';
-                  html += '<span class="quantity">0</span>';
+                  html += '<input type="number" min="1" style="width:3.5rem;height:2rem;line-height:2rem;margin-bottom:0;font-size:14px;" class="quantity" value="0"/>';
                   html += '<a href="#!" class="right-side" spec_id = "'+ specs[j]['spec_id'] +'" data_id = "'+dataObj[i]['_id']+'"><i class="ion-plus-circled"></i></a>';
                   html += '</div></div></li>';
                 }
@@ -255,22 +255,22 @@
         };
 
         $(document).on('click','.right-side',function(event){
-            var num = $(this).prev().text();
-            var begin_num = num;
+            var step = 1;
+            var num = $(this).prev().val();
                 num ++;
-            $(this).prev().text(num);
-            goods_num = goods_num + 1;
+            $(this).prev().val(num);
+            goods_num = goods_num + step;
             if(num == 1){
               $("#shop-car span:first-child").addClass('mark');
-              $("#shop-car span:first-child").text(goods_num);
+              // $("#shop-car span:first-child").text(goods_num);
             }else{
-              $("#shop-car span:first-child").text(goods_num);
+              // $("#shop-car span:first-child").text(goods_num);
             }
             $(this).parent().removeClass('hidden');
             var item_id = $(this).attr('data_id');
             var tem_id = $(this).attr('spec_id');
-            var product_num = parseInt($(this).prev().text())-parseInt(begin_num);
-            var data = {"spec_id":tem_id, "quantity":product_num};
+            // var product_num = parseInt($(this).prev().text())-parseInt(begin_num);
+            var data = {"spec_id":tem_id, "quantity":step};
             var json = JSON.stringify(data);
             console.log(json);
             $.ajax({
@@ -281,19 +281,25 @@
               headers: {"Authorization":"Bearer {{access_token}}"},
               contentType: 'application/json',
               success: function(data, status, xhr) {
-                console.log(data);
+                // console.log(data);
+                if(data.data.quantity > 99){
+                  data.data.quantity = "99+";
+                }
+                $("#shop-car span:first-child").html(data.data.quantity);
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("error");
+                  // console.log("error");
               }
             });
         }).on('click','.left-side',function(){
-          var num = $(this).next().text();
-          var begin_num = num;
+          var step = 1;
+          var num = $(this).next().val();
+              if(num <= 0){
+                num = 0;
+              }
               num -- ;
-              goods_num = goods_num - 1;
-
-              $("#shop-car span:first-child").text(goods_num);
+              goods_num = goods_num - step;
+              // $("#shop-car span:first-child").text(goods_num);
           if(num == 0){
             $(this).parent().addClass('hidden');
             if(goods_num == 0){
@@ -301,13 +307,12 @@
               $("#shop-car span:first-child").html('');
             }
           }
-            $(this).next().text(num);
+            $(this).next().val(num);
             var tem_id = $(this).attr('spec_id');
             var item_id = $(this).attr('data_id');
-            var product_num = parseInt(begin_num) - parseInt($(this).next().text());
-            var data = {"spec_id":tem_id,"quantity":product_num};
+            var data = {"spec_id":tem_id,"quantity":step};
             var json = JSON.stringify(data);
-            console.log(json);
+            // console.log(json);
             $.ajax({
               type: "POST",
               url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/decrease",
@@ -316,13 +321,51 @@
               headers: {"Authorization":"Bearer {{access_token}}"},
               contentType: 'application/json',
               success: function(data, status, xhr) {
-                console.log(data);
+                // console.log(data);
+                if(data.data.quantity > 99){
+                  data.data.quantity = "99+";
+                }
+                $("#shop-car span:first-child").html(data.data.quantity);
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  console.log("error");
+                  // console.log("error");
               }
             });
 
+        });
+
+        // 给数目输入框绑定事件
+        $(document).on('change','.quantity',function(){
+          var val = parseInt($(this).val());
+          console.log(val);
+          if (isNaN(val) || val <= 0) {
+              val = 1;
+              $(this).val(val)
+          }
+          goods_num = goods_num + val;
+          var tem_id = $(this).next().attr('spec_id');
+          var item_id = $(this).next().attr('data_id');
+          var data = {"spec_id":tem_id,"quantity":val};
+          var json = JSON.stringify(data);
+          console.log(json);
+          $.ajax({
+            type: "POST",
+            url: "{{ API_DOMAIN }}/api/clubs/{{ club_id }}/cart/items/"+ item_id +"/update",
+            data: json,
+            dataType: "json",
+            headers: {"Authorization":"Bearer {{access_token}}"},
+            contentType: 'application/json',
+            success: function(data, status, xhr) {
+              // console.log(data.data.quantity);
+              if(data.data.quantity > 99){
+                data.data.quantity = "99+";
+              }
+              $("#shop-car span:first-child").html(data.data.quantity);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log("error");
+            }
+          });
         });
 
         function nodata(res) {//数据加载完毕的操作
