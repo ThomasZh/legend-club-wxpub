@@ -94,13 +94,22 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         second_categorys = data['rs']
 
-        # 获取商品数量
-        cart_goods = self.get_cart(club_id)
-        logging.info("got cart_goods %r", cart_goods)
-        cart_goods_num = 0
-        for cart_good in cart_goods:
-            cart_goods_num += cart_good['quantity']
+        # 获取商品数量  /api/clubs/([a-z0-9]*)/cart/nums
+        url = API_DOMAIN + "/api/clubs/" + club_id + "/cart/nums"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        cart_goods_num = data['data']['quantity']
         logging.info("got cart_goods_num %r", cart_goods_num)
+
+        # cart_goods = self.get_cart(club_id)
+        # logging.info("got cart_goods %r", cart_goods)
+        # cart_goods_num = 0
+        # for cart_good in cart_goods:
+        #     cart_goods_num += cart_good['quantity']
+        # logging.info("got cart_goods_num %r", cart_goods_num)
 
         second_specs = None
         second_brands = None
@@ -170,12 +179,14 @@ class WxItemsCategorySpecsListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         second_categorys = data['rs']
 
-        # 获取商品数量
-        cart_goods = self.get_cart(club_id)
-        logging.info("got cart_goods %r", cart_goods)
-        cart_goods_num = 0
-        for cart_good in cart_goods:
-            cart_goods_num += cart_good['quantity']
+        # 获取商品数量  /api/clubs/([a-z0-9]*)/cart/nums
+        url = API_DOMAIN + "/api/clubs/" + club_id + "/cart/nums"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        cart_goods_num = data['data']['quantity']
         logging.info("got cart_goods_num %r", cart_goods_num)
 
         second_specs = None
@@ -256,12 +267,14 @@ class WxItemsCategoryBrandsListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         second_categorys = data['rs']
 
-        # 获取商品数量
-        cart_goods = self.get_cart(club_id)
-        logging.info("got cart_goods %r", cart_goods)
-        cart_goods_num = 0
-        for cart_good in cart_goods:
-            cart_goods_num += cart_good['quantity']
+        # 获取商品数量  /api/clubs/([a-z0-9]*)/cart/nums
+        url = API_DOMAIN + "/api/clubs/" + club_id + "/cart/nums"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        cart_goods_num = data['data']['quantity']
         logging.info("got cart_goods_num %r", cart_goods_num)
 
         second_specs = None
