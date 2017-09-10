@@ -109,11 +109,37 @@ class AuthWxLoginStep2Handler(BaseHandler):
         avatar = wx_userInfo["headimgurl"]
         logging.info("got avatar=[%r]", avatar)
 
+        # 是否为新用户
+        new_user = False
+        login = self.get_user_basic_info_by_wxopenid(wx_openid)
+        logging.info("got login=[%r]", login)
+        if login:
+            if login['account_id'] == wx_openid:
+                new_user = True
+        else:
+            new_user = True
+            logging.warn("is new_user=[%r]", wx_openid)
+
         session_ticket = self.wx_register(wx_openid, nickname, avatar)
         self.set_secure_cookie("access_token", session_ticket['access_token'])
         self.set_secure_cookie("expires_at", str(session_ticket['expires_at']))
         self.set_secure_cookie("account_id", session_ticket['account_id'])
         self.create_club_user(club_id, session_ticket['account_id'])
+
+        # TODO 将分销用户的上线、下线关系关联在一起
+        if new_user:
+            guest_id = self.get_secure_cookie("guest_id")
+            logging.info("got guest_id=[%r] from cookie", guest_id)
+            higher_id = guest_id
+            lower_id = session_ticket['account_id']
+
+            url = API_DOMAIN + "/api/clubs/"+ club_id +"/acquaintance"
+            http_client = HTTPClient()
+            random = generate_uuid_str()
+            headers = {"Authorization":"Bearer "+session_ticket['access_token']}
+            _json = json_encode({'higher_level':higher_id, 'lower_level':lower_id})
+            response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+            logging.info("got response.body %r", response.body)
 
         login_next = self.get_secure_cookie("login_next")
         self.redirect(login_next)

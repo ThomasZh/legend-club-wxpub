@@ -300,10 +300,24 @@ class BaseHandler(tornado.web.RequestHandler):
         headers = {"Authorization":"Bearer "+random}
         _json = json_encode({'wx_openid':wx_openid, 'nickname':nickname, 'avatar':avatar})
         response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-        logging.info("got response.body %r", response.body)
+        logging.info("got register esponse.body %r", response.body)
         data = json_decode(response.body)
         session_ticket = data['rs']
         return session_ticket
+
+
+    def get_user_basic_info_by_wxopenid(self, wx_openid):
+        http_client = HTTPClient()
+        params = {"filter":"basic", "_by":"wx_pub"}
+        url = url_concat(API_DOMAIN + "/api/profiles/" + wx_openid, params)
+        response = http_client.fetch(url, method="GET")
+        logging.info("got basic_info by wxopenid response.body %r", response.body)
+        data = json_decode(response.body)
+        if data['err_code'] == 200:
+            login = data['rs']
+            return login
+        else:
+            return None
 
 
     def get_points_log(self, _account_id, activity_id, _filter):
@@ -754,6 +768,28 @@ class AuthorizationHandler(BaseHandler):
 
     def get_current_user(self):
         self.set_secure_cookie("login_next", self.request.uri)
+
+        # parse club_id & guest_id from uri
+        # /bf/wx/vendors/702c87d4f73111e69a3c00163e023e513b4eff6c3aaa11e7b21000163e023e51/category/items
+        club_id = DEFAULT_USER_ID
+        guest_id = DEFAULT_USER_ID
+        club_ids = re.findall(r"/bf/wx/vendors/([a-z0-9]*)/", self.request.uri)
+        logging.info("got club_ids=[%r] from uri", club_ids)
+        if len(club_ids) > 0:
+            club_id = club_ids[0]
+
+            if len(club_id) == 32:
+                guest_id = DEFAULT_USER_ID
+            elif len(club_id) == 64:
+                guest_id = club_id[32:64]
+                club_id = club_id[0:32]
+                self.set_secure_cookie("guest_id", guest_id)
+                self.set_secure_cookie("club_id", club_id)
+            else:
+                guest_id = club_id[32:64]
+                club_id = club_id[0:32]
+        logging.info("got club_id=[%r]", club_id)
+        logging.info("got guest_id=[%r]", guest_id)
 
         access_token = self.get_secure_cookie("access_token")
         logging.info("got access_token %r from cookie", access_token)
