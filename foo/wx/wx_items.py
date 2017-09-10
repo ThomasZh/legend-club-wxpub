@@ -56,6 +56,7 @@ from dao import trip_router_dao
 from dao import triprouter_share_dao
 from dao import club_dao
 from dao import activity_share_dao
+from dao import vendor_wx_dao
 
 from foo.wx import wx_wrap
 from xml_parser import parseWxOrderReturn, parseWxPayReturn
@@ -66,20 +67,37 @@ from global_const import *
 class WxItemsCategoryListHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
         logging.info("GET %r", self.request.uri)
+
+        guest_id = DEFAULT_USER_ID
+        if len(club_id) == 32:
+            guest_id = DEFAULT_USER_ID
+        elif len(club_id) == 64:
+            guest_id = club_id[32:64]
+            club_id = club_id[0:32]
+        else:
+            guest_id = club_id[32:64]
+            club_id = club_id[0:32]
+        logging.info("got club_id=[%r]", club_id)
+        logging.info("got guest_id=[%r]", guest_id)
+
         category_id = self.get_argument("category_id", "")
         logging.info("got category_id %r", category_id)
         second_category_id = self.get_argument("second_category_id", "")
         logging.info("got second_category_id %r", second_category_id)
         # 查询分类
         access_token = self.get_access_token()
-        logging.info("GET access_token %r", access_token)
+        logging.info("GET access_token=[%r]", access_token)
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
 
         url = API_DOMAIN + "/api/def/leagues/"+ LEAGUE_ID +"/categories"
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got response.body %r", response.body)
+        logging.debug("got categorys response.body %r", response.body)
         data = json_decode(response.body)
         categorys = data['rs']
 
@@ -90,7 +108,7 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got response.body %r", response.body)
+        logging.debug("got second_categorys response.body %r", response.body)
         data = json_decode(response.body)
         second_categorys = data['rs']
 
@@ -99,17 +117,10 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got response.body %r", response.body)
+        logging.debug("got cart_goods_num response.body %r", response.body)
         data = json_decode(response.body)
         cart_goods_num = data['data']['quantity']
         logging.info("got cart_goods_num %r", cart_goods_num)
-
-        # cart_goods = self.get_cart(club_id)
-        # logging.info("got cart_goods %r", cart_goods)
-        # cart_goods_num = 0
-        # for cart_good in cart_goods:
-        #     cart_goods_num += cart_good['quantity']
-        # logging.info("got cart_goods_num %r", cart_goods_num)
 
         second_specs = None
         second_brands = None
@@ -120,7 +131,7 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got response.body %r", response.body)
+        logging.debug("got second_specs response.body %r", response.body)
         data = json_decode(response.body)
         second_specs = data['rs']
 
@@ -128,9 +139,22 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
-        logging.info("got response.body %r", response.body)
+        logging.debug("got second_brands response.body %r", response.body)
         data = json_decode(response.body)
         second_brands = data['rs']
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/category/items"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
 
         club = self.get_club_basic_info(club_id)
         self.render('items/category.html',
@@ -144,7 +168,10 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
                 second_specs=second_specs,
                 second_brands=second_brands,
                 categorys=categorys,
-                cart_goods_num=cart_goods_num)
+                cart_goods_num=cart_goods_num,
+                wx_app_id=wx_app_id,
+                share_url=share_url,
+                sign=_sign)
 
 
 # 规格分类列表
