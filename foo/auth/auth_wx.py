@@ -133,13 +133,14 @@ class AuthWxLoginStep2Handler(BaseHandler):
             higher_id = guest_id
             lower_id = session_ticket['account_id']
 
-            url = API_DOMAIN + "/api/clubs/"+ club_id +"/acquaintance"
-            http_client = HTTPClient()
-            random = generate_uuid_str()
-            headers = {"Authorization":"Bearer "+session_ticket['access_token']}
-            _json = json_encode({'higher_level':higher_id, 'lower_level':lower_id})
-            response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-            logging.info("got response.body %r", response.body)
+            if higher_id != DEFAULT_USER_ID:
+                url = API_DOMAIN + "/api/clubs/"+ club_id +"/acquaintance"
+                http_client = HTTPClient()
+                random = generate_uuid_str()
+                headers = {"Authorization":"Bearer "+session_ticket['access_token']}
+                _json = json_encode({'higher_level':higher_id, 'lower_level':lower_id})
+                response = http_client.fetch(url, method="POST", headers=headers, body=_json)
+                logging.info("got response.body %r", response.body)
 
         login_next = self.get_secure_cookie("login_next")
         self.redirect(login_next)
