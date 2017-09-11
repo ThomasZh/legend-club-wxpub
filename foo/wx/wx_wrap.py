@@ -169,6 +169,19 @@ def getUserInfo(token, openid):
     return userInfo
 
 
+def sendMessageToCustomer(access_token, openid, text):
+    data = {
+        "touser":openid,
+        "msgtype":"text",
+        "text":{"content":text}
+    }
+    _json = json_encode(data)
+    url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + access_token
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_json)
+    logging.info("got sendMessageToCustomer response %r", response.body)
+
+
 def sendActivityOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, order):
     # touser = 店小二openid
     # template_id = 订单支付成功
@@ -200,7 +213,7 @@ def sendActivityOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, o
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)
-    logging.info("got response %r", response.body)
+    logging.info("got sendActivityOrderPayedToOpsMessage response %r", response.body)
 
 
 def sendItemOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, order):
@@ -234,7 +247,7 @@ def sendItemOrderPayedToOpsMessage(access_token, wx_notify_domain, openid, order
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)
-    logging.info("got response %r", response.body)
+    logging.info("got sendItemOrderPayedToOpsMessage response %r", response.body)
 
 
 def sendItemOrderPayedToOpsMessage_kkfcps(access_token, wx_notify_domain, openid, order):
@@ -280,7 +293,7 @@ def sendItemOrderPayedToOpsMessage_kkfcps(access_token, wx_notify_domain, openid
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)
-    logging.info("got response %r", response.body)
+    logging.info("got sendItemOrderPayedToOpsMessage_kkfcps response %r", response.body)
 
 
 def sendApplyCashoutToAdminMessage(access_token, wx_notify_domain, openid, apply_cashout):
@@ -322,7 +335,7 @@ def sendApplyCashoutToAdminMessage(access_token, wx_notify_domain, openid, apply
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)
-    logging.info("got response %r", response.body)
+    logging.info("got sendApplyCashoutToAdminMessage response %r", response.body)
 
 
 def sendApplyCashoutToOpsMessage(access_token, wx_notify_domain, openid, apply_cashout):
@@ -364,4 +377,4 @@ def sendApplyCashoutToOpsMessage(access_token, wx_notify_domain, openid, apply_c
     url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)
-    logging.info("got response %r", response.body)
+    logging.info("got sendApplyCashoutToOpsMessage response %r", response.body)

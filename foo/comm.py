@@ -224,6 +224,18 @@ class BaseHandler(tornado.web.RequestHandler):
         return ops
 
 
+    def get_club_user_wx(self, club_id, account_id):
+        params = {"filter":"login","_by":"account_id"}
+        url = url_concat(API_DOMAIN + "/api/profiles/"+account_id)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        data = json_decode(response.body)
+        user_login = data['rs']
+        logging.info("got user_login=[%r]", user_login)
+        # myinfo['login']: wx_openid
+        return user_login
+
+
     def get_discount_rate(self, league_id, item_id):
         url = API_DOMAIN + "/api/leagues/"+league_id+"/items/" + item_id
         http_client = HTTPClient()

@@ -881,6 +881,14 @@ class WxOrderNotifyHandler(BaseHandler):
                         'order_id': order_index['_id']
                     }
                     self.create_points(bonus_points)
+
+                    # TODO 发送消息给上级获得积分，下级购买商品
+                    higher_login = self.get_club_user_wx(higher_level['higher_level'])
+                    if higher_login:
+                        higher_openid = higher_login['login']
+                        nickname = order_index['nickname']
+                        text = u"您的朋友" +nickname+ "购买商品，您获得 " +points+ u" 个积分"
+                        wx_wrap.sendMessageToCustomer(wx_access_token, higher_openid, text)
         else:
             # 调用微信支付接口，返回成功
             # TODO: 更新订单索引中，订单状态pay_status,transaction_id,payed_total_fee
