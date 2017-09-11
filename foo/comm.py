@@ -226,7 +226,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def get_club_user_wx(self, club_id, account_id):
         params = {"filter":"login","_by":"account_id"}
-        url = url_concat(API_DOMAIN + "/api/profiles/"+account_id)
+        url = url_concat(API_DOMAIN + "/api/profiles/"+account_id, params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         data = json_decode(response.body)

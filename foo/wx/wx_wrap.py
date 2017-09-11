@@ -173,9 +173,10 @@ def sendMessageToCustomer(access_token, openid, text):
     data = {
         "touser":openid,
         "msgtype":"text",
-        "text":{"content":text}
+        "text":{"content":"to_customer_msg"}
     }
     _json = json_encode(data)
+    _json = _json.replace("to_customer_msg", text)
     url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + access_token
     http_client = HTTPClient()
     response = http_client.fetch(url, method="POST", body=_json)

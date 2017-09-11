@@ -54,6 +54,7 @@
       <input type="hidden" id="api_domain" value="{{ api_domain }}">
       <input type="hidden" id="club_id" value="{{ club_id }}">
       <input type="hidden" id="league_id" value="{{ league_id }}">
+      <input type="hidden" id="account_id" value="{{ account_id }}">
       <!-- Page Contents -->
       <form class="order-form" action="/bf/wxpay/items?club_id={{ club_id }}&guest_club_id='00000000000000000000000000000000'" method="post">
           <div class="animated fadeinup">
@@ -105,6 +106,22 @@
               <div class="col s6">税金:</div>
               <div class="col s6" style="text-align: right;">
                 <span id="tax-fee">0.00</span>元
+              </div>
+            </div>
+            <div class="order-card-title">
+              积分信息:
+            </div>
+            <div class="row" id="point-row" style="background-color: white;padding: 2rem;border-top: 1px solid #e0e0e0;">
+              <div class="col s6">是否使用积分</div>
+              <div class="col s6" style="display: flex;justify-content: space-around;">
+                <p>
+                  <input class="with-gap" name="billing" type="radio" id="point1" value="1" />
+                  <label for="point1">是</label>
+                </p>
+                <p>
+                  <input class="with-gap" name="billing" type="radio" id="point2" value="0" checked="true" />
+                  <label for="point2">否</label>
+                </p>
               </div>
             </div>
             <div class="order-card-title">
