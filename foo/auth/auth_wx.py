@@ -147,7 +147,7 @@ class AuthWxLoginStep2Handler(BaseHandler):
                 if higher_login:
                     higher_openid = higher_login['_id']
                     text = u"您的朋友 " +nickname+ u" 登录注册, 成为您的下线, 他购买的任何商品都会给您增加积分"
-                    wx_wrap.sendMessageToCustomer(accessToken, higher_openid, text)
+                    wx_wrap.sendMessageToCustomer(access_token, higher_openid, text)
 
 
         login_next = self.get_secure_cookie("login_next")
