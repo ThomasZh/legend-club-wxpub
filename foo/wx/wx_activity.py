@@ -762,22 +762,23 @@ class WxOrderNotifyHandler(BaseHandler):
                     'actual_payment':_pay_return['total_fee']
                 }
                 self.update_order_payed(order_payed)
+                logging.info("update_order_payed=[%r]", order_payed)
 
                 # 购买商品活动奖励积分
-                bonus_points = {
-                    'org_id':vendor_id,
-                    'org_type':'club',
-                    'account_id':order_index['account_id'],
-                    'account_type':'user',
-                    'action': 'get_bonus_points_buy_item',
-                    'item_type': order_index['item_type'],
-                    'item_id': order_index['item_id'],
-                    'item_name': order_index['item_name'],
-                    'bonus_type':'bonus',
-                    'points': _pay_return['total_fee'],
-                    'order_id': order_index['_id']
-                }
-                self.create_points(bonus_points)
+                # bonus_points = {
+                #     'org_id':vendor_id,
+                #     'org_type':'club',
+                #     'account_id':order_index['account_id'],
+                #     'account_type':'user',
+                #     'action': 'get_bonus_points_buy_item',
+                #     'item_type': order_index['item_type'],
+                #     'item_id': order_index['item_id'],
+                #     'item_name': order_index['item_name'],
+                #     'bonus_type':'bonus',
+                #     'points': _pay_return['total_fee'],
+                #     'order_id': order_index['_id']
+                # }
+                # self.create_points(bonus_points)
 
                 # 如使用积分抵扣，则将积分减去
                 points = int(order_index['points_used'])
@@ -798,6 +799,7 @@ class WxOrderNotifyHandler(BaseHandler):
                     }
                     self.create_points(bonus_points)
                     # self.points_increase(vendor_id, order_index['account_id'], bonus)
+                    logging.info("used bonus_points=[%r]", bonus_points)
 
                 # 如使用代金券抵扣，则将代金券减去
                 _vouchers = order_index['vouchers']
@@ -812,6 +814,7 @@ class WxOrderNotifyHandler(BaseHandler):
                     _json = {'vendor_id':vendor_id, 'account_id':order_index['account_id'], 'last_update_time':_timestamp,
                         'vouchers':_voucher_amount}
                     vendor_member_dao.vendor_member_dao().update(_json)
+                    logging.info("used _vouchers=[%r]", _vouchers)
 
                 # send message to wx 公众号客户 by template
                 wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
@@ -848,6 +851,28 @@ class WxOrderNotifyHandler(BaseHandler):
                         'account_id':order_index['distributor_id'],
                         'account_type':'club',
                         'action': 'resale_item',
+                        'item_type': order_index['item_type'],
+                        'item_id': order_index['item_id'],
+                        'item_name': order_index['item_name'],
+                        'bonus_type':'bonus',
+                        'points': points,
+                        'order_id': order_index['_id']
+                    }
+                    self.create_points(bonus_points)
+
+                # TODO 如果有分销上线，将1%的积分奖励给上线
+                higher_level = self.get_higher_level(order_index['club_id'], order_index['account_id'])
+                logging.info("got higher_level=[%r]", higher_level)
+                if higher_level:
+                    actual_payment = _pay_return['total_fee']
+                    # points = int(int(actual_payment) / 100)
+                    points = actual_payment # test
+                    bonus_points = {
+                        'org_id':vendor_id,
+                        'org_type':'club',
+                        'account_id':higher_level['higher_level'],
+                        'account_type':'user',
+                        'action': 'lower_level_buy_item',
                         'item_type': order_index['item_type'],
                         'item_id': order_index['item_id'],
                         'item_name': order_index['item_name'],

@@ -731,6 +731,7 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
                         order_id=order_id,
                         order=order)
 
+
 # 重新支付订单操作
 class WxOrdersCheckoutHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page

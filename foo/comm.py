@@ -156,6 +156,18 @@ def time_span(ts):
 
 class BaseHandler(tornado.web.RequestHandler):
 
+    def get_higher_level(self, club_id, account_id):
+        url = API_DOMAIN + "/api/clubs/"+club_id+"/acquaintance/"+account_id+"/higher"
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got get_higher_level %r", response.body)
+        data = json_decode(response.body)
+        if data['err_code'] == 404:
+            return {}
+        higher_level = data['rs']
+        return higher_level
+
+
     def get_bonus_points_log(self, water_id):
         url = API_DOMAIN + "/api/points/" + water_id
         http_client = HTTPClient()
