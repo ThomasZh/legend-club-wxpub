@@ -116,6 +116,7 @@ class AuthWxLoginStep2Handler(BaseHandler):
         if login:
             if login['account_id'] == wx_openid:
                 new_user = True
+                logging.warn("is new_user=[%r]", wx_openid)
         else:
             new_user = True
             logging.warn("is new_user=[%r]", wx_openid)
@@ -128,9 +129,8 @@ class AuthWxLoginStep2Handler(BaseHandler):
 
         # TODO 将分销用户的上线、下线关系关联在一起
         if new_user:
-            guest_id = self.get_secure_cookie("guest_id")
-            logging.info("got guest_id=[%r] from cookie", guest_id)
-            higher_id = guest_id
+            higher_id = self.get_secure_cookie("guest_id")
+            logging.info("got guest_id=[%r] from cookie", higher_id)
             lower_id = session_ticket['account_id']
 
             if higher_id != DEFAULT_USER_ID:
@@ -140,14 +140,18 @@ class AuthWxLoginStep2Handler(BaseHandler):
                 headers = {"Authorization":"Bearer "+session_ticket['access_token']}
                 _json = json_encode({'higher_level':higher_id, 'lower_level':lower_id})
                 response = http_client.fetch(url, method="POST", headers=headers, body=_json)
-                logging.info("got response.body %r", response.body)
+                logging.info("create acquaintance response.body %r", response.body)
 
                 # TODO 消息提醒上级，朋友注册
                 higher_login = self.get_club_user_wx(club_id, higher_id)
                 if higher_login:
+                    # send message to wx 公众号客户 by template
+                    wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
+                    logging.info("got wx_access_token %r", wx_access_token)
+
                     higher_openid = higher_login['_id']
                     text = u"您的朋友 " +nickname+ u" 登录注册, 成为您的下线, 他购买的任何商品都会给您增加积分"
-                    wx_wrap.sendMessageToCustomer(access_token, higher_openid, text)
+                    wx_wrap.sendMessageToCustomer(wx_access_token, higher_openid, text)
 
 
         login_next = self.get_secure_cookie("login_next")
