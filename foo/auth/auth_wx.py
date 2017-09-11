@@ -142,5 +142,13 @@ class AuthWxLoginStep2Handler(BaseHandler):
                 response = http_client.fetch(url, method="POST", headers=headers, body=_json)
                 logging.info("got response.body %r", response.body)
 
+                # TODO 消息提醒上级，朋友注册
+                higher_login = self.get_club_user_wx(club_id, higher_id)
+                if higher_login:
+                    higher_openid = higher_login['_id']
+                    text = u"您的朋友 " +nickname+ u" 登录注册, 成为您的下线, 他购买的任何商品都会给您增加积分"
+                    wx_wrap.sendMessageToCustomer(accessToken, higher_openid, text)
+
+
         login_next = self.get_secure_cookie("login_next")
         self.redirect(login_next)
