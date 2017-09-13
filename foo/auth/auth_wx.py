@@ -130,6 +130,8 @@ class AuthWxLoginStep2Handler(BaseHandler):
         # TODO 将分销用户的上线、下线关系关联在一起
         if new_user:
             higher_id = self.get_secure_cookie("guest_id")
+            if not higher_id:
+                higher_id = DEFAULT_USER_ID
             logging.info("got guest_id=[%r] from cookie", higher_id)
             lower_id = session_ticket['account_id']
 
