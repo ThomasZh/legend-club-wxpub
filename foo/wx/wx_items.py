@@ -546,6 +546,10 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         logging.info("got coupon %r",coupon)
         coupon = JSON.loads(coupon)
 
+        # 积分
+        used_points = self.get_argument('used_points',0)
+        logging.info("got used_points %r",used_points)
+
         order_id = str(uuid.uuid1()).replace('-', '')
         # 创建订单索引
         order_index = {
@@ -573,7 +577,7 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             "ext_fees": [], # 附加服务项编号数组
             "insurances": [], # 保险选项,数组
             "vouchers": [], #代金券选项,数组
-            "points_used": 0, # 使用积分数量
+            "points_used": used_points, # 使用积分数量
             "bonus_points": 0, # 购买商品获得奖励积分
             "booking_time": _timestamp,
         }
@@ -611,6 +615,24 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
         wx_mch_key = wx_app_info['wx_mch_key']
         wx_mch_id = wx_app_info['wx_mch_id']
         wx_notify_domain = wx_app_info['wx_notify_domain']
+
+        # 如使用积分抵扣，则将积分减去
+        if order_index['points_used'] > 0:
+            # 修改个人积分信息
+            bonus_points = {
+                'org_id':club_id,
+                'org_type':'club',
+                'account_id':_account_id,
+                'account_type':'user',
+                'action': 'buy_item',
+                'item_type': 'items',
+                'item_id': "00000000000000000000000000000000",
+                'item_name': '',
+                'bonus_type':'bonus',
+                'points': used_points,
+                'order_id': order_index['_id']
+            }
+            self.create_points(bonus_points)
 
         if order['actual_payment'] != 0:
             # wechat 统一下单
@@ -650,41 +672,6 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             # self.redirect('/bf/wx/vendors/'+ club_id +'/items/checkout/orders/'+order_id)
 
         else: #actual_payment == 0:
-            # _status = ORDER_STATUS_WECHAT_PAY_SUCCESS
-            # self.update_order_status(order['_id'], _status)
-
-            # 如使用积分抵扣，则将积分减去
-            if order_index['points_used'] < 0:
-                # 修改个人积分信息
-                bonus_points = {
-                    'org_id':club_id,
-                    'org_type':'club',
-                    'account_id':_account_id,
-                    'account_type':'user',
-                    'action': 'buy_activity',
-                    'item_type': 'activity',
-                    'item_id': "00000000000000000000000000000000",
-                    'item_name': 'order_title',
-                    'bonus_type':'bonus',
-                    'points': points,
-                    'order_id': order_index['_id']
-                }
-                self.create_points(bonus_points)
-                # self.points_decrease(club_id, order_index['account_id'], order_index['points_used'])
-
-            # 如使用代金券抵扣，则将代金券减去
-            for _voucher in _vouchers:
-                # status=2, 已使用
-                voucher_dao.voucher_dao().update({'_id':_voucher['_id'], 'status':2, 'last_update_time':_timestamp})
-                _customer_profile = vendor_member_dao.vendor_member_dao().query_not_safe(club_id, order_index['account_id'])
-                # 修改个人代金券信息
-                _voucher_amount = int(_customer_profile['vouchers']) - int(_voucher['fee'])
-                if _voucher_amount < 0:
-                    _voucher_amount = 0
-                _json = {'vendor_id':club_id, 'account_id':order_index['account_id'], 'last_update_time':_timestamp,
-                        'vouchers':_voucher_amount}
-                vendor_member_dao.vendor_member_dao().update(_json)
-
             # send message to wx 公众号客户 by template
             wx_access_token = wx_wrap.getAccessTokenByClientCredential(WX_APP_ID, WX_APP_SECRET)
             logging.info("got wx_access_token %r", wx_access_token)
@@ -693,15 +680,24 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
             for op in ops:
                 wx_openid = op['binding_id']
                 logging.info("got wx_openid %r", wx_openid)
-                wx_wrap.sendOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
-            self.render('items/order-confirm.html',
-                    access_token = access_token,
-                    api_domain = API_DOMAIN,
-                    club_id=club_id,
-                    shipping_addr=shipping_addr,
-                    billing_addr=billing_addr,
-                    return_msg=response.body, order_return=_order_return,
-                    order=order, items=items, order_index=order_index)
+                if order_index['order_type'] == "buy_activity":
+                    wx_wrap.sendActivityOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+                elif order_index['order_type'] == "buy_item":
+                    logging.info("sendItemOrderPayedToOpsMessage=[%r]", WX_MESSAGE_TEMPLATE)
+                    if WX_MESSAGE_TEMPLATE == "kkfcps":
+                        wx_wrap.sendItemOrderPayedToOpsMessage_kkfcps(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+                    else:
+                        wx_wrap.sendItemOrderPayedToOpsMessage(wx_access_token, WX_NOTIFY_DOMAIN, wx_openid, order_index)
+
+            self.render('items/order-result.html',
+                        api_domain=API_DOMAIN,
+                        club_id=club_id,
+                        items=items,
+                        shipping_addr=shipping_addr,
+                        billing_addr=billing_addr,
+                        access_token=access_token,
+                        order_id=order['_id'],
+                        order=order)
 
 
 # 下单成功后的订单详情
@@ -718,9 +714,6 @@ class WxItemsOrderResultHandler(AuthorizationHandler):
         logging.info("GET items %r", items)
         shipping_addr= order['shipping_addr']
         billing_addr= order['billing_addr']
-        order['amount'] = float(order['amount'])/100
-        for item in items:
-            item['amount'] = float(item['amount'])/100
 
         self.render('items/order-result.html',
                         api_domain=API_DOMAIN,
@@ -784,9 +777,6 @@ class WxOrdersCheckoutHandler(AuthorizationHandler):
         actual_payment = order['actual_payment']
         _timestamp = (int)(time.time())
         items = order['items']
-
-        for item in items:
-            item['amount'] = float(item['amount'])/100
 
         order['create_time'] = timestamp_datetime(float(order['create_time']))
         # order['shipping_cost'] = float(order['shipping_cost'])/100

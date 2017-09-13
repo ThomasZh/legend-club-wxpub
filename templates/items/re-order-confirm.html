@@ -110,7 +110,7 @@
                 规格: {{ item['spec_title'] }}
               </p>
               <div class="hilight flex-separate">
-                <span class="one-price">{{ item['amount'] }}元/{{ item['unit'] }}</span>
+                <span class="one-price">{{ float(item['amount'])/100 }}元/{{ item['unit'] }}</span>
                 <div class="quantity">
                   数量：
                   <span class="one-quantity">{{ item['quantity'] }}</span>
@@ -160,7 +160,7 @@
             {% if order.has_key('coupon') %}
               {{ float(order['coupon']['actual_discount'])/100 }}
             {% else %}
-              0
+              0.0
             {% end %}
           </span>元
         </div>
@@ -169,6 +169,16 @@
           <span id="coupon-fee">
             {% if order.has_key('tax_amount') %}
               {{ float(order['tax_amount'])/100 }}
+            {% else %}
+              0.0
+            {% end %}
+          </span>元
+        </div>
+        <div class="col s6">积分:</div>
+        <div class="col s6" style="text-align: right;">
+          <span id="coupon-fee">
+            {% if order.has_key('points_used') %}
+              {{ float(order['points_used'])/100 }}
             {% else %}
               0
             {% end %}
