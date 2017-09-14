@@ -143,6 +143,9 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         second_brands = data['rs']
 
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
         wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
         wx_app_id = wx_app_info['wx_app_id']
         wx_app_secret = wx_app_info['wx_app_secret']
@@ -245,6 +248,22 @@ class WxItemsCategorySpecsListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         _spec = data['rs']
 
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/category/items"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
+
         club = self.get_club_basic_info(club_id)
         self.render('items/category-specs.html',
                 API_DOMAIN=API_DOMAIN,
@@ -259,7 +278,10 @@ class WxItemsCategorySpecsListHandler(AuthorizationHandler):
                 second_brands=second_brands,
                 categorys=categorys,
                 _spec=_spec,
-                cart_goods_num=cart_goods_num)
+                cart_goods_num=cart_goods_num,
+                wx_app_id=wx_app_id,
+                share_url=share_url,
+                sign=_sign)
 
 
 # 品牌分类列表
@@ -333,6 +355,22 @@ class WxItemsCategoryBrandsListHandler(AuthorizationHandler):
         data = json_decode(response.body)
         _brand = data['rs']
 
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/category/items"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
+
         club = self.get_club_basic_info(club_id)
         self.render('items/category-brands.html',
                 API_DOMAIN=API_DOMAIN,
@@ -347,7 +385,10 @@ class WxItemsCategoryBrandsListHandler(AuthorizationHandler):
                 second_brands=second_brands,
                 categorys=categorys,
                 _brand=_brand,
-                cart_goods_num=cart_goods_num)
+                cart_goods_num=cart_goods_num,
+                wx_app_id=wx_app_id,
+                share_url=share_url,
+                sign=_sign)
 
 
 # old分类列表
@@ -433,6 +474,22 @@ class WxItemsDetailHandler(AuthorizationHandler):
             self.create_article(article)
         logging.info("got article %r", article)
 
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/category/items"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
+
         self.render('items/prodetail.html',
                 api_domain= API_DOMAIN,
                 access_token=access_token,
@@ -442,7 +499,10 @@ class WxItemsDetailHandler(AuthorizationHandler):
                 item_id=item_id,
                 item=item,
                 item_specs=item_specs,
-                article=article)
+                article=article,
+                wx_app_id=wx_app_id,
+                share_url=share_url,
+                sign=_sign)
 
     # 添加商品到购物车
     # @tornado.web.authenticated  # if no session, redirect to login page
@@ -883,12 +943,32 @@ class WxItemsRecommendListHandler(AuthorizationHandler):
         logging.info("GET access_token %r", access_token)
 
         club = self.get_club_basic_info(club_id)
+
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/category/items"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
+
         self.render('items/recommend-category.html',
                 API_DOMAIN=API_DOMAIN,
                 access_token=access_token,
                 LEAGUE_ID=LEAGUE_ID,
                 club=club,
-                club_id=club_id)
+                club_id=club_id,
+                wx_app_id=wx_app_id,
+                share_url=share_url,
+                sign=_sign)
 
 
 # 预估商品列表
@@ -901,8 +981,30 @@ class WxItemsRecommendProductsHandler(AuthorizationHandler):
         logging.info("GET access_token %r", access_token)
         logging.info("got recommend_category_id %r", recommend_category_id)
 
+        club = self.get_club_basic_info(club_id)
+
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/category/items"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
+
         self.render('items/recommend-products.html',
                      api_domain=API_DOMAIN,
                      club_id=club_id,
+                     club=club,
                      access_token=access_token,
-                     recommend_category_id=recommend_category_id)
+                     recommend_category_id=recommend_category_id,
+                     wx_app_id=wx_app_id,
+                     share_url=share_url,
+                     sign=_sign)

@@ -69,6 +69,49 @@
     <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
     <script src="{{ static_url('weui/js/jquery-weui.min.js') }}"></script>
     <script src="{{ static_url('shuttle-master/js/recommend-products.js') }}"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script>
+      wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '{{ wx_app_id }}', // 必填，公众号的唯一标识
+        timestamp: '{{ sign["timestamp"] }}', // 必填，生成签名的时间戳
+        nonceStr: '{{ sign["nonceStr"] }}', // 必填，生成签名的随机串
+        signature: '{{ sign["signature"] }}',// 必填，签名，见附录1
+        jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+      });
 
+      wx.ready(function(){
+        wx.onMenuShareAppMessage({
+          title: '{{ club["name"] }}', // 分享标题
+          desc: '{{ club["introduction"] }}', // 分享描述
+          link: '{{ share_url }}', // 分享链接
+          imgUrl: '{{ club["img"] }}!200x200', // 分享图标
+          type: 'link', // 分享类型,music、video或link，不填默认为link
+          dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+          success: function () {
+            // 弹出提示窗口
+            alert("分享此页面，好友下单购买，您可获得购买金额1%积分！");
+            //$(".ui-dialog").dialog("show");
+          },
+          cancel: function () {
+            // 用户取消分享后执行的回调函数
+          }
+        });
+
+        wx.onMenuShareTimeline({
+          title: '{{ club["name"] }}', // 分享标题
+          link: '{{ share_url }}', // 分享链接
+          imgUrl: '{{ club["img"] }}!200x200', // 分享图标
+          success: function () {
+            // 弹出提示窗口
+            alert("分享此页面，好友下单购买，您可获得购买金额1%积分！");
+            //$(".ui-dialog").dialog("show");
+          },
+          cancel: function () {
+            // 用户取消分享后执行的回调函数
+          }
+        });
+      });
+    </script>
   </body>
 </html>
