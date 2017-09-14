@@ -113,8 +113,8 @@ class AuthWxLoginStep2Handler(BaseHandler):
         new_user = False
         login = self.get_user_basic_info_by_wxopenid(wx_openid)
         logging.info("got login=[%r]", login)
-        if login:
-            if login['account_id'] == wx_openid:
+        if not login:
+            if login['account_id'] != wx_openid:
                 new_user = True
                 logging.warn("is new_user=[%r]", wx_openid)
         else:
