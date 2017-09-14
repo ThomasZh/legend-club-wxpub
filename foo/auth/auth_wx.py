@@ -113,8 +113,11 @@ class AuthWxLoginStep2Handler(BaseHandler):
         new_user = False
         login = self.get_user_basic_info_by_wxopenid(wx_openid)
         logging.info("got login=[%r]", login)
-        if not login:
-            if login['account_id'] != wx_openid:
+        if login:
+            # anonymous
+            DEFAULT_USER_NICKNAME = u"游客"
+            DEFAULT_USER_AVATAR = "http://tripc2c-person-face.b0.upaiyun.com/default/user.png"
+            if login['nickname'] == DEFAULT_USER_NICKNAME and login['avatar'] == DEFAULT_USER_AVATAR:
                 new_user = True
                 logging.warn("is new_user=[%r]", wx_openid)
         else:

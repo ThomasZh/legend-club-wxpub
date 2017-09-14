@@ -865,30 +865,32 @@ class WxOrderNotifyHandler(BaseHandler):
                 logging.info("got higher_level=[%r]", higher_level)
                 if higher_level:
                     actual_payment = _pay_return['total_fee']
-                    # points = int(int(actual_payment) / 100)
-                    points = actual_payment # test
-                    bonus_points = {
-                        'org_id':vendor_id,
-                        'org_type':'club',
-                        'account_id':higher_level['higher_level'],
-                        'account_type':'user',
-                        'action': 'lower_level_buy_item',
-                        'item_type': order_index['item_type'],
-                        'item_id': order_index['item_id'],
-                        'item_name': order_index['item_name'],
-                        'bonus_type':'bonus',
-                        'points': points,
-                        'order_id': order_index['_id']
-                    }
-                    self.create_points(bonus_points)
+                    points = int(int(actual_payment) / 100)
+                    # TODO test
+                    # points = actual_payment
+                    if points > 0:
+                        bonus_points = {
+                            'org_id':vendor_id,
+                            'org_type':'club',
+                            'account_id':higher_level['higher_level'],
+                            'account_type':'user',
+                            'action': 'lower_level_buy_item',
+                            'item_type': order_index['item_type'],
+                            'item_id': order_index['item_id'],
+                            'item_name': order_index['item_name'],
+                            'bonus_type':'bonus',
+                            'points': points,
+                            'order_id': order_index['_id']
+                        }
+                        self.create_points(bonus_points)
 
-                    # TODO 发送消息给上级获得积分，下级购买商品
-                    higher_login = self.get_club_user_wx(vendor_id, higher_level['higher_level'])
-                    if higher_login:
-                        higher_openid = higher_login['_id']
-                        nickname = order_index['nickname']
-                        text = u"您的朋友 " +nickname+ u" 购买商品，您获得 " +points+ u" 个积分"
-                        wx_wrap.sendMessageToCustomer(wx_access_token, higher_openid, text)
+                        # TODO 发送消息给上级获得积分，下级购买商品
+                        higher_login = self.get_club_user_wx(vendor_id, higher_level['higher_level'])
+                        if higher_login:
+                            higher_openid = higher_login['_id']
+                            nickname = order_index['nickname']
+                            text = u"您的朋友 " +nickname+ u" 购买商品，您获得 " +points+ u" 个积分"
+                            wx_wrap.sendMessageToCustomer(wx_access_token, higher_openid, text)
         else:
             # 调用微信支付接口，返回成功
             # TODO: 更新订单索引中，订单状态pay_status,transaction_id,payed_total_fee
