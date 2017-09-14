@@ -73,6 +73,7 @@ def map():
 
 
         # 俱乐部首页
+
         (r"/bf/wx/vendors/([a-z0-9]*)/info", getattr(wx_vendor, 'WxVendorInfoHandler')),
         # 俱乐部管理员绑定微信
         (r"/bf/wx/vendors/([a-z0-9]*)/ops/([a-z0-9]*)/binding", getattr(wx_vendor, 'WxVendorBindingHandler')),
@@ -118,6 +119,8 @@ def map():
 
         # old items wexin
         (r"/bf/wx/vendors/([a-z0-9]*)/items", getattr(wx_items, 'WxItemsListHandler')),
+        # 俱乐部首页
+        (r"/bf/wx/vendors/([a-z0-9]*)/index", getattr(wx_items, 'WxItemsIndexHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/category/items", getattr(wx_items, 'WxItemsCategoryListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/category/items/([a-z0-9]*)/brands", getattr(wx_items, 'WxItemsCategoryBrandsListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/category/items/([a-z0-9]*)/specs", getattr(wx_items, 'WxItemsCategorySpecsListHandler')),

@@ -1,0 +1,136 @@
+<!-- 供应商页面 @2017/05/23 -->
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <meta name="description" content="Material Design Mobile Template">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link href="{{ static_url('shuttle/css/ionicons.min.css') }}" media="all" rel="stylesheet" type="text/css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ static_url('weui/css/weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('weui/css/jquery-weui.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/animate.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swipebox.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle/css/main.css') }}">
+    <link rel="stylesheet" href="{{ static_url('shuttle-master/supplier.css') }}">
+    <script src="{{ static_url('shuttle/js/vendor/modernizr-2.7.1.min.js') }}"></script>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div id="main" class="main">
+      <!-- Page Contents -->
+      <div class="grey lighten-4 animated fadeinup">
+        <!-- Hero Header -->
+        <div class="hero-header hero-big animated fadeindown" style="background-image: url('{{ club['img'] }}');">
+          <div class="hero-author">
+            <img src="{{ club['img'] }}" alt="" class="center avatar big">
+            <div class="center">
+              <h2 class="white-text m-0">{{ club['name'] }}</h2>
+              <span class="white-text small"><em>{{ club['phone'] }}</em></span>
+            </div>
+          </div>
+          <div class="opacity-overlay-gradient"></div>
+        </div>
+
+        <div class="share-counter" style="border-bottom: 1px solid #eee;">
+          <div onclick="location.href='/bf/wx/vendors/{{ club_id }}/recommend'">
+            <h3>预估</h3>
+            <p class="grey-text">辅材推荐</p>
+          </div>
+          <div onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items'">
+            <h3>分类</h3>
+            <p class="grey-text">商品列表</p>
+          </div>
+        </div>
+
+        <div class="animated fadeinup delay-1">
+          <div class="section">
+            <p class="text-flow"><span class="dropcap">新</span> {{ club['introduction'] }}</p>
+            <blockquote class="accent-border">"The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog."</blockquote>
+            <p class="text-flow">{{ club['paragraphs'] }}</p>
+          </div>
+        </div>
+
+
+      </div>
+      <!-- End of Page Contents -->
+    </div>
+    <!-- End of Main Container -->
+
+    <!-- Scripts -->
+    <script src="{{ static_url('shuttle/js/vendor/jquery-2.1.0.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/HeadsUp.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.smoothState.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/jquery.swipebox.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/masonry.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/swiper.min.js') }}"></script>
+    <script src="{{ static_url('shuttle/js/vendor/materialize.min.js') }}"></script>
+    <script src="{{ static_url('shuttle-master/supplier.js') }}"></script>
+
+    <script type="text/javascript">
+      $(function(){
+          function getLocalTime(nS) { //时间戳转换
+             return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+          };
+
+          function GetQueryString(name){ //获取url参数
+               var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+               var r = window.location.search.substr(1).match(reg);
+               if(r!=null)return  unescape(r[2]); return null;
+          };
+
+          var limit = 20;//初始化值
+          var id = GetQueryString("club_id");
+          function one(pageNum) {
+              $.ajax({
+                type: "GET",
+                url: "{{api_domain}}/api/suppliers/"+id+"/items?_status=20&private=0&page="+pageNum+"&limit="+limit,
+                // headers: {
+                //   "Authorization": "Bearer {{ access_token }}"
+                // },
+                contentType: 'application/json',
+                success: function(data, status, xhr) {
+                      console.log(data);
+                      data_obj = JSON.parse(data);
+                      data = data_obj.rs;
+                  var pageData = data.data;
+                  for (var i in pageData) {
+                    var inner_html = '<div class="grid-item gallery-item-card">';
+                    inner_html += '<a href="/bf/wx/vendors/{{club_id}}/goods-detail/'+id+'?item_id='+pageData[i].item_id+'" class="swipebox no-smoothState" title="This is dummy caption.">';
+                    inner_html += '<img src="'+pageData[i].img+'" class="one_img" alt="image">';
+                    inner_html += '<div class="gallery-item-header">';
+                    inner_html += '<div class="gallery-item-author">';
+                    inner_html += '<span>'+ pageData[i].item_name +'</span>';
+                    inner_html += '<span class="small">价格：'+pageData[i].amount+'元</span>';
+                    inner_html += '</div></div></a></div>';
+                    $('#one').append(inner_html);
+                    };
+                    var num = $(".one_img").length;
+                    $(".one_img").load(function() {
+                        num--;
+                        if (num > 0) {
+                          return;
+                        }
+                        $('#one').masonry({
+                          itemSelector: '.gallery-item-card'
+                        });
+                    });
+                  }
+                })
+          };
+          one("1");
+        })
+    </script>
+  </body>
+</html>

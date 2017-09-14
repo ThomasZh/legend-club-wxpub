@@ -63,6 +63,34 @@ from xml_parser import parseWxOrderReturn, parseWxPayReturn
 from global_const import *
 
 
+# 俱乐部首页
+class WxItemsIndexHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, club_id):
+        logging.info("got club_id %r", club_id)
+        access_token = self.get_access_token()
+
+        # club = self.get_club_basic_info(club_id)
+        # logging.info("got club %r", club)
+
+        url = API_DOMAIN+"/api/clubs/"+club_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        data = json_decode(response.body)
+        club = data['rs']
+        if not club.has_key('img'):
+            club['img'] = ''
+        if not club.has_key('paragraphs'):
+            club['paragraphs'] = ''
+
+        self.render('items/main.html',
+                api_domain = API_DOMAIN,
+                access_token=access_token,
+                club_id = club_id,
+                club=club)
+
+
 # 分类列表
 class WxItemsCategoryListHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
