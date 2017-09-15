@@ -3,7 +3,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>Home</title>
+    <title>首页</title>
     <meta name="description" content="Material Design Mobile Template">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -33,7 +33,6 @@
         <!-- Hero Header -->
         <div class="hero-header hero-big animated fadeindown" style="background-image: url('{{ club['img'] }}');">
           <div class="hero-author">
-            <img src="{{ club['img'] }}" alt="" class="center avatar big">
             <div class="center">
               <h2 class="white-text m-0">{{ club['name'] }}</h2>
               <span class="white-text small"><em>{{ club['phone'] }}</em></span>
@@ -54,10 +53,10 @@
         </div>
 
         <div class="animated fadeinup delay-1">
-          <div class="section">
-            <p class="text-flow"><span class="dropcap">新</span> {{ club['introduction'] }}</p>
-            <blockquote class="accent-border">"The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog."</blockquote>
-            <p class="text-flow">{{ club['paragraphs'] }}</p>
+          <div class="section" style="padding: 10px 20px;">
+            <!-- <p class="text-flow"><span class="dropcap">新</span> </p> -->
+            <blockquote class="accent-border">{{ club['introduction'] }}</blockquote>
+            <p class="text-flow">{% raw club['paragraphs'] %}</p>
           </div>
         </div>
 
