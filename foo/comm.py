@@ -812,6 +812,8 @@ class AuthorizationHandler(BaseHandler):
             else:
                 guest_id = club_id[32:64]
                 club_id = club_id[0:32]
+                self.set_secure_cookie("guest_id", guest_id)
+                self.set_secure_cookie("club_id", club_id)
         logging.info("got club_id=[%r]", club_id)
         logging.info("got guest_id=[%r]", guest_id)
 

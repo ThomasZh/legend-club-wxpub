@@ -70,6 +70,18 @@ class WxItemsIndexHandler(AuthorizationHandler):
         logging.info("got club_id %r", club_id)
         access_token = self.get_access_token()
 
+        guest_id = DEFAULT_USER_ID
+        if len(club_id) == 32:
+            guest_id = DEFAULT_USER_ID
+        elif len(club_id) == 64:
+            guest_id = club_id[32:64]
+            club_id = club_id[0:32]
+        else:
+            guest_id = club_id[32:64]
+            club_id = club_id[0:32]
+        logging.info("got club_id=[%r]", club_id)
+        logging.info("got guest_id=[%r]", guest_id)
+
         # club = self.get_club_basic_info(club_id)
         # logging.info("got club %r", club)
 
@@ -84,11 +96,30 @@ class WxItemsIndexHandler(AuthorizationHandler):
         if not club.has_key('paragraphs'):
             club['paragraphs'] = ''
 
+        my_account_id = self.get_secure_cookie("account_id")
+        logging.info("GET my_account_id=[%r]", my_account_id)
+
+        wx_app_info = vendor_wx_dao.vendor_wx_dao().query(club_id)
+        wx_app_id = wx_app_info['wx_app_id']
+        wx_app_secret = wx_app_info['wx_app_secret']
+        wx_notify_domain = wx_app_info['wx_notify_domain']
+        logging.info("got wx_app_info=[%r]", wx_app_info)
+
+        wx_access_token = wx_wrap.getAccessTokenByClientCredential(wx_app_id, wx_app_secret)
+        _jsapi_ticket = wx_wrap.getJsapiTicket(wx_access_token)
+        _url = wx_notify_domain + self.request.uri
+        share_url = wx_notify_domain + "/bf/wx/vendors/"+club_id+my_account_id+"/index"
+        _sign = wx_wrap.Sign(_jsapi_ticket, _url).sign()
+        logging.info("got sign=[%r]", _sign)
+
         self.render('items/main.html',
                 api_domain = API_DOMAIN,
                 access_token=access_token,
                 club_id = club_id,
-                club=club)
+                club=club,
+                wx_app_id=wx_app_id,
+                share_url=share_url,
+                sign=_sign)
 
 
 # 分类列表
@@ -1036,3 +1067,58 @@ class WxItemsRecommendProductsHandler(AuthorizationHandler):
                      wx_app_id=wx_app_id,
                      share_url=share_url,
                      sign=_sign)
+
+
+# 我的历史积分列表页
+class WxItemsUserPointsHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, vendor_id):
+        logging.info("got vendor_id %r in uri", vendor_id)
+
+        account_id = self.get_secure_cookie("account_id")
+        access_token = self.get_access_token()
+
+        # 获取当前积分
+        url = API_DOMAIN + "/api/clubs/"+vendor_id+"/users/" + account_id
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        _customer_profile = data['rs']
+        bonus_num = _customer_profile['remaining_points']
+
+        self.render('items/user-points.html',
+                api_domain = API_DOMAIN,
+                access_token = access_token,
+                account_id = account_id,
+                vendor_id=vendor_id,
+                bonus_num=bonus_num)
+
+
+# 我的上下线
+class WxItemsUserlinesHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self, vendor_id):
+        logging.info("got vendor_id %r in uri", vendor_id)
+
+        account_id = self.get_secure_cookie("account_id")
+        access_token = self.get_access_token()
+
+        # 上级
+        url = API_DOMAIN + "/api/clubs/"+vendor_id+"/acquaintance/"+account_id+"/higher"
+        http_client = HTTPClient()
+        headers = {"Authorization":"Bearer " + access_token}
+        response = http_client.fetch(url, method="GET", headers=headers)
+        logging.info("got response.body %r", response.body)
+        data = json_decode(response.body)
+        higher = data['rs']
+        if higher:
+            higher['ctime'] = timestamp_datetime(float(higher['ctime']))
+
+        self.render('items/user-lines.html',
+                vendor_id=vendor_id,
+                account_id=account_id,
+                higher=higher,
+                api_domain=API_DOMAIN,
+                access_token = access_token)

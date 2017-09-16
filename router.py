@@ -140,7 +140,10 @@ def map():
         # 预估begin
         (r"/bf/wx/vendors/([a-z0-9]*)/recommend", getattr(wx_items, 'WxItemsRecommendListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/recommend/([a-z0-9]*)/products", getattr(wx_items, 'WxItemsRecommendProductsHandler')),
-
+        # 用户积分
+        (r"/bf/wx/vendors/([a-z0-9]*)/user/points", getattr(wx_items, 'WxItemsUserPointsHandler')),
+        # 用户上线和下线
+        (r"/bf/wx/vendors/([a-z0-9]*)/user/lines", getattr(wx_items, 'WxItemsUserlinesHandler')),
 
         # 开放线路市场
         (r"/bf/wx/vendors/([a-z0-9]*)/triprouters", getattr(wx_triprouter, 'WxTriprouterMarketHandler')),
