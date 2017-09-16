@@ -745,8 +745,8 @@ class WxItemsOrderCheckoutHandler(AuthorizationHandler):
                 'account_type':'user',
                 'action': 'buy_item',
                 'item_type': 'items',
-                'item_id': "00000000000000000000000000000000",
-                'item_name': '',
+                'item_id': order['item_id'],
+                'item_name': order['item_name'],
                 'bonus_type':'bonus',
                 'points': used_points,
                 'order_id': order_index['_id']
