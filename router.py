@@ -124,6 +124,7 @@ def map():
         (r"/bf/wx/vendors/([a-z0-9]*)/category/items", getattr(wx_items, 'WxItemsCategoryListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/category/items/([a-z0-9]*)/brands", getattr(wx_items, 'WxItemsCategoryBrandsListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/category/items/([a-z0-9]*)/specs", getattr(wx_items, 'WxItemsCategorySpecsListHandler')),
+        (r"/bf/wx/category/items", getattr(wx_items, 'WxItemsCategoryListDefaultHandler')),
 
         # cart
         (r"/bf/wx/vendors/([a-z0-9]*)/items/cart", getattr(wx_items, 'WxItemsCartHandler')),

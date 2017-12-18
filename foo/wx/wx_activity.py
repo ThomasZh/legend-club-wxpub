@@ -216,6 +216,7 @@ class WxActivityInfoHandler(BaseHandler):
         article = self.get_article(activity_id)
 
         wx_app_info = vendor_wx_dao.vendor_wx_dao().query(vendor_id)
+        logging.info("got wx_app_info %r", wx_app_info)
         wx_app_id = wx_app_info['wx_app_id']
         logging.info("got wx_app_id %r in uri", wx_app_id)
         wx_app_secret = wx_app_info['wx_app_secret']

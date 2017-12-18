@@ -70,6 +70,25 @@
         border-top:1px solid #e0e0e0;
         margin-top: 10px;
       }
+      .position{
+        width:15%;
+        font-size: 12px;
+        text-align: center;
+        line-height: 40px;
+        color: white;
+      }
+      .c-position{
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 48px;
+        width: 15%;
+        font-size: 12px;
+        background: #01acc6;
+        text-align: center;
+        line-height: 30px;
+        color: white;
+      }
     </style>
   </head>
   <body>
@@ -78,15 +97,23 @@
       <!-- Toolbar -->
       <div id="toolbar" class="primary-color z-depth-1" style="height:48px;transform: translate3d(0, 0, 0);">
         <!-- Tabs -->
-        <ul class="tabs">
+        <ul class="tabs" style="width:85%; overflow-x:scroll;margin:0;">
           {% for category in categorys %}
             {% if category['_id'] == _spec['super_category_id'] %}
-            <li class="tab col s2"><a style="font-size: 18px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
+            <li class="tab col s2"><a style="font-size: 18px; display:inline;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'" class="active">{{ category['title'] }}</a></li>
             {% else %}
-            <li class="tab col s2"><a style="font-size: 18px;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
+            <li class="tab col s2"><a style="font-size: 18px; display:inline;" onclick="location.href='/bf/wx/vendors/{{ club_id }}/category/items?category_id={{ category['_id'] }}'">{{ category['title'] }}</a></li>
             {% end %}
           {% end %}
         </ul>
+        <div class="position">
+          <i class="ion-android-arrow-dropdown right" style="margin-right: 10px;margin-left:0;font-size:1.8rem;"></i>
+          {% if club_id == "ef7ad69e75bc11e7a81600163e007856" %}
+          <a href="#modal3" class="drop-condition" style="margin-left: 5px;" id="addr-name">北京</a>
+          {% elif club_id == "81cf359e282e11e7812a00163e007856" %}
+          <a href="#modal3" class="drop-condition" style="margin-left: 5px;" id="addr-name">临沂</a>
+          {% end %}
+        </div>
       </div>
       <!-- End of Toolbar -->
 
@@ -159,6 +186,20 @@
           {% else %}
           <span class="checkbox spec" data_id="{{ second_spec['_id'] }}" style="curser:pointer;margin-bottom: 1rem;">{{ second_spec['title'] }}</span>
           {% end %}
+        {% end %}
+      </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal3" class="modal bottom-sheet">
+      <div class="modal-content">
+        <h4 style="width:100%;">选择地区</h4>
+        {% if club_id == "ef7ad69e75bc11e7a81600163e007856" %}
+        <span class="checkbox addr active" style="margin-bottom: 1rem;" data_id="ef7ad69e75bc11e7a81600163e007856">北京</span>
+        <span class="checkbox addr" style="margin-bottom: 1rem;" data_id="81cf359e282e11e7812a00163e007856">临沂</span>
+        {% else %}
+        <span class="checkbox addr" style="margin-bottom: 1rem;" data_id="ef7ad69e75bc11e7a81600163e007856">北京</span>
+        <span class="checkbox addr active" style="margin-bottom: 1rem;" data_id="81cf359e282e11e7812a00163e007856">临沂</span>
         {% end %}
       </div>
     </div>
@@ -416,6 +457,13 @@
             }
             pageNum = pageNum + 1;
         };
+
+        //选择地区点击事件
+        $(".modal-content").on('click','.addr',function(){
+            var club_id = $(this).attr('data_id');
+            location.href="/bf/wx/vendors/"+ club_id +"/category/items";
+        });
+        
           //品牌 规格 查询点击事件
         $(".modal-content").on('click','.brand',function(){
             var tag = 'brands';

@@ -122,6 +122,25 @@ class WxItemsIndexHandler(AuthorizationHandler):
                 sign=_sign)
 
 
+# 默认分类列表
+class WxItemsCategoryListDefaultHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("GET %r", self.request.uri)
+
+        club_id = "ef7ad69e75bc11e7a81600163e007856"
+        last_visit_club_id = self.get_cookie("last_visit_club_id")
+        logging.info("got last_visit_club_id=[%r]", last_visit_club_id)
+        if last_visit_club_id == None:
+            last_visit_club_id = club_id
+            self.set_cookie("last_visit_club_id", last_visit_club_id)
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/category/items")
+        else:
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/category/items")
+
+
 # 分类列表
 class WxItemsCategoryListHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
@@ -129,6 +148,8 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
         logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
         logging.info("GET %r", self.request.uri)
+
+        self.set_cookie("last_visit_club_id", club_id)
 
         guest_id = DEFAULT_USER_ID
         if len(club_id) == 32:
@@ -152,7 +173,11 @@ class WxItemsCategoryListHandler(AuthorizationHandler):
         my_account_id = self.get_secure_cookie("account_id")
         logging.info("GET my_account_id=[%r]", my_account_id)
 
-        url = API_DOMAIN + "/api/def/leagues/"+ LEAGUE_ID +"/categories"
+        club = self.get_club_basic_info(club_id)
+        logging.info("get club %r",club)
+        league_id = club['league_id']
+
+        url = API_DOMAIN + "/api/def/leagues/"+ league_id +"/categories"
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
@@ -249,7 +274,11 @@ class WxItemsCategorySpecsListHandler(AuthorizationHandler):
         access_token = self.get_access_token()
         logging.info("GET access_token %r", access_token)
 
-        url = API_DOMAIN + "/api/def/leagues/"+ LEAGUE_ID +"/categories"
+        club = self.get_club_basic_info(club_id)
+        logging.info("get club %r",club)
+        league_id = club['league_id']
+
+        url = API_DOMAIN + "/api/def/leagues/"+ league_id +"/categories"
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
@@ -356,7 +385,11 @@ class WxItemsCategoryBrandsListHandler(AuthorizationHandler):
         access_token = self.get_access_token()
         logging.info("GET access_token %r", access_token)
 
-        url = API_DOMAIN + "/api/def/leagues/"+ LEAGUE_ID +"/categories"
+        club = self.get_club_basic_info(club_id)
+        logging.info("get club %r",club)
+        league_id = club['league_id']
+
+        url = API_DOMAIN + "/api/def/leagues/"+ league_id +"/categories"
         http_client = HTTPClient()
         headers = {"Authorization":"Bearer " + access_token}
         response = http_client.fetch(url, method="GET", headers=headers)
@@ -604,7 +637,11 @@ class WxItemsSubmitOrderHandler(AuthorizationHandler):
         access_token = self.get_secure_cookie("access_token")
         account_id = self.get_secure_cookie("account_id")
 
-        self.render('items/submit-order.html',api_domain=API_DOMAIN,league_id=LEAGUE_ID, club_id=club_id,access_token=access_token,account_id=account_id)
+        club = self.get_club_basic_info(club_id)
+        logging.info("get club %r",club)
+        league_id = club['league_id']
+
+        self.render('items/submit-order.html',api_domain=API_DOMAIN,league_id=league_id, club_id=club_id,access_token=access_token,account_id=account_id)
 
 
 # 调用wechat pay
@@ -1002,6 +1039,7 @@ class WxItemsRecommendListHandler(AuthorizationHandler):
         logging.info("GET access_token %r", access_token)
 
         club = self.get_club_basic_info(club_id)
+        league_id = club['league_id']
 
         my_account_id = self.get_secure_cookie("account_id")
         logging.info("GET my_account_id=[%r]", my_account_id)
@@ -1022,7 +1060,7 @@ class WxItemsRecommendListHandler(AuthorizationHandler):
         self.render('items/recommend-category.html',
                 API_DOMAIN=API_DOMAIN,
                 access_token=access_token,
-                LEAGUE_ID=LEAGUE_ID,
+                LEAGUE_ID=league_id,
                 club=club,
                 club_id=club_id,
                 wx_app_id=wx_app_id,
