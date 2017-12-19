@@ -409,8 +409,11 @@
                 // console.log(data);
                 if(data.data.quantity > 99){
                   data.data.quantity = "99+";
+                }else if(data.data.quantity == 0){
+                  $("#shop-car span:first-child").html('');
+                }else{
+                  $("#shop-car span:first-child").html(data.data.quantity);
                 }
-                $("#shop-car span:first-child").html(data.data.quantity);
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
                   // console.log("error");
@@ -466,7 +469,7 @@
             var club_id = $(this).attr('data_id');
             location.href="/bf/wx/vendors/"+ club_id +"/category/items";
         });
-        
+
           //品牌 规格 查询点击事件
         $(".modal-content").on('click','.brand',function(){
             var tag = 'brands';
