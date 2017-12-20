@@ -389,10 +389,7 @@
                 $("#shop-car span:first-child").removeClass('mark').html('');
               }
             }
-            else{
-              $(this).next().val(num);
-            }
-
+            $(this).next().val(num);
             var tem_id = $(this).attr('spec_id');
             var item_id = $(this).attr('data_id');
             var data = {"spec_id":tem_id,"quantity":step};

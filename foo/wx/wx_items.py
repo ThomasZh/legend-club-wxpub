@@ -130,7 +130,7 @@ class WxItemsCategoryListDefaultHandler(AuthorizationHandler):
         logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
         logging.info("GET %r", self.request.uri)
 
-        club_id = "ef7ad69e75bc11e7a81600163e007856"
+        club_id = CLUB_ID
         last_visit_club_id = self.get_cookie("last_visit_club_id")
         logging.info("got last_visit_club_id=[%r]", last_visit_club_id)
         if last_visit_club_id == None:
@@ -619,12 +619,32 @@ class WxItemsDetailHandler(AuthorizationHandler):
     #     self.redirect('/bf/wx/vendors/'+ club_id +'/items/'+item_id)
 
 
+# 默认购物车
+class WxItemsCartDefaultHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("GET %r", self.request.uri)
+
+        last_visit_club_id = self.get_cookie("last_visit_club_id")
+        logging.info("got last_visit_club_id=[%r]", last_visit_club_id)
+        if last_visit_club_id == None:
+            last_visit_club_id = CLUB_ID
+            self.set_cookie("last_visit_club_id", last_visit_club_id)
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/items/cart")
+        else:
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/items/cart")
+
+
 # 购物车
 class WxItemsCartHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_secure_cookie("access_token")
+
+        self.set_cookie("last_visit_club_id", club_id)
 
         self.render('items/cart.html',api_domain=API_DOMAIN,club_id=club_id,access_token=access_token)
 
@@ -987,6 +1007,24 @@ class WxOrdersCheckoutHandler(AuthorizationHandler):
                     order=order, items=items)
 
 
+# 默认个人订单列表
+class WxItemsMyordersDefaultHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("GET %r", self.request.uri)
+
+        last_visit_club_id = self.get_cookie("last_visit_club_id")
+        logging.info("got last_visit_club_id=[%r]", last_visit_club_id)
+        if last_visit_club_id == None:
+            last_visit_club_id = CLUB_ID
+            self.set_cookie("last_visit_club_id", last_visit_club_id)
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/items/myorders")
+        else:
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/items/myorders")
+
+
 # 订单中心-所有订单
 class WxItemsMyordersHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
@@ -994,6 +1032,8 @@ class WxItemsMyordersHandler(AuthorizationHandler):
         logging.info("GET %r", self.request.uri)
         access_token = self.get_access_token()
         logging.info("GET access_token %r", access_token)
+
+        self.set_cookie("last_visit_club_id", club_id)
 
         self.render('items/myorders.html',
                 club_id=club_id,
@@ -1029,11 +1069,31 @@ class WxItemsNopayMyordersHandler(AuthorizationHandler):
                 access_token=access_token)
 
 
+# 默认预估分类列表
+class WxItemsRecommendListDefaultHandler(AuthorizationHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^ ^^^^^")
+        logging.info("GET %r", self.request.uri)
+
+        last_visit_club_id = self.get_cookie("last_visit_club_id")
+        logging.info("got last_visit_club_id=[%r]", last_visit_club_id)
+        if last_visit_club_id == None:
+            last_visit_club_id = CLUB_ID
+            self.set_cookie("last_visit_club_id", last_visit_club_id)
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/recommend")
+        else:
+            self.redirect("/bf/wx/vendors/"+ last_visit_club_id +"/recommend")
+
+
 # 预估分类列表
 class WxItemsRecommendListHandler(AuthorizationHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self, club_id):
         logging.info("GET %r", self.request.uri)
+        self.set_cookie("last_visit_club_id", club_id)
+
         # 查询分类
         access_token = self.get_access_token()
         logging.info("GET access_token %r", access_token)

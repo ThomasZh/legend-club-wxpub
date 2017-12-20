@@ -129,11 +129,13 @@ def map():
         # cart
         (r"/bf/wx/vendors/([a-z0-9]*)/items/cart", getattr(wx_items, 'WxItemsCartHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/submit/order", getattr(wx_items, 'WxItemsSubmitOrderHandler')),
+        (r"/bf/wx/items/cart", getattr(wx_items, 'WxItemsCartDefaultHandler')),
 
         (r"/bf/wx/vendors/([a-z0-9]*)/items/myorders", getattr(wx_items, 'WxItemsMyordersHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/pay-myorders", getattr(wx_items, 'WxItemsPayMyordersHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/nopay-myorders", getattr(wx_items, 'WxItemsNopayMyordersHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/items/([a-z0-9]*)", getattr(wx_items, 'WxItemsDetailHandler')),
+        (r"/bf/wx/items/myorders", getattr(wx_items, 'WxItemsMyordersDefaultHandler')),
         # 点击结算按钮
         (r"/bf/wxpay/items", getattr(wx_items, 'WxItemsOrderCheckoutHandler')),
         (r"/bf/wxpay/orders", getattr(wx_items, 'WxOrdersCheckoutHandler')),
@@ -141,6 +143,7 @@ def map():
         # 预估begin
         (r"/bf/wx/vendors/([a-z0-9]*)/recommend", getattr(wx_items, 'WxItemsRecommendListHandler')),
         (r"/bf/wx/vendors/([a-z0-9]*)/recommend/([a-z0-9]*)/products", getattr(wx_items, 'WxItemsRecommendProductsHandler')),
+        (r"/bf/wx/recommend", getattr(wx_items, 'WxItemsRecommendListDefaultHandler')),
         # 用户积分
         (r"/bf/wx/vendors/([a-z0-9]*)/user/points", getattr(wx_items, 'WxItemsUserPointsHandler')),
         # 用户上线和下线
