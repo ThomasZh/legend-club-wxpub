@@ -498,7 +498,7 @@ class WxActivityApplyStep2Handler(AuthorizationHandler):
             _openid = myinfo['login']
             _store_id = 'Aplan'
             logging.info("got _store_id %r", _store_id)
-            _product_description = _activity['title']
+            _product_description = _activity['activity_id']
             logging.info("got _product_description %r", _product_description)
             #_ip = self.request.remote_ip
             _remote_ip = self.request.headers['X-Real-Ip']
